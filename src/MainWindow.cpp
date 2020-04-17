@@ -47,18 +47,8 @@ MainWindow::MainWindow(QWidget *parent)
   setStatusBar(new StatusBar(this));
 
   bool useTabs = (ui_->editor->indentPolicy() == EditorWidget::IndentWithTabs);
-  ui_->actionUseTabs->setChecked(useTabs);
-  ui_->actionUseSpaces->setChecked(!useTabs);
-
   int tabWidth = ui_->editor->tabWidth();
-  ui_->actionTabWidth2->setChecked(tabWidth == 2);
-  ui_->actionTabWidth4->setChecked(tabWidth == 4);
-  ui_->actionTabWidth8->setChecked(tabWidth == 8);
-
   int indentWidth = ui_->editor->indentWidth();
-  ui_->actionIndentWidth2->setChecked(indentWidth == 2);
-  ui_->actionIndentWidth4->setChecked(indentWidth == 4);
-  ui_->actionIndentWidth8->setChecked(indentWidth == 8);
 
   QSettings settings;
 
@@ -267,60 +257,6 @@ void MainWindow::on_actionGoToLine_triggered() {
   GoToDialog dialog;
   dialog.exec();
   ui_->editor->jumpToLine(dialog.targetLineNumber());
-}
-
-void MainWindow::on_actionUseTabs_triggered() {
-  ui_->editor->setIndentPolicy(EditorWidget::IndentWithTabs);
-  ui_->actionUseTabs->setChecked(true);
-  ui_->actionUseSpaces->setChecked(false);
-}
-
-void MainWindow::on_actionUseSpaces_triggered() {
-  ui_->editor->setIndentPolicy(EditorWidget::IndentWithSpaces);
-  ui_->actionUseTabs->setChecked(false);
-  ui_->actionUseSpaces->setChecked(true);
-}
-
-void MainWindow::on_actionTabWidth2_triggered() {
-  ui_->editor->setTabWidth(2);
-  ui_->actionTabWidth2->setChecked(true);
-  ui_->actionTabWidth4->setChecked(false);
-  ui_->actionTabWidth8->setChecked(false);
-}
-
-void MainWindow::on_actionTabWidth4_triggered() {
-  ui_->editor->setTabWidth(4);
-  ui_->actionTabWidth2->setChecked(false);
-  ui_->actionTabWidth4->setChecked(true);
-  ui_->actionTabWidth8->setChecked(false);
-}
-
-void MainWindow::on_actionTabWidth8_triggered() {
-  ui_->editor->setTabWidth(8);
-  ui_->actionTabWidth2->setChecked(false);
-  ui_->actionTabWidth4->setChecked(false);
-  ui_->actionTabWidth8->setChecked(true);
-}
-
-void MainWindow::on_actionIndentWidth2_triggered() {
-  ui_->editor->setIndentWidth(2);
-  ui_->actionIndentWidth2->setChecked(true);
-  ui_->actionIndentWidth4->setChecked(false);
-  ui_->actionIndentWidth8->setChecked(false);
-}
-
-void MainWindow::on_actionIndentWidth4_triggered() {
-  ui_->editor->setIndentWidth(4);
-  ui_->actionIndentWidth2->setChecked(false);
-  ui_->actionIndentWidth4->setChecked(true);
-  ui_->actionIndentWidth8->setChecked(false);
-}
-
-void MainWindow::on_actionIndentWidth8_triggered() {
-  ui_->editor->setIndentWidth(8);
-  ui_->actionIndentWidth2->setChecked(false);
-  ui_->actionIndentWidth4->setChecked(false);
-  ui_->actionIndentWidth8->setChecked(true);
 }
 
 void MainWindow::on_actionEditorFont_triggered() {

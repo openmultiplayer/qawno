@@ -47,15 +47,6 @@ class MainWindow: public QMainWindow {
 
   void on_actionCompile_triggered();
 
-  void on_actionUseTabs_triggered();
-  void on_actionUseSpaces_triggered();
-  void on_actionTabWidth2_triggered();
-  void on_actionTabWidth4_triggered();
-  void on_actionTabWidth8_triggered();
-  void on_actionIndentWidth2_triggered();
-  void on_actionIndentWidth4_triggered();
-  void on_actionIndentWidth8_triggered();
-
   void on_actionEditorFont_triggered();
   void on_actionOutputFont_triggered();
 
