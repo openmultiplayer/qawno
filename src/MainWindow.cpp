@@ -46,10 +46,6 @@ MainWindow::MainWindow(QWidget *parent)
 
   setStatusBar(new StatusBar(this));
 
-  bool useTabs = (ui_->editor->indentPolicy() == EditorWidget::IndentWithTabs);
-  int tabWidth = ui_->editor->tabWidth();
-  int indentWidth = ui_->editor->indentWidth();
-
   QSettings settings;
 
   resize(settings.value("WindowSize", QSize(800, 600)).toSize());

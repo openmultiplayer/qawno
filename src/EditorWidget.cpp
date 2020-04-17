@@ -120,7 +120,6 @@ EditorWidget::EditorWidget(QWidget *parent)
 
   setTabWidth(tabWidth_);
   setIndentWidth(indentWidth_);
-  setIndentPolicy(indentPolicy_);
 
   setLineWrapMode(NoWrap);
   setUndoRedoEnabled(true);
@@ -156,14 +155,6 @@ int EditorWidget::indentWidth() const {
 
 void EditorWidget::setIndentWidth(int width) {
   indentWidth_ = width;
-}
-
-EditorWidget::IndentPolicy EditorWidget::indentPolicy() const {
-  return indentPolicy_;
-}
-
-void EditorWidget::setIndentPolicy(EditorWidget::IndentPolicy policy) {
-  indentPolicy_ = policy;
 }
 
 void EditorWidget::jumpToLine(long line) {
@@ -240,16 +231,7 @@ void EditorWidget::editSelectedText(QTextCursor cursor,
 }
 
 void EditorWidget::indentBlock(QTextCursor cursor) {
-  switch (indentPolicy_) {
-    case IndentWithTabs:
-      cursor.insertText("\t");
-      break;
-    case IndentWithSpaces:
-      for (int i = 0; i < indentWidth_; i++) {
-        cursor.insertText(" ");
-      }
-      break;
-  }
+  cursor.insertText("\t");
 }
 
 void EditorWidget::indentSelectedText(QTextCursor cursor) {
@@ -268,9 +250,6 @@ void EditorWidget::unindentSelectedText(QTextCursor cursor) {
       if (text == "\t") {
         cursor.removeSelectedText();
         removedChars += tabWidth_;
-      } else if (text == " ") {
-        cursor.removeSelectedText();
-        removedChars++;
       } else {
         break;
       }

@@ -50,11 +50,6 @@ class EditorWidget: public QPlainTextEdit {
  public:
   friend class EditorLineNumberWidget;
 
-  enum IndentPolicy {
-    IndentWithTabs,
-    IndentWithSpaces
-  };
-
   explicit EditorWidget(QWidget *parent = 0);
   ~EditorWidget() override;
 
@@ -63,9 +58,6 @@ class EditorWidget: public QPlainTextEdit {
 
   int indentWidth() const;
   void setIndentWidth(int width);
-
-  IndentPolicy indentPolicy() const;
-  void setIndentPolicy(IndentPolicy policy);
 
  public slots:
   void jumpToLine(long line);
@@ -90,7 +82,6 @@ class EditorWidget: public QPlainTextEdit {
   SyntaxHighlighter highlighter_;
   int tabWidth_ = 4;
   int indentWidth_ = 4;
-  IndentPolicy indentPolicy_ = IndentWithTabs;
 };
 
 #endif // EDITORWIDGET_H
