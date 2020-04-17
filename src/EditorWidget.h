@@ -88,9 +88,9 @@ class EditorWidget: public QPlainTextEdit {
  private:
   EditorLineNumberWidget lineNumberArea_;
   SyntaxHighlighter highlighter_;
-  int tabWidth_;
-  int indentWidth_;
-  IndentPolicy indentPolicy_;
+  int tabWidth_ = 4;
+  int indentWidth_ = 4;
+  IndentPolicy indentPolicy_ = IndentWithTabs;
 };
 
 #endif // EDITORWIDGET_H

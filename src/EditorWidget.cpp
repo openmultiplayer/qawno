@@ -118,10 +118,9 @@ EditorWidget::EditorWidget(QWidget *parent)
   font.fromString(settings.value("EditorFont", font).toString());
   setFont(font);
 
-  setTabWidth(settings.value("TabWidth", 4).toInt());
-  setIndentWidth(settings.value("IndentWidth", 4).toInt());
-  setIndentPolicy(static_cast<IndentPolicy>(
-    settings.value("IndentPolicy", IndentWithTabs).toInt()));
+  setTabWidth(tabWidth_);
+  setIndentWidth(indentWidth_);
+  setIndentPolicy(indentPolicy_);
 
   setLineWrapMode(NoWrap);
   setUndoRedoEnabled(true);
@@ -140,10 +139,6 @@ EditorWidget::EditorWidget(QWidget *parent)
 
 EditorWidget::~EditorWidget() {
   QSettings settings;
-  settings.setValue("EditorFont", font().toString());
-  settings.setValue("TabWidth", tabWidth());
-  settings.setValue("IndentPolicy", indentPolicy());
-  settings.setValue("IndentWidth", indentWidth());
 }
 
 int EditorWidget::tabWidth() const {
