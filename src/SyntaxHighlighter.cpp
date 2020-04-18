@@ -15,7 +15,7 @@
 
 #include "SyntaxHighlighter.h"
 
-static SyntaxHighlighter::ColorScheme defaultColorScheme = {
+SyntaxHighlighter::ColorScheme SyntaxHighlighter::defaultColorScheme = {
   Qt::darkBlue,
   Qt::blue,
   Qt::darkGreen,
@@ -25,6 +25,18 @@ static SyntaxHighlighter::ColorScheme defaultColorScheme = {
   Qt::darkMagenta,
   Qt::darkRed,
   Qt::blue
+};
+
+SyntaxHighlighter::ColorScheme SyntaxHighlighter::darkModeColorScheme = {
+  QColor(0xABB2BF),
+  QColor(0x10B1FE),
+  QColor(0x636D83),
+  QColor(0x636D83),
+  QColor(0xCCCCCC),
+  QColor(0xFF78F8),
+  QColor(0xFF78F8),
+  QColor(0xF9C859),
+  QColor(0x9F71CA)
 };
 
 SyntaxHighlighter::SyntaxHighlighter(QObject *parent)
@@ -92,7 +104,7 @@ bool SyntaxHighlighter::isKeyword(const QString &s) {
 }
 
 void SyntaxHighlighter::highlightBlock(const QString &text) {
-  setFormat(0, text.length(), defaultColorScheme.defaultColor);
+  setFormat(0, text.length(), colorScheme_.defaultColor);
 
   enum State {
     Unknown = -1,

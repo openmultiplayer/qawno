@@ -157,6 +157,23 @@ void EditorWidget::setIndentWidth(int width) {
   indentWidth_ = width;
 }
 
+void EditorWidget::toggleDarkMode(bool toggle) {
+  QPalette lineNumAreaPalette;
+  if (toggle) {
+    highlighter_.setColorScheme(SyntaxHighlighter::darkModeColorScheme);
+    lineNumAreaPalette.setColor(lineNumberArea_.backgroundRole(), QColor(0x2D333D));
+    lineNumAreaPalette.setColor(lineNumberArea_.foregroundRole(), QColor(0x636D83));
+  } else {
+    highlighter_.setColorScheme(SyntaxHighlighter::defaultColorScheme);
+    lineNumAreaPalette.setColor(lineNumberArea_.backgroundRole(), Qt::lightGray);
+    lineNumAreaPalette.setColor(lineNumberArea_.foregroundRole(), Qt::black);
+  }
+  usingDarkMode = toggle;
+  highlighter_.rehighlight();
+  lineNumberArea_.setPalette(lineNumAreaPalette);
+  highlightCurrentLine();
+}
+
 void EditorWidget::jumpToLine(long line) {
   if (line > 0 && line <= blockCount()) {
     QTextCursor cursor = textCursor();
@@ -210,7 +227,11 @@ void EditorWidget::highlightCurrentLine() {
   if (!isReadOnly()) {
     QList<QTextEdit::ExtraSelection> extraSelections;
     QTextEdit::ExtraSelection selection;
-    selection.format.setBackground(QColor(Qt::lightGray).lighter(120));
+    if (usingDarkMode) {
+      selection.format.setBackground(QColor(0x2D333D));
+    } else {
+      selection.format.setBackground(QColor(Qt::lightGray).lighter(120));
+    }
     selection.format.setProperty(QTextFormat::FullWidthSelection, true);
     selection.cursor = textCursor();
     selection.cursor.clearSelection();

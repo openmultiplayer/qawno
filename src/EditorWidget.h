@@ -59,6 +59,8 @@ class EditorWidget: public QPlainTextEdit {
   int indentWidth() const;
   void setIndentWidth(int width);
 
+  void toggleDarkMode(bool toggle);
+
  public slots:
   void jumpToLine(long line);
 
@@ -84,6 +86,7 @@ class EditorWidget: public QPlainTextEdit {
  private:
   EditorLineNumberWidget lineNumberArea_;
   SyntaxHighlighter highlighter_;
+  bool usingDarkMode = false;
   int tabWidth_ = 4;
   int indentWidth_ = 4;
 };

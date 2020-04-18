@@ -48,6 +48,35 @@ MainWindow::MainWindow(QWidget *parent)
 
   QSettings settings;
 
+  defaultPalette = ui_->editor->palette();
+
+  QPalette darkPalette;
+  darkPalette.setColor(QPalette::Window, QColor(0x282C34));
+  darkPalette.setColor(QPalette::WindowText, Qt::white);
+  darkPalette.setColor(QPalette::Base, QColor(0x282C34));
+  darkPalette.setColor(QPalette::AlternateBase, QColor(0x282C34));
+  darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
+  darkPalette.setColor(QPalette::ToolTipText, Qt::white);
+  darkPalette.setColor(QPalette::Text, Qt::white);
+  darkPalette.setColor(QPalette::Button, QColor(53, 53, 53));
+  darkPalette.setColor(QPalette::ButtonText, Qt::white);
+  darkPalette.setColor(QPalette::BrightText, Qt::red);
+  darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
+  darkPalette.setColor(QPalette::Highlight, QColor(0x324054));
+  darkPalette.setBrush(QPalette::HighlightedText, QBrush(Qt::NoBrush));
+
+  darkModePalette = darkPalette;
+
+  bool useDarkMode = settings.value("DarkMode", false).toBool();
+  ui_->actionDarkMode->setChecked(useDarkMode);
+  ui_->editor->toggleDarkMode(useDarkMode);
+
+  if (useDarkMode) {
+    ui_->splitter->setPalette(darkModePalette);
+  } else {
+    ui_->splitter->setPalette(defaultPalette);
+  }
+
   resize(settings.value("WindowSize", QSize(800, 600)).toSize());
   if (settings.value("Maximized", false).toBool()) {
     setWindowState(Qt::WindowMaximized);
@@ -276,6 +305,18 @@ void MainWindow::on_actionOutputFont_triggered() {
 
   if (ok) {
     ui_->output->setFont(newFont);
+  }
+}
+
+void MainWindow::on_actionDarkMode_triggered() {
+  QSettings settings;
+  bool useDarkMode = !settings.value("DarkMode", false).toBool();
+  settings.setValue("DarkMode", useDarkMode);
+  ui_->editor->toggleDarkMode(useDarkMode);
+  if (useDarkMode) {
+    ui_->splitter->setPalette(darkModePalette);
+  } else {
+    ui_->splitter->setPalette(defaultPalette);
   }
 }
 

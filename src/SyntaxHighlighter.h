@@ -34,6 +34,9 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
     QColor preprocessor;
   };
 
+  static ColorScheme defaultColorScheme;
+  static ColorScheme darkModeColorScheme;
+
   explicit SyntaxHighlighter(QObject *parent);
   ~SyntaxHighlighter() override;
 

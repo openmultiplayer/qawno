@@ -50,6 +50,8 @@ class MainWindow: public QMainWindow {
   void on_actionEditorFont_triggered();
   void on_actionOutputFont_triggered();
 
+  void on_actionDarkMode_triggered();
+
   void on_actionCompiler_triggered();
 
   void on_actionAbout_triggered();
@@ -70,6 +72,8 @@ class MainWindow: public QMainWindow {
   Ui::MainWindow *ui_;
 
  private:
+  QPalette defaultPalette;
+  QPalette darkModePalette;
   QString fileName_;
   int findStart_ = 0;
   int findRound_ = 0;

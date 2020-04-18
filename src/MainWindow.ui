@@ -136,6 +136,7 @@
      <addaction name="actionOutputFont"/>
     </widget>
     <addaction name="menuFont"/>
+    <addaction name="actionDarkMode"/>
     <addaction name="separator"/>
     <addaction name="actionCompiler"/>
    </widget>
@@ -325,6 +326,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+G</string>
+   </property>
+  </action>
+  <action name="actionDarkMode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Dark Mode</string>
    </property>
   </action>
  </widget>
