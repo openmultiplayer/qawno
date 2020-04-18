@@ -76,6 +76,7 @@ class EditorWidget: public QPlainTextEdit {
   void indentBlock(QTextCursor cursor);
   void indentSelectedText(QTextCursor cursor);
   void unindentSelectedText(QTextCursor cursor);
+  int countIndents(QString line);
 
  private:
   EditorLineNumberWidget lineNumberArea_;

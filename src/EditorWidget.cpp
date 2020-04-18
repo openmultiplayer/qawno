@@ -190,6 +190,27 @@ void EditorWidget::keyPressEvent(QKeyEvent *event) {
       }
       event->accept();
       return;
+    case Qt::Key_Enter:
+    case Qt::Key_Return:
+    {
+      int blockStart = cursor.position();
+      cursor.setPosition(blockStart - 1, QTextCursor::KeepAnchor);
+      QString charBefore = cursor.selectedText();
+      cursor.setPosition(blockStart - cursor.positionInBlock() - 1, QTextCursor::KeepAnchor);
+      QString line = cursor.selectedText();
+      int indents = 0;
+      if (charBefore == "{") {
+        indents++;
+      }
+      indents += countIndents(line);
+      cursor.setPosition(blockStart);
+      cursor.insertText("\r\n");
+      while (indents) {
+        indentBlock(cursor);
+        indents--;
+      }
+      return;
+    }
   }
 
   QPlainTextEdit::keyPressEvent(event);
@@ -255,4 +276,17 @@ void EditorWidget::unindentSelectedText(QTextCursor cursor) {
       }
     } while (removedChars < indentWidth_);
   });
+}
+
+int EditorWidget::countIndents(QString line)
+{
+  int indents = 0;
+  for (int i = 0; i < line.length(); i++) {
+    if (line[i].toLatin1() == '\t') {
+      indents++;
+    } else {
+      break;
+    }
+  }
+  return indents;
 }
