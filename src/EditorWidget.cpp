@@ -191,24 +191,14 @@ void EditorWidget::keyPressEvent(QKeyEvent *event) {
       event->accept();
       return;
     case Qt::Key_Enter:
-    case Qt::Key_Return:
-    {
-      int blockStart = cursor.position();
-      cursor.setPosition(blockStart - 1, QTextCursor::KeepAnchor);
-      QString charBefore = cursor.selectedText();
-      cursor.setPosition(blockStart - cursor.positionInBlock() - 1, QTextCursor::KeepAnchor);
-      QString line = cursor.selectedText();
-      int indents = 0;
-      if (charBefore == "{") {
-        indents++;
-      }
-      indents += countIndents(line);
-      cursor.setPosition(blockStart);
-      cursor.insertText("\r\n");
-      while (indents) {
-        indentBlock(cursor);
-        indents--;
-      }
+    case Qt::Key_Return: {
+      autoIndentOnNewLineInsertion(cursor);
+      event->accept();
+      return;
+    }
+    case Qt::Key_BraceRight: {
+      autoUnindentOnClosingBraceInsertion(cursor);
+      event->accept();
       return;
     }
   }
@@ -278,8 +268,48 @@ void EditorWidget::unindentSelectedText(QTextCursor cursor) {
   });
 }
 
-int EditorWidget::countIndents(QString line)
-{
+void EditorWidget::autoIndentOnNewLineInsertion(QTextCursor cursor) {
+  int currPos = cursor.position();
+  cursor.setPosition(currPos - 1, QTextCursor::KeepAnchor);
+  QString charBefore = cursor.selectedText();
+  cursor.setPosition(currPos - cursor.positionInBlock() - 1, QTextCursor::KeepAnchor);
+  QString line = cursor.selectedText();
+  int indents = 0;
+  if (charBefore == "{") {
+    indents++;
+  }
+  indents += countIndents(line);
+  cursor.setPosition(currPos);
+  cursor.insertText("\r\n");
+  while (indents) {
+    indentBlock(cursor);
+    indents--;
+  }
+}
+
+void EditorWidget::autoUnindentOnClosingBraceInsertion(QTextCursor cursor) {
+  int currPos = cursor.position();
+  cursor.setPosition(currPos - cursor.positionInBlock(), QTextCursor::KeepAnchor);
+  QString line = cursor.selectedText();
+  bool allTabs = isLineAllTabs(line);
+  if (allTabs) {
+    int indents = 0;
+    indents += countIndents(line);
+    if (indents != 0) {
+      indents--;
+    }
+    while (indents) {
+      indentBlock(cursor);
+      indents--;
+    }
+  }
+  else {
+    cursor.setPosition(currPos);
+  }
+  cursor.insertText("}");
+}
+
+int EditorWidget::countIndents(QString line) {
   int indents = 0;
   for (int i = 0; i < line.length(); i++) {
     if (line[i].toLatin1() == '\t') {
@@ -289,4 +319,15 @@ int EditorWidget::countIndents(QString line)
     }
   }
   return indents;
+}
+
+bool EditorWidget::isLineAllTabs(QString line) {
+  bool allTabs = true;
+  for (int i = 0; i < line.length(); i++) {
+    if (line[i].toLatin1() != '\t') {
+      allTabs = false;
+      break;
+    }
+  }
+  return allTabs;
 }

@@ -76,7 +76,10 @@ class EditorWidget: public QPlainTextEdit {
   void indentBlock(QTextCursor cursor);
   void indentSelectedText(QTextCursor cursor);
   void unindentSelectedText(QTextCursor cursor);
+  void autoIndentOnNewLineInsertion(QTextCursor cursor);
+  void autoUnindentOnClosingBraceInsertion(QTextCursor cursor);
   int countIndents(QString line);
+  bool isLineAllTabs(QString line);
 
  private:
   EditorLineNumberWidget lineNumberArea_;
