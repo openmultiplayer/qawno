@@ -146,7 +146,7 @@ int EditorWidget::tabWidth() const {
 
 void EditorWidget::setTabWidth(int width) {
   tabWidth_ = width;
-  setTabStopDistance(fontMetrics().horizontalAdvance(' ') * width);
+  setTabStopDistance(static_cast<double>(fontMetrics().horizontalAdvance(' ') * width));
 }
 
 int EditorWidget::indentWidth() const {
