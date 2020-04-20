@@ -191,6 +191,7 @@ void EditorWidget::resizeEvent(QResizeEvent *event) {
 
 void EditorWidget::keyPressEvent(QKeyEvent *event) {
   QTextCursor cursor = textCursor();
+  bool removePrevChar = false;
 
   switch (event->key()) {
     case Qt::Key_Tab:
@@ -210,8 +211,9 @@ void EditorWidget::keyPressEvent(QKeyEvent *event) {
     case Qt::Key_Enter:
     case Qt::Key_Return: {
       autoIndentOnNewLineInsertion(cursor);
+      removePrevChar = true;
       event->accept();
-      return;
+      break;
     }
     case Qt::Key_BraceRight: {
       autoUnindentOnClosingBraceInsertion(cursor);
@@ -221,6 +223,9 @@ void EditorWidget::keyPressEvent(QKeyEvent *event) {
   }
 
   QPlainTextEdit::keyPressEvent(event);
+  if (removePrevChar) {
+    textCursor().deletePreviousChar();
+  }
 }
 
 void EditorWidget::highlightCurrentLine() {
