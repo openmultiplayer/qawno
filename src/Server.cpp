@@ -16,13 +16,15 @@
 #include <QFileInfo>
 #include <QProcess>
 #include <QSettings>
-#include <string>
+#include <QDir>
+#include <Windows.h>
 
 #include "Server.h"
 
 Server::Server() {
   QSettings settings;
-  path_ = settings.value("ServerPath", "omp-server").toString();
+  path_ = QDir::cleanPath(QDir::currentPath() + "/..");
+  path_ = settings.value("ServerPath", path_).toString();
   options_ = settings.value("ServerOptions", "").toString().split("\\s*");
 }
 
@@ -69,26 +71,23 @@ QString Server::output() const {
 }
 
 QString Server::command() const {
-  return QString("%1 %2 -- %s").arg(path_).arg(options_.join(" ")).arg(extras_.join(" "));
+  return QString("omp-server.exe %1 -- %2").arg(options_.join(" ")).arg(extras_.join(" "));
 }
 
 QString Server::commandFor(const QString &inputFile) const {
   QString fileName = QFileInfo(inputFile).baseName();
-  return QString("%1 %2 %3 -- %4").arg(path_).arg(options_.join(" ")).arg(fileName).arg(extras_.join(" "));
+  return QString("%1/omp-server.exe %2 %3 -- %4").arg(path_).arg(options_.join(" ")).arg(fileName).arg(extras_.join(" "));
 }
 
 void Server::run(const QString &inputFile) {
-  std::system((QString("cmd.exe /K \"") + commandFor(inputFile) + QString("\"")).toStdString().c_str());
-  /*QProcess process;
-  process.setProcessChannelMode(QProcess::MergedChannels);
-  process.setWorkingDirectory(QFileInfo(inputFile).absolutePath());
+  STARTUPINFO si;
+  PROCESS_INFORMATION pi;
 
-  QString command = commandFor(inputFile);
-  process.start(command, QStringList(), QProcess::ReadOnly);
-
-  if (process.waitForFinished()) {
-    output_ = process.readAll();
-  } else {
-    output_ = process.errorString();
-  }*/
+  ZeroMemory(&si, sizeof(si));
+  si.cb = sizeof(si);
+  ZeroMemory(&pi, sizeof(pi));
+  std::string cmd = commandFor(inputFile).toStdString();
+  std::string path = path_.toStdString();
+  CreateProcess(NULL, (char *)cmd.c_str(), NULL, NULL, FALSE, 0, NULL, (char *)path.c_str(), &si, &pi);
 }
+

@@ -54,6 +54,7 @@ class MainWindow: public QMainWindow {
   void on_actionDarkMode_triggered();
 
   void on_actionCompiler_triggered();
+  void on_actionServer_triggered();
 
   void on_actionAbout_triggered();
   void on_actionAboutQt_triggered();

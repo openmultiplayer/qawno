@@ -28,6 +28,7 @@
 #include "AboutDialog.h"
 #include "Compiler.h"
 #include "CompilerSettingsDialog.h"
+#include "ServerSettingsDialog.h"
 #include "EditorWidget.h"
 #include "FindDialog.h"
 #include "GoToDialog.h"
@@ -335,6 +336,21 @@ void MainWindow::on_actionCompiler_triggered() {
   if (dialog.result() == QDialog::Accepted) {
     compiler.setPath(dialog.compilerPath());
     compiler.setOptions(dialog.compilerOptions());
+  }
+}
+
+void MainWindow::on_actionServer_triggered() {
+  Server server;
+  ServerSettingsDialog dialog;
+
+  dialog.setServerPath(server.path());
+  dialog.setServerOptions(server.options().join(" "));
+
+  dialog.exec();
+
+  if (dialog.result() == QDialog::Accepted) {
+    server.setPath(dialog.serverPath());
+    server.setOptions(dialog.serverOptions());
   }
 }
 
