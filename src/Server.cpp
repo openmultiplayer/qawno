@@ -16,12 +16,13 @@
 #include <QFileInfo>
 #include <QProcess>
 #include <QSettings>
+#include <string>
 
 #include "Server.h"
 
 Server::Server() {
   QSettings settings;
-  path_ = settings.value("ServerPath", "../omp-server").toString();
+  path_ = settings.value("ServerPath", "omp-server").toString();
   options_ = settings.value("ServerOptions", "").toString().split("\\s*");
 }
 
@@ -77,7 +78,8 @@ QString Server::commandFor(const QString &inputFile) const {
 }
 
 void Server::run(const QString &inputFile) {
-  QProcess process;
+  std::system((QString("cmd.exe /K \"") + commandFor(inputFile) + QString("\"")).toStdString().c_str());
+  /*QProcess process;
   process.setProcessChannelMode(QProcess::MergedChannels);
   process.setWorkingDirectory(QFileInfo(inputFile).absolutePath());
 
@@ -88,5 +90,5 @@ void Server::run(const QString &inputFile) {
     output_ = process.readAll();
   } else {
     output_ = process.errorString();
-  }
+  }*/
 }

@@ -35,6 +35,7 @@
 #include "OutputWidget.h"
 #include "ReplaceDialog.h"
 #include "StatusBar.h"
+#include "Server.h"
 
 #include "ui_MainWindow.h"
 
@@ -353,6 +354,8 @@ void MainWindow::on_actionCompile_triggered() {
 
 void MainWindow::on_actionRun_triggered() {
   on_actionCompile_triggered();
+  Server server;
+  server.run(fileName_);
 }
 
 void MainWindow::on_actionAbout_triggered() {
