@@ -351,6 +351,10 @@ void MainWindow::on_actionCompile_triggered() {
   ui_->output->appendPlainText(compiler.output());
 }
 
+void MainWindow::on_actionRun_triggered() {
+  on_actionCompile_triggered();
+}
+
 void MainWindow::on_actionAbout_triggered() {
   AboutDialog dialog;
   dialog.exec();

@@ -46,6 +46,7 @@ class MainWindow: public QMainWindow {
   void on_actionGoToLine_triggered();
 
   void on_actionCompile_triggered();
+  void on_actionRun_triggered();
 
   void on_actionEditorFont_triggered();
   void on_actionOutputFont_triggered();

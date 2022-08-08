@@ -123,6 +123,7 @@
      <string>&amp;Build</string>
     </property>
     <addaction name="actionCompile"/>
+    <addaction name="actionRun"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
@@ -270,6 +271,14 @@
    </property>
    <property name="shortcut">
     <string>F5</string>
+   </property>
+  </action>
+  <action name="actionRun">
+   <property name="text">
+    <string>&amp;Run</string>
+   </property>
+   <property name="shortcut">
+    <string>F6</string>
    </property>
   </action>
   <action name="actionAbout">
