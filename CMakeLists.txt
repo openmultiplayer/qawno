@@ -43,6 +43,7 @@ set(HEADERS
   src/AboutDialog.h
   src/Compiler.h
   src/CompilerSettingsDialog.h
+  src/ServerSettingsDialog.h
   src/EditorWidget.h
   src/FindDialog.h
   src/GoToDialog.h
@@ -58,6 +59,7 @@ set(SOURCES
   src/AboutDialog.cpp
   src/Compiler.cpp
   src/CompilerSettingsDialog.cpp
+  src/ServerSettingsDialog.cpp
   src/EditorWidget.cpp
   src/FindDialog.cpp
   src/GoToDialog.cpp
@@ -74,6 +76,7 @@ set(SOURCES
 set(UI_SOURCES
   src/AboutDialog.ui
   src/CompilerSettingsDialog.ui
+  src/ServerSettingsDialog.ui
   src/FindDialog.ui
   src/GoToDialog.ui
   src/MainWindow.ui
