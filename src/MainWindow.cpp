@@ -342,13 +342,13 @@ void MainWindow::on_actionCompile_triggered() {
     on_actionSaveAs_triggered();
   } else {
     on_actionSave_triggered();
-    Compiler compiler;
-    ui_->output->clear();
-    ui_->output->appendPlainText(compiler.commandFor(fileName_));
-    ui_->output->appendPlainText("\n");
-    compiler.run(fileName_);
-    ui_->output->appendPlainText(compiler.output());
   }
+  Compiler compiler;
+  ui_->output->clear();
+  ui_->output->appendPlainText(compiler.commandFor(fileName_));
+  ui_->output->appendPlainText("\n");
+  compiler.run(fileName_);
+  ui_->output->appendPlainText(compiler.output());
 }
 
 void MainWindow::on_actionAbout_triggered() {
