@@ -61,7 +61,7 @@ QString Compiler::command() const {
 
 QString Compiler::commandFor(const QString &inputFile) const {
   QString fileName = QFileInfo(inputFile).fileName();
-  return QString("%1 -c \"%2\"").arg(command(), fileName);
+  return QString("%1 %2 -c \"%3\"").arg(path_).arg(options_.join(" ")).arg(fileName);
 }
 
 void Compiler::run(const QString &inputFile) {

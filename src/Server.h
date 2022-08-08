@@ -30,6 +30,10 @@ class Server {
   QStringList options() const;
   void setOptions(const QString &options);
   void setOptions(const QStringList &options);
+  
+  QStringList extras() const;
+  void setExtras(const QString &extras);
+  void setExtras(const QStringList &extras);
 
   QString output() const;
 
@@ -41,6 +45,7 @@ class Server {
  private:
   QString path_;
   QStringList options_;
+  QStringList extras_;
   QString output_;
 };
 

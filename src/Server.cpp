@@ -21,8 +21,8 @@
 
 Server::Server() {
   QSettings settings;
-  path_ = settings.value("ServerPath", "pawncc").toString();
-  options_ = settings.value("ServerOptions", "-;+ -(+").toString().split("\\s*");
+  path_ = settings.value("ServerPath", "../omp-server").toString();
+  options_ = settings.value("ServerOptions", "").toString().split("\\s*");
 }
 
 Server::~Server() {
@@ -51,17 +51,29 @@ void Server::setOptions(const QStringList &options) {
   options_ = options;
 }
 
+QStringList Server::extras() const {
+  return extras_;
+}
+
+void Server::setExtras(const QString &extras) {
+  extras_ = extras.split("\\s*");
+}
+
+void Server::setExtras(const QStringList &extras) {
+  extras_ = extras;
+}
+
 QString Server::output() const {
   return output_;
 }
 
 QString Server::command() const {
-  return QString("%1 %2").arg(path_).arg(options_.join(" "));
+  return QString("%1 %2 -- %s").arg(path_).arg(options_.join(" ")).arg(extras_.join(" "));
 }
 
 QString Server::commandFor(const QString &inputFile) const {
-  QString fileName = QFileInfo(inputFile).fileName();
-  return QString("%1 -c \"%2\"").arg(command(), fileName);
+  QString fileName = QFileInfo(inputFile).baseName();
+  return QString("%1 %2 %3 -- %4").arg(path_).arg(options_.join(" ")).arg(fileName).arg(extras_.join(" "));
 }
 
 void Server::run(const QString &inputFile) {
