@@ -49,6 +49,7 @@ set(HEADERS
   src/MainWindow.h
   src/OutputWidget.h
   src/ReplaceDialog.h
+  src/Server.h
   src/StatusBar.h
   src/SyntaxHighlighter.h
 )
@@ -64,6 +65,7 @@ set(SOURCES
   src/MainWindow.cpp
   src/OutputWidget.cpp
   src/ReplaceDialog.cpp
+  src/Server.cpp
   src/StatusBar.cpp
   src/SyntaxHighlighter.cpp
   qawno.rc
