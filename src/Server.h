@@ -18,6 +18,8 @@
 
 #include <QString>
 #include <QStringList>
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
 
 class Server {
  public:
@@ -47,6 +49,15 @@ class Server {
   QStringList options_;
   QStringList extras_;
   QString output_;
+  PROCESS_INFORMATION pi_;
+
+  HANDLE stdinR_;
+  HANDLE stdinW_;
+  
+  HANDLE stdoutR_;
+  HANDLE stdoutW_;
+
+  static DWORD threaded(LPVOID);
 };
 
 #endif // SERVER_H

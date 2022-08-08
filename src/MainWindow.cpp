@@ -36,13 +36,13 @@
 #include "OutputWidget.h"
 #include "ReplaceDialog.h"
 #include "StatusBar.h"
-#include "Server.h"
 
 #include "ui_MainWindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow(parent),
-    ui_(new Ui::MainWindow)
+    ui_(new Ui::MainWindow),
+    server_()
 {
   ui_->setupUi(this);
 
@@ -340,17 +340,16 @@ void MainWindow::on_actionCompiler_triggered() {
 }
 
 void MainWindow::on_actionServer_triggered() {
-  Server server;
   ServerSettingsDialog dialog;
 
-  dialog.setServerPath(server.path());
-  dialog.setServerOptions(server.options().join(" "));
+  dialog.setServerPath(server_.path());
+  dialog.setServerOptions(server_.options().join(" "));
 
   dialog.exec();
 
   if (dialog.result() == QDialog::Accepted) {
-    server.setPath(dialog.serverPath());
-    server.setOptions(dialog.serverOptions());
+    server_.setPath(dialog.serverPath());
+    server_.setOptions(dialog.serverOptions());
   }
 }
 
@@ -370,8 +369,7 @@ void MainWindow::on_actionCompile_triggered() {
 
 void MainWindow::on_actionRun_triggered() {
   on_actionCompile_triggered();
-  Server server;
-  server.run(fileName_);
+  server_.run(fileName_);
 }
 
 void MainWindow::on_actionAbout_triggered() {

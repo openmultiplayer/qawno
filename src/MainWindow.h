@@ -17,6 +17,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "Server.h"
 
 namespace Ui {
   class MainWindow;
@@ -72,6 +73,7 @@ class MainWindow: public QMainWindow {
 
  private:
   Ui::MainWindow *ui_;
+  Server server_;
 
  private:
   QPalette defaultPalette;

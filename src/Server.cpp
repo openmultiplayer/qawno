@@ -17,7 +17,6 @@
 #include <QProcess>
 #include <QSettings>
 #include <QDir>
-#include <Windows.h>
 
 #include "Server.h"
 
@@ -26,6 +25,9 @@ Server::Server() {
   path_ = QDir::cleanPath(QDir::currentPath() + "/..");
   path_ = settings.value("ServerPath", path_).toString();
   options_ = settings.value("ServerOptions", "").toString().split("\\s*");
+  ZeroMemory(&pi_, sizeof(PROCESS_INFORMATION));
+  stdinR_ = NULL;
+  stdinW_ = NULL;
 }
 
 Server::~Server() {
@@ -80,14 +82,46 @@ QString Server::commandFor(const QString &inputFile) const {
 }
 
 void Server::run(const QString &inputFile) {
-  STARTUPINFO si;
-  PROCESS_INFORMATION pi;
+  if (pi_.hProcess) {
+    QString fileName = QFileInfo(inputFile).baseName();
+    std::string cmd = QString("echo %1\r\n").arg(fileName).toStdString();
+    // The process exists.  Send a `changemode` command.
+    DWORD written;
+    WriteFile(stdinW_, cmd.data(), cmd.size(), &written, NULL);
+  } else {
+    // Inherit the input pipes.
+    SECURITY_ATTRIBUTES sa;
+    sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+    sa.bInheritHandle = TRUE;
+    sa.lpSecurityDescriptor = NULL;
 
-  ZeroMemory(&si, sizeof(si));
-  si.cb = sizeof(si);
-  ZeroMemory(&pi, sizeof(pi));
-  std::string cmd = commandFor(inputFile).toStdString();
-  std::string path = path_.toStdString();
-  CreateProcess(NULL, (char *)cmd.c_str(), NULL, NULL, FALSE, 0, NULL, (char *)path.c_str(), &si, &pi);
+    CreatePipe(&stdinR_, &stdinW_, &sa, 0);
+    SetHandleInformation(stdinW_, HANDLE_FLAG_INHERIT, 0);
+
+    CreatePipe(&stdoutR_, &stdoutW_, &sa, 0);
+    SetHandleInformation(stdoutW_, HANDLE_FLAG_INHERIT, 0);
+
+    // Initialise the process.
+    STARTUPINFO si;
+    ZeroMemory(&si, sizeof(STARTUPINFO));
+    si.cb = sizeof(STARTUPINFO);
+    si.lpTitle = "open.mp server";
+    //si.hStdOutput = stdoutW_;
+    //si.hStdError = stdoutW_;
+    si.hStdInput = stdinR_;
+    si.dwFlags |= STARTF_USESTDHANDLES;
+
+    // Spawn a server and wait till it closes to reset some memory.
+    std::string cmd = commandFor(inputFile).toStdString();
+    std::string path = path_.toStdString();
+    CreateProcess(NULL, (char *)cmd.c_str(), NULL, NULL, TRUE, 0, NULL, (char *)path.c_str(), &si, &pi_);
+    CreateThread(NULL, 0, &Server::threaded, &pi_, 0, NULL);
+  }
+}
+
+DWORD Server::threaded(LPVOID p) {
+  WaitForSingleObject(((PROCESS_INFORMATION*)p)->hProcess, INFINITE);
+  ZeroMemory(p, sizeof(PROCESS_INFORMATION));
+  return 0;
 }
 
