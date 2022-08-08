@@ -49,13 +49,8 @@ class Server {
   QStringList options_;
   QStringList extras_;
   QString output_;
+  HANDLE thread_;
   PROCESS_INFORMATION pi_;
-
-  HANDLE stdinR_;
-  HANDLE stdinW_;
-  
-  HANDLE stdoutR_;
-  HANDLE stdoutW_;
 
   static DWORD threaded(LPVOID);
 };
