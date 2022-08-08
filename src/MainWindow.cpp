@@ -341,6 +341,7 @@ void MainWindow::on_actionCompile_triggered() {
   if (isNewFile()) {
     on_actionSaveAs_triggered();
   } else {
+    on_actionSave_triggered();
     Compiler compiler;
     ui_->output->clear();
     ui_->output->appendPlainText(compiler.commandFor(fileName_));
