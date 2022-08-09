@@ -90,6 +90,8 @@ MainWindow::MainWindow(QWidget *parent)
       loadFile(lastOpenedFileName);
     }
   }
+
+  updateTitle();
 }
 
 MainWindow::~MainWindow() {
