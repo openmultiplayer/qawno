@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>242</height>
+    <height>287</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -29,6 +29,16 @@
    </item>
    <item>
     <widget class="QLineEdit" name="findWhatEdit"/>
+   </item>
+   <item>
+    <widget class="QLabel" name="replaceLabel">
+     <property name="text">
+      <string>Replace:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="replaceEdit"/>
    </item>
    <item>
     <spacer name="verticalSpacer_2">
@@ -107,6 +117,20 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="replaceButton">
+       <property name="text">
+        <string>Replace</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="allButton">
+       <property name="text">
+        <string>Replace All</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="closeButton">
        <property name="text">
         <string>Close</string>
@@ -126,8 +150,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>259</x>
-     <y>204</y>
+     <x>146</x>
+     <y>276</y>
     </hint>
     <hint type="destinationlabel">
      <x>193</x>
@@ -142,8 +166,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>340</x>
-     <y>204</y>
+     <x>389</x>
+     <y>276</y>
     </hint>
     <hint type="destinationlabel">
      <x>193</x>
@@ -151,5 +175,41 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>allButton</sender>
+   <signal>clicked()</signal>
+   <receiver>FindDialog</receiver>
+   <slot>all()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>272</x>
+     <y>264</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>275</x>
+     <y>203</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>replaceButton</sender>
+   <signal>clicked()</signal>
+   <receiver>FindDialog</receiver>
+   <slot>replace()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>193</x>
+     <y>258</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>209</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>replace()</slot>
+  <slot>all()</slot>
+ </slots>
 </ui>

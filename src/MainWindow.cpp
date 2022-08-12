@@ -211,16 +211,31 @@ void MainWindow::on_actionSaveAs_triggered() {
 }
 
 void MainWindow::on_actionFind_triggered() {
-  bool found = false;
+  int found = 0;
   {
     FindDialog dialog;
     dialog.exec();
-    found = dialog.result() == QDialog::Accepted;
+    found = dialog.result();
   }
-  if (found) {
+  switch (found) {
+  case 1:
+    // "Find".
     findStart_ = ui_->editor->textCursor().position();
     findRound_ = 0;
     on_actionFindNext_triggered();
+    break;
+  case 2:
+    // "Replace".
+    findStart_ = ui_->editor->textCursor().position();
+    findRound_ = 0;
+    on_actionFindNext_triggered();
+    break;
+  case 3:
+    // "All".
+    findStart_ = ui_->editor->textCursor().position();
+    findRound_ = 0;
+    on_actionFindNext_triggered();
+    break;
   }
 }
 

@@ -31,6 +31,7 @@ class FindDialog: public QDialog {
   ~FindDialog() override;
 
   QString findWhatText() const;
+  QString replaceText() const;
 
   bool matchCase() const;
   bool matchWholeWords() const;
@@ -39,6 +40,9 @@ class FindDialog: public QDialog {
 
  private:
   Ui::FindDialog *ui_;
+ private slots:
+  void all();
+  void replace();
 };
 
 #endif // FINDDIALOG_H

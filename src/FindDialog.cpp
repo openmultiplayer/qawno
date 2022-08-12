@@ -27,15 +27,19 @@ FindDialog::FindDialog(QWidget *parent) :
 
   QSettings settings;
   ui_->findWhatEdit->setText(settings.value("FindText").toString());
+  ui_->replaceEdit->setText(settings.value("ReplaceText").toString());
   ui_->matchCase->setChecked(settings.value("FindMatchCase").toBool());
   ui_->matchWholeWords->setChecked(settings.value("FindMatchWholeWords").toBool());
   ui_->searchBackwards->setChecked(settings.value("FindSearchBackwards").toBool());
   ui_->useRegExp->setChecked(settings.value("FindUseRegexp").toBool());
+
+  connect(parent, SIGNAL(all()), SLOT(all()));
 }
 
 FindDialog::~FindDialog() {
   QSettings settings;
   settings.setValue("FindText", ui_->findWhatEdit->text());
+  settings.setValue("ReplaceText", ui_->replaceEdit->text());
   settings.setValue("FindMatchCase", ui_->matchCase->isChecked());
   settings.setValue("FindMatchWholeWords", ui_->matchWholeWords->isChecked());
   settings.setValue("FindSearchBackwards", ui_->searchBackwards->isChecked());
@@ -45,6 +49,10 @@ FindDialog::~FindDialog() {
 
 QString FindDialog::findWhatText() const {
   return ui_->findWhatEdit->text();
+}
+
+QString FindDialog::replaceText() const {
+  return ui_->replaceEdit->text();
 }
 
 bool FindDialog::matchCase() const {
@@ -61,4 +69,12 @@ bool FindDialog::useRegExp() const {
 
 bool FindDialog::searchBackwards() const {
   return ui_->searchBackwards->isChecked();
+}
+
+void FindDialog::all() {
+  done(3);
+}
+
+void FindDialog::replace() {
+  done(2);
 }
