@@ -24,6 +24,7 @@
 #include <QMimeData>
 #include <QRegExp>
 #include <QSettings>
+#include <QUndoStack>
 
 #include "AboutDialog.h"
 #include "Compiler.h"
@@ -211,6 +212,7 @@ void MainWindow::on_actionSaveAs_triggered() {
 }
 
 void MainWindow::on_actionFind_triggered() {
+  //QUndoStack stack {};
   int found = 0;
   {
     FindDialog dialog;
@@ -228,13 +230,15 @@ void MainWindow::on_actionFind_triggered() {
     // "Replace".
     findStart_ = ui_->editor->textCursor().position();
     findRound_ = 0;
-    on_actionFindNext_triggered();
+    on_actionReplaceNext_triggered();
     break;
   case 3:
     // "All".
     findStart_ = ui_->editor->textCursor().position();
     findRound_ = 0;
-    on_actionFindNext_triggered();
+    //stack.beginMacro("replace all");
+    on_actionReplaceAll_triggered();
+    //stack.endMacro();
     break;
   }
 }
@@ -295,6 +299,131 @@ void MainWindow::on_actionFindNext_triggered() {
     findRound_++;
     on_actionFindNext_triggered();
   }
+}
+
+void MainWindow::on_actionReplaceNext_triggered() {
+  FindDialog dialog;
+  QTextDocument::FindFlags flags;
+
+  if (dialog.matchCase()) {
+    flags |= QTextDocument::FindCaseSensitively;
+  }
+  if (dialog.matchWholeWords()) {
+    flags |= QTextDocument::FindWholeWords;
+  }
+  if (dialog.searchBackwards()) {
+    flags |= QTextDocument::FindBackward;
+  }
+
+  QTextCursor current = ui_->editor->textCursor();
+  QTextCursor next;
+
+  if (dialog.useRegExp()) {
+    Qt::CaseSensitivity sens = dialog.matchCase()? Qt::CaseSensitive:
+                                                   Qt::CaseInsensitive;
+    QRegExp regexp(dialog.findWhatText(), sens);
+    next = ui_->editor->document()->find(regexp, current, flags);
+  } else {
+    next = ui_->editor->document()->find(dialog.findWhatText(), current, flags);
+  }
+
+  bool found = !next.isNull() &&
+    (findRound_ == 0 || next.position() < findStart_);
+
+  if (!found && findRound_ > 0) {
+    QString string = dialog.findWhatText();
+    QString message = tr("No matching text found for \"%1\".").arg(string);
+    QMessageBox::information(this,
+                              QCoreApplication::applicationName(),
+                              message,
+                              QMessageBox::Ok);
+    findStart_ = next.position();
+    findRound_ = 0;
+    return;
+  }
+
+  if (!found && findRound_ == 0) {
+    next = current;
+    if (dialog.searchBackwards()) {
+      next.movePosition(QTextCursor::End);
+    } else {
+      next.movePosition(QTextCursor::Start);
+    }
+  }
+
+  ui_->editor->setTextCursor(next);
+  
+  if (next.hasSelection()) {
+    next.insertText(dialog.replaceText());
+  }
+
+  if (!found && findRound_ == 0) {
+    findRound_++;
+    on_actionReplaceNext_triggered();
+  }
+}
+
+void MainWindow::on_actionReplaceAll_triggered() {
+  FindDialog dialog;
+  QTextDocument::FindFlags flags;
+
+  if (dialog.matchCase()) {
+    flags |= QTextDocument::FindCaseSensitively;
+  }
+  if (dialog.matchWholeWords()) {
+    flags |= QTextDocument::FindWholeWords;
+  }
+  if (dialog.searchBackwards()) {
+    flags |= QTextDocument::FindBackward;
+  }
+
+  QTextCursor current = ui_->editor->textCursor();
+  QTextCursor next;
+
+  if (dialog.useRegExp()) {
+    Qt::CaseSensitivity sens = dialog.matchCase()? Qt::CaseSensitive:
+                                                   Qt::CaseInsensitive;
+    QRegExp regexp(dialog.findWhatText(), sens);
+    next = ui_->editor->document()->find(regexp, current, flags);
+  } else {
+    next = ui_->editor->document()->find(dialog.findWhatText(), current, flags);
+  }
+
+  bool found = !next.isNull() &&
+    (findRound_ == 0 || next.position() < findStart_);
+
+  if (!found && findRound_ > 0) {
+    QString string = dialog.findWhatText();
+    QString message = tr("All instances replaced.");
+    QMessageBox::information(this,
+                              QCoreApplication::applicationName(),
+                              message,
+                              QMessageBox::Ok);
+    findStart_ = next.position();
+    findRound_ = 0;
+    return;
+  }
+
+  if (!found && findRound_ == 0) {
+    next = current;
+    if (dialog.searchBackwards()) {
+      next.movePosition(QTextCursor::End);
+    } else {
+      next.movePosition(QTextCursor::Start);
+    }
+  }
+
+  ui_->editor->setTextCursor(next);
+    
+  if (next.hasSelection()) {
+    next.insertText(dialog.replaceText());
+  }
+
+  if (!found && findRound_ == 0) {
+    findRound_++;
+  }
+
+  on_actionReplaceAll_triggered();
 }
 
 void MainWindow::on_actionGoToLine_triggered() {

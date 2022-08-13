@@ -44,6 +44,8 @@ class MainWindow: public QMainWindow {
 
   void on_actionFind_triggered();
   void on_actionFindNext_triggered();
+  void on_actionReplaceNext_triggered();
+  void on_actionReplaceAll_triggered();
   void on_actionGoToLine_triggered();
 
   void on_actionCompile_triggered();
