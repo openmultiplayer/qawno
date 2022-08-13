@@ -212,7 +212,6 @@ void MainWindow::on_actionSaveAs_triggered() {
 }
 
 void MainWindow::on_actionFind_triggered() {
-  //QUndoStack stack {};
   int found = 0;
   {
     FindDialog dialog;
@@ -236,9 +235,7 @@ void MainWindow::on_actionFind_triggered() {
     // "All".
     findStart_ = ui_->editor->textCursor().position();
     findRound_ = 0;
-    //stack.beginMacro("replace all");
     on_actionReplaceAll_triggered();
-    //stack.endMacro();
     break;
   }
 }
@@ -366,6 +363,7 @@ void MainWindow::on_actionReplaceNext_triggered() {
 void MainWindow::on_actionReplaceAll_triggered() {
   FindDialog dialog;
   QTextDocument::FindFlags flags;
+  bool first = true;
 
   if (dialog.matchCase()) {
     flags |= QTextDocument::FindCaseSensitively;
@@ -377,53 +375,60 @@ void MainWindow::on_actionReplaceAll_triggered() {
     flags |= QTextDocument::FindBackward;
   }
 
-  QTextCursor current = ui_->editor->textCursor();
-  QTextCursor next;
+  for ( ; ; ) {
+    QTextCursor current = ui_->editor->textCursor();
+    QTextCursor next;
 
-  if (dialog.useRegExp()) {
-    Qt::CaseSensitivity sens = dialog.matchCase()? Qt::CaseSensitive:
-                                                   Qt::CaseInsensitive;
-    QRegExp regexp(dialog.findWhatText(), sens);
-    next = ui_->editor->document()->find(regexp, current, flags);
-  } else {
-    next = ui_->editor->document()->find(dialog.findWhatText(), current, flags);
-  }
-
-  bool found = !next.isNull() &&
-    (findRound_ == 0 || next.position() < findStart_);
-
-  if (!found && findRound_ > 0) {
-    QString string = dialog.findWhatText();
-    QString message = tr("All instances replaced.");
-    QMessageBox::information(this,
-                              QCoreApplication::applicationName(),
-                              message,
-                              QMessageBox::Ok);
-    findStart_ = next.position();
-    findRound_ = 0;
-    return;
-  }
-
-  if (!found && findRound_ == 0) {
-    next = current;
-    if (dialog.searchBackwards()) {
-      next.movePosition(QTextCursor::End);
+    if (dialog.useRegExp()) {
+      Qt::CaseSensitivity sens = dialog.matchCase()? Qt::CaseSensitive:
+                                                     Qt::CaseInsensitive;
+      QRegExp regexp(dialog.findWhatText(), sens);
+      next = ui_->editor->document()->find(regexp, current, flags);
     } else {
-      next.movePosition(QTextCursor::Start);
+      next = ui_->editor->document()->find(dialog.findWhatText(), current, flags);
+    }
+
+    bool found = !next.isNull() &&
+      (findRound_ == 0 || next.position() < findStart_);
+
+    if (!found && findRound_ > 0) {
+      QString string = dialog.findWhatText();
+      QString message = tr("All instances replaced.");
+      QMessageBox::information(this,
+                                QCoreApplication::applicationName(),
+                                message,
+                                QMessageBox::Ok);
+      findStart_ = next.position();
+      findRound_ = 0;
+      return;
+    }
+
+    if (!found && findRound_ == 0) {
+      next = current;
+      if (dialog.searchBackwards()) {
+        next.movePosition(QTextCursor::End);
+      } else {
+        next.movePosition(QTextCursor::Start);
+      }
+    }
+
+    ui_->editor->setTextCursor(next);
+    
+    if (next.hasSelection()) {
+      if (first) {
+        next.beginEditBlock();
+        first = false;
+      } else {
+        next.joinPreviousEditBlock();
+      }
+      next.insertText(dialog.replaceText());
+      next.endEditBlock();
+    }
+
+    if (!found && findRound_ == 0) {
+      findRound_++;
     }
   }
-
-  ui_->editor->setTextCursor(next);
-    
-  if (next.hasSelection()) {
-    next.insertText(dialog.replaceText());
-  }
-
-  if (!found && findRound_ == 0) {
-    findRound_++;
-  }
-
-  on_actionReplaceAll_triggered();
 }
 
 void MainWindow::on_actionGoToLine_triggered() {
