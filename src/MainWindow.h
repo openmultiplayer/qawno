@@ -42,6 +42,7 @@ class MainWindow: public QMainWindow {
   void on_actionClose_triggered();
   void on_actionSave_triggered();
   void on_actionSaveAs_triggered();
+  void on_actionSaveAll_triggered();
 
   void on_actionPaste_triggered();
   void on_actionCopy_triggered();

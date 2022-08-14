@@ -96,6 +96,7 @@
     <addaction name="separator"/>
     <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>
+    <addaction name="actionSaveAll"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -191,6 +192,14 @@
    </property>
    <property name="toolTip">
     <string>Save changes to a different file</string>
+   </property>
+  </action>
+  <action name="actionSaveAll">
+   <property name="text">
+    <string>Save All</string>
+   </property>
+   <property name="toolTip">
+    <string>Save changes to all open tabs</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>

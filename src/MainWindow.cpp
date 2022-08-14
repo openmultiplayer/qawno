@@ -259,6 +259,7 @@ void MainWindow::on_actionSaveAs_triggered() {
   settings.setValue("LastFile", fileName);
 
   fileNames_[getCurrentView()] = fileName;
+  ui_->tabWidget->setTabText(getCurrentView(), fileName);
   return on_actionSave_triggered();
 }
 
@@ -574,7 +575,7 @@ void MainWindow::on_actionServer_triggered() {
   }
 }
 
-void MainWindow::on_actionCompile_triggered() {
+void MainWindow::on_actionSaveAll_triggered() {
   int cur = getCurrentView(), count = fileNames_.count();
   if (count == 0) {
     return;
@@ -588,7 +589,14 @@ void MainWindow::on_actionCompile_triggered() {
       on_actionSave_triggered();
     }
   }
+  // Return to the originally selected tab.
   ui_->tabWidget->setCurrentIndex(cur);
+}
+
+void MainWindow::on_actionCompile_triggered() {
+  if (fileNames_.isEmpty()) {
+    return;
+  }
   Compiler compiler;
   const QString& fileName = fileNames_[getCurrentView()];
   ui_->output->clear();
