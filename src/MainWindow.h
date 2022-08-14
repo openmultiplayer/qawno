@@ -77,6 +77,8 @@ class MainWindow: public QMainWindow {
   Ui::MainWindow *ui_;
   Server server_;
 
+  void createTab(const QString& title);
+
  private:
   QPalette defaultPalette;
   QPalette darkModePalette;

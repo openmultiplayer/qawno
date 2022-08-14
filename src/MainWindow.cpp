@@ -46,6 +46,9 @@ MainWindow::MainWindow(QWidget *parent)
     server_()
 {
   ui_->setupUi(this);
+  createTab("a");
+  createTab("b");
+  createTab("c");
 
   setStatusBar(new StatusBar(this));
 
@@ -628,3 +631,24 @@ bool MainWindow::isFileEmpty() const {
     || ui_->editor->document()->isEmpty()
     || (isNewFile() && !document->toPlainText().contains(QRegExp("\\S")));
 }
+
+void MainWindow::createTab(const QString& title) {
+
+  QWidget* tab = new QWidget();
+  tab->setObjectName(title);
+  QHBoxLayout* horizontalLayout = new QHBoxLayout(tab);
+  horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+  EditorWidget* editor = new EditorWidget(tab);
+  editor->setObjectName(QString::fromUtf8("editor"));
+  QSizePolicy sizePolicy2(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  sizePolicy2.setHorizontalStretch(0);
+  sizePolicy2.setVerticalStretch(0);
+  sizePolicy2.setHeightForWidth(editor->sizePolicy().hasHeightForWidth());
+  editor->setSizePolicy(sizePolicy2);
+  editor->setAcceptDrops(false);
+  horizontalLayout->addWidget(editor);
+  ui_->tabWidget->addTab(tab, QString());
+  ui_->tabWidget->setTabText(ui_->tabWidget->indexOf(tab), title);
+}
+
+
