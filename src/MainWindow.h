@@ -18,6 +18,7 @@
 
 #include <QMainWindow>
 #include "Server.h"
+#include "EditorWidget.h"
 
 namespace Ui {
   class MainWindow;
@@ -72,9 +73,13 @@ class MainWindow: public QMainWindow {
   bool isFileModified() const;
   void setFileModified(bool isModified);
   bool isFileEmpty() const;
+  int getCurrentView() const;
+  const QString& getCurrentName() const;
+  EditorWidget* getCurrentEditor() const;
 
  private:
   Ui::MainWindow *ui_;
+  QVector<EditorWidget*> editors_;
   Server server_;
 
   void createTab(const QString& title);
@@ -82,7 +87,7 @@ class MainWindow: public QMainWindow {
  private:
   QPalette defaultPalette;
   QPalette darkModePalette;
-  QString fileName_;
+  QVector<QString> fileNames_;
   int findStart_ = 0;
   int findRound_ = 0;
 };

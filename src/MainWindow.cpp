@@ -43,18 +43,17 @@
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow(parent),
     ui_(new Ui::MainWindow),
-    server_()
+    server_(),
+    fileNames_()
 {
   ui_->setupUi(this);
-  createTab("a");
-  createTab("b");
-  createTab("c");
+  ui_->tabWidget->setTabsClosable(true);
 
   setStatusBar(new StatusBar(this));
 
   QSettings settings;
 
-  defaultPalette = ui_->editor->palette();
+  defaultPalette = ui_->splitter->palette();
 
   QPalette darkPalette;
   darkPalette.setColor(QPalette::Window, QColor(0x282C34));
@@ -75,7 +74,6 @@ MainWindow::MainWindow(QWidget *parent)
 
   bool useDarkMode = settings.value("DarkMode", false).toBool();
   ui_->actionDarkMode->setChecked(useDarkMode);
-  ui_->editor->toggleDarkMode(useDarkMode);
 
   if (useDarkMode) {
     ui_->splitter->setPalette(darkModePalette);
@@ -112,12 +110,11 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::on_actionNew_triggered() {
-  emit on_actionClose_triggered();
+  createTab("");
+  ui_->tabWidget->setCurrentIndex(editors_.count() - 1);
 }
 
 void MainWindow::on_actionOpen_triggered() {
-  on_actionClose_triggered();
-
   if (!isFileEmpty()) {
     return;
   }
@@ -140,10 +137,14 @@ void MainWindow::on_actionOpen_triggered() {
 
 void MainWindow::on_actionClose_triggered() {
   bool canClose = true;
+  int idx = getCurrentView();
+  if (idx < 0) {
+    return;
+  }
 
   if (isFileModified() && !isFileEmpty()) {
     QString message = (!isNewFile())
-      ? tr("Save changes to %1?").arg(fileName_)
+      ? tr("Save changes to %1?").arg(fileNames_.at(idx))
       : tr("Save changes to a new file?");
     int result = QMessageBox::question(this,
                                        QCoreApplication::applicationName(),
@@ -165,23 +166,27 @@ void MainWindow::on_actionClose_triggered() {
   }
 
   if (canClose) {
-    ui_->editor->clear();
-    fileName_.clear();
+    ui_->tabWidget->removeTab(idx);
+    editors_.remove(idx);
+    fileNames_.remove(idx);
   }
 
   updateTitle();
 }
 
 void MainWindow::on_actionSave_triggered() {
+  if (!getCurrentEditor()) {
+    return;
+  }
   if (isNewFile()) {
     on_actionSaveAs_triggered();
     return;
   }
 
-  QFile file(fileName_);
+  QFile file(fileNames_[getCurrentView()]);
   if (!file.open(QIODevice::WriteOnly)) {
     QString message =
-      tr("Could not save to %1: %2.").arg(fileName_, file.errorString());
+      tr("Could not save to %1: %2.").arg(fileNames_[getCurrentView()], file.errorString());
     QMessageBox::critical(this,
                           QCoreApplication::applicationName(),
                           message,
@@ -189,8 +194,8 @@ void MainWindow::on_actionSave_triggered() {
     return;
   }
 
-  file.write(ui_->editor->toPlainText().toLatin1());
-  ui_->editor->textChanged();
+  file.write(getCurrentEditor()->toPlainText().toLatin1());
+  getCurrentEditor()->textChanged();
   setFileModified(false);
 }
 
@@ -210,11 +215,14 @@ void MainWindow::on_actionSaveAs_triggered() {
   settings.setValue("LastSaveDir", dir);
   settings.setValue("LastFile", fileName);
 
-  fileName_ = fileName;
+  fileNames_[getCurrentView()] = fileName;
   return on_actionSave_triggered();
 }
 
 void MainWindow::on_actionFind_triggered() {
+  if (!getCurrentEditor()) {
+    return;
+  }
   int found = 0;
   {
     FindDialog dialog;
@@ -224,19 +232,19 @@ void MainWindow::on_actionFind_triggered() {
   switch (found) {
   case 1:
     // "Find".
-    findStart_ = ui_->editor->textCursor().position();
+    findStart_ = getCurrentEditor()->textCursor().position();
     findRound_ = 0;
     on_actionFindNext_triggered();
     break;
   case 2:
     // "Replace".
-    findStart_ = ui_->editor->textCursor().position();
+    findStart_ = getCurrentEditor()->textCursor().position();
     findRound_ = 0;
     on_actionReplaceNext_triggered();
     break;
   case 3:
     // "All".
-    findStart_ = ui_->editor->textCursor().position();
+    findStart_ = getCurrentEditor()->textCursor().position();
     findRound_ = 0;
     on_actionReplaceAll_triggered();
     break;
@@ -244,6 +252,9 @@ void MainWindow::on_actionFind_triggered() {
 }
 
 void MainWindow::on_actionFindNext_triggered() {
+  if (!getCurrentEditor()) {
+    return;
+  }
   FindDialog dialog;
   QTextDocument::FindFlags flags;
 
@@ -257,16 +268,16 @@ void MainWindow::on_actionFindNext_triggered() {
     flags |= QTextDocument::FindBackward;
   }
 
-  QTextCursor current = ui_->editor->textCursor();
+  QTextCursor current = getCurrentEditor()->textCursor();
   QTextCursor next;
 
   if (dialog.useRegExp()) {
     Qt::CaseSensitivity sens = dialog.matchCase()? Qt::CaseSensitive:
                                                    Qt::CaseInsensitive;
     QRegExp regexp(dialog.findWhatText(), sens);
-    next = ui_->editor->document()->find(regexp, current, flags);
+    next = getCurrentEditor()->document()->find(regexp, current, flags);
   } else {
-    next = ui_->editor->document()->find(dialog.findWhatText(), current, flags);
+    next = getCurrentEditor()->document()->find(dialog.findWhatText(), current, flags);
   }
 
   bool found = !next.isNull() &&
@@ -293,7 +304,7 @@ void MainWindow::on_actionFindNext_triggered() {
     }
   }
 
-  ui_->editor->setTextCursor(next);
+  getCurrentEditor()->setTextCursor(next);
 
   if (!found && findRound_ == 0) {
     findRound_++;
@@ -302,6 +313,9 @@ void MainWindow::on_actionFindNext_triggered() {
 }
 
 void MainWindow::on_actionReplaceNext_triggered() {
+  if (!getCurrentEditor()) {
+    return;
+  }
   FindDialog dialog;
   QTextDocument::FindFlags flags;
 
@@ -315,16 +329,16 @@ void MainWindow::on_actionReplaceNext_triggered() {
     flags |= QTextDocument::FindBackward;
   }
 
-  QTextCursor current = ui_->editor->textCursor();
+  QTextCursor current = getCurrentEditor()->textCursor();
   QTextCursor next;
 
   if (dialog.useRegExp()) {
     Qt::CaseSensitivity sens = dialog.matchCase()? Qt::CaseSensitive:
                                                    Qt::CaseInsensitive;
     QRegExp regexp(dialog.findWhatText(), sens);
-    next = ui_->editor->document()->find(regexp, current, flags);
+    next = getCurrentEditor()->document()->find(regexp, current, flags);
   } else {
-    next = ui_->editor->document()->find(dialog.findWhatText(), current, flags);
+    next = getCurrentEditor()->document()->find(dialog.findWhatText(), current, flags);
   }
 
   bool found = !next.isNull() &&
@@ -351,7 +365,7 @@ void MainWindow::on_actionReplaceNext_triggered() {
     }
   }
 
-  ui_->editor->setTextCursor(next);
+  getCurrentEditor()->setTextCursor(next);
   
   if (next.hasSelection()) {
     next.insertText(dialog.replaceText());
@@ -364,6 +378,9 @@ void MainWindow::on_actionReplaceNext_triggered() {
 }
 
 void MainWindow::on_actionReplaceAll_triggered() {
+  if (!getCurrentEditor()) {
+    return;
+  }
   FindDialog dialog;
   QTextDocument::FindFlags flags;
   bool first = true;
@@ -379,16 +396,16 @@ void MainWindow::on_actionReplaceAll_triggered() {
   }
 
   for ( ; ; ) {
-    QTextCursor current = ui_->editor->textCursor();
+    QTextCursor current = getCurrentEditor()->textCursor();
     QTextCursor next;
 
     if (dialog.useRegExp()) {
       Qt::CaseSensitivity sens = dialog.matchCase()? Qt::CaseSensitive:
                                                      Qt::CaseInsensitive;
       QRegExp regexp(dialog.findWhatText(), sens);
-      next = ui_->editor->document()->find(regexp, current, flags);
+      next = getCurrentEditor()->document()->find(regexp, current, flags);
     } else {
-      next = ui_->editor->document()->find(dialog.findWhatText(), current, flags);
+      next = getCurrentEditor()->document()->find(dialog.findWhatText(), current, flags);
     }
 
     bool found = !next.isNull() &&
@@ -415,7 +432,7 @@ void MainWindow::on_actionReplaceAll_triggered() {
       }
     }
 
-    ui_->editor->setTextCursor(next);
+    getCurrentEditor()->setTextCursor(next);
     
     if (next.hasSelection()) {
       if (first) {
@@ -435,20 +452,26 @@ void MainWindow::on_actionReplaceAll_triggered() {
 }
 
 void MainWindow::on_actionGoToLine_triggered() {
+  if (!getCurrentEditor()) {
+    return;
+  }
   GoToDialog dialog;
   dialog.exec();
-  ui_->editor->jumpToLine(dialog.targetLineNumber());
+  getCurrentEditor()->jumpToLine(dialog.targetLineNumber());
 }
 
 void MainWindow::on_actionEditorFont_triggered() {
+  if (!getCurrentEditor()) {
+    return;
+  }
   QFontDialog fontDialog(this);
 
   bool ok = false;
-  QFont newFont = fontDialog.getFont(&ok, ui_->editor->font(), this,
+  QFont newFont = fontDialog.getFont(&ok, getCurrentEditor()->font(), this,
                                      tr("Editor Font"));
 
   if (ok) {
-    ui_->editor->setFont(newFont);
+    getCurrentEditor()->setFont(newFont);
   }
 }
 
@@ -465,10 +488,13 @@ void MainWindow::on_actionOutputFont_triggered() {
 }
 
 void MainWindow::on_actionDarkMode_triggered() {
+  if (!getCurrentEditor()) {
+    return;
+  }
   QSettings settings;
   bool useDarkMode = !settings.value("DarkMode", false).toBool();
   settings.setValue("DarkMode", useDarkMode);
-  ui_->editor->toggleDarkMode(useDarkMode);
+  getCurrentEditor()->toggleDarkMode(useDarkMode);
   if (useDarkMode) {
     ui_->splitter->setPalette(darkModePalette);
   } else {
@@ -506,22 +532,29 @@ void MainWindow::on_actionServer_triggered() {
 }
 
 void MainWindow::on_actionCompile_triggered() {
+  if (fileNames_.isEmpty()) {
+    return;
+  }
   if (isNewFile()) {
     on_actionSaveAs_triggered();
   } else {
     on_actionSave_triggered();
   }
   Compiler compiler;
+  const QString& fileName = fileNames_[getCurrentView()];
   ui_->output->clear();
-  ui_->output->appendPlainText(compiler.commandFor(fileName_));
+  ui_->output->appendPlainText(compiler.commandFor(fileName));
   ui_->output->appendPlainText("\n");
-  compiler.run(fileName_);
+  compiler.run(fileName);
   ui_->output->appendPlainText(compiler.output());
 }
 
 void MainWindow::on_actionRun_triggered() {
+  if (fileNames_.isEmpty()) {
+    return;
+  }
   on_actionCompile_triggered();
-  server_.run(fileName_);
+  server_.run(fileNames_[getCurrentView()]);
 }
 
 void MainWindow::on_actionAbout_triggered() {
@@ -538,7 +571,10 @@ void MainWindow::on_editor_textChanged() {
 }
 
 void MainWindow::on_editor_cursorPositionChanged() {
-  QTextCursor cursor = ui_->editor->textCursor();
+  if (!getCurrentEditor()) {
+    return;
+  }
+  QTextCursor cursor = getCurrentEditor()->textCursor();
   int line = cursor.blockNumber() + 1;
   int column = cursor.columnNumber() + 1;
   dynamic_cast<StatusBar*>(statusBar())->setCursorPosition(line, column);
@@ -572,13 +608,34 @@ void MainWindow::dropEvent(QDropEvent *event) {
   }
 }
 
+const QString& MainWindow::getCurrentName() const {
+  static QString none = "";
+  if (fileNames_.isEmpty()) {
+    return none;
+  }
+  return fileNames_[getCurrentView()];
+}
+
+EditorWidget* MainWindow::getCurrentEditor() const {
+  if (fileNames_.isEmpty()) {
+    return 0;
+  }
+  return editors_[getCurrentView()];
+}
+
+int MainWindow::getCurrentView() const {
+  return ui_->tabWidget->currentIndex();
+}
+
 void MainWindow::updateTitle() {
   QString title;
 
   if (isNewFile()) {
     title = "Untitled File";
+  } else if (fileNames_.isEmpty()) {
+    title = "No File";
   } else {
-    title = QFileInfo(fileName_).fileName();
+    title = QFileInfo(fileNames_[getCurrentView()]).fileName();
     if (isFileModified()) {
       title.append("*");
     }
@@ -605,37 +662,41 @@ bool MainWindow::loadFile(const QString &fileName) {
     return false;
   }
 
-  fileName_ = fileName;
-  ui_->editor->setPlainText(file.readAll());
+  createTab(fileName);
+  ui_->tabWidget->setCurrentIndex(ui_->tabWidget->count() - 1);
+  editors_.last()->setPlainText(file.readAll());
   setFileModified(false);
 
   return true;
 }
 
 bool MainWindow::isNewFile() const {
-  return fileName_.isEmpty();
+  return fileNames_.isEmpty() || fileNames_[getCurrentView()].isEmpty();
 }
 
 bool MainWindow::isFileModified() const {
-  return ui_->editor->document()->isModified();
+  return !editors_.isEmpty() && editors_[getCurrentView()]->document()->isModified();
 }
 
 void MainWindow::setFileModified(bool isModified) {
-  ui_->editor->document()->setModified(isModified);
-  updateTitle();
+  if (!editors_.isEmpty()) {
+    editors_[getCurrentView()]->document()->setModified(isModified);
+    updateTitle();
+  }
 }
 
 bool MainWindow::isFileEmpty() const {
-  QTextDocument *document = ui_->editor->document();
+  if (editors_.isEmpty()) {
+    return true;
+  }
+  QTextDocument *document = editors_[getCurrentView()]->document();
   return document->isEmpty()
-    || ui_->editor->document()->isEmpty()
     || (isNewFile() && !document->toPlainText().contains(QRegExp("\\S")));
 }
 
-void MainWindow::createTab(const QString& title) {
-
+void MainWindow::createTab(const QString& fileName) {
   QWidget* tab = new QWidget();
-  tab->setObjectName(title);
+  tab->setObjectName(fileName);
   QHBoxLayout* horizontalLayout = new QHBoxLayout(tab);
   horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
   EditorWidget* editor = new EditorWidget(tab);
@@ -648,7 +709,10 @@ void MainWindow::createTab(const QString& title) {
   editor->setAcceptDrops(false);
   horizontalLayout->addWidget(editor);
   ui_->tabWidget->addTab(tab, QString());
-  ui_->tabWidget->setTabText(ui_->tabWidget->indexOf(tab), title);
+  ui_->tabWidget->setTabText(ui_->tabWidget->indexOf(tab), fileName);
+  bool useDarkMode = ui_->actionDarkMode->isChecked();
+  editor->toggleDarkMode(useDarkMode);
+  fileNames_.push_back(fileName);
+  editors_.push_back(editor);
 }
-
 
