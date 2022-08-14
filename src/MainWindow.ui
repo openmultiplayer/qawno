@@ -371,7 +371,7 @@
   <connection>
    <sender>actionUndo</sender>
    <signal>triggered()</signal>
-   <receiver>editor</receiver>
+   <receiver>MainWindow</receiver>
    <slot>undo()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -387,7 +387,7 @@
   <connection>
    <sender>actionRedo</sender>
    <signal>triggered()</signal>
-   <receiver>editor</receiver>
+   <receiver>MainWindow</receiver>
    <slot>redo()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -403,7 +403,7 @@
   <connection>
    <sender>actionCut</sender>
    <signal>triggered()</signal>
-   <receiver>editor</receiver>
+   <receiver>MainWindow</receiver>
    <slot>cut()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -419,7 +419,7 @@
   <connection>
    <sender>actionCopy</sender>
    <signal>triggered()</signal>
-   <receiver>editor</receiver>
+   <receiver>MainWindow</receiver>
    <slot>copy()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -435,7 +435,7 @@
   <connection>
    <sender>actionPaste</sender>
    <signal>triggered()</signal>
-   <receiver>editor</receiver>
+   <receiver>MainWindow</receiver>
    <slot>paste()</slot>
    <hints>
     <hint type="sourcelabel">

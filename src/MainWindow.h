@@ -43,6 +43,12 @@ class MainWindow: public QMainWindow {
   void on_actionSave_triggered();
   void on_actionSaveAs_triggered();
 
+  void on_actionPaste_triggered();
+  void on_actionCopy_triggered();
+  void on_actionCut_triggered();
+  void on_actionRedo_triggered();
+  void on_actionUndo_triggered();
+
   void on_actionFind_triggered();
   void on_actionFindNext_triggered();
   void on_actionReplaceNext_triggered();

@@ -135,6 +135,42 @@ void MainWindow::on_actionOpen_triggered() {
   settings.setValue("LastFile", fileName);
 }
 
+void MainWindow::on_actionPaste_triggered() {
+  EditorWidget* cur = getCurrentEditor();
+  if (cur) {
+    cur->paste();
+  }
+}
+
+void MainWindow::on_actionCopy_triggered() {
+  EditorWidget* cur = getCurrentEditor();
+  if (cur) {
+    cur->copy();
+  }
+}
+
+void MainWindow::on_actionCut_triggered() {
+  EditorWidget* cur = getCurrentEditor();
+  if (cur) {
+    cur->cut();
+  }
+}
+
+void MainWindow::on_actionRedo_triggered() {
+  EditorWidget* cur = getCurrentEditor();
+  if (cur) {
+    cur->redo();
+  }
+}
+
+void MainWindow::on_actionUndo_triggered() {
+  EditorWidget* cur = getCurrentEditor();
+  if (cur) {
+    cur->undo();
+  }
+}
+
+
 void MainWindow::on_actionClose_triggered() {
   bool canClose = true;
   int idx = getCurrentView();
