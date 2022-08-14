@@ -575,14 +575,20 @@ void MainWindow::on_actionServer_triggered() {
 }
 
 void MainWindow::on_actionCompile_triggered() {
-  if (fileNames_.isEmpty()) {
+  int cur = getCurrentView(), count = fileNames_.count();
+  if (count == 0) {
     return;
   }
-  if (isNewFile()) {
-    on_actionSaveAs_triggered();
-  } else {
-    on_actionSave_triggered();
+  // Loop over all the tabs and save them all.  There could be include dependencies.
+  for (int i = 0; i != count; ++i) {
+    ui_->tabWidget->setCurrentIndex(i);
+    if (isNewFile()) {
+      on_actionSaveAs_triggered();
+    } else {
+      on_actionSave_triggered();
+    }
   }
+  ui_->tabWidget->setCurrentIndex(cur);
   Compiler compiler;
   const QString& fileName = fileNames_[getCurrentView()];
   ui_->output->clear();
