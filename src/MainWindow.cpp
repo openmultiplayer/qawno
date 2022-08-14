@@ -126,6 +126,14 @@ void MainWindow::on_actionOpen_triggered() {
   QString filter = tr("Pawn scripts (*.pwn *.inc)");
   QString fileName = QFileDialog::getOpenFileName(this, caption, dir, filter);
 
+  // Is the file already open?  If so just switch to the tab.
+  for (int i = fileNames_.count(); i--; ) {
+    if (fileNames_[i] == fileName) {
+      ui_->tabWidget->setCurrentIndex(i);
+      return;
+    }
+  }
+
   if (!loadFile(fileName)) {
     return;
   }
@@ -169,7 +177,6 @@ void MainWindow::on_actionUndo_triggered() {
     cur->undo();
   }
 }
-
 
 void MainWindow::on_actionClose_triggered() {
   bool canClose = true;
@@ -750,5 +757,6 @@ void MainWindow::createTab(const QString& fileName) {
   editor->toggleDarkMode(useDarkMode);
   fileNames_.push_back(fileName);
   editors_.push_back(editor);
+  editor->focusWidget();
 }
 
