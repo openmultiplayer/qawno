@@ -76,6 +76,7 @@ class MainWindow: public QMainWindow {
   void on_editor_cursorPositionChanged();
 
   void currentChanged(int index);
+  void tabCloseRequested(int index);
 
  private:
   void updateTitle();

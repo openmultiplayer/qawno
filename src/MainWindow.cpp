@@ -102,6 +102,7 @@ MainWindow::MainWindow(QWidget *parent)
     }
   }
   connect(ui_->tabWidget, SIGNAL(currentChanged(int)), SLOT(currentChanged(int)));
+  connect(ui_->tabWidget, SIGNAL(tabCloseRequested(int)), SLOT(tabCloseRequested(int)));
   QApplication::instance()->installEventFilter(this);
 
   updateTitle();
@@ -124,6 +125,11 @@ void MainWindow::currentChanged(int index) {
   // And push it to the top.
   mru_.push(index);
   updateTitle();
+}
+
+void MainWindow::tabCloseRequested(int index) {
+  ui_->tabWidget->setCurrentIndex(index);
+  on_actionClose_triggered();
 }
 
 void MainWindow::on_actionNew_triggered() {
