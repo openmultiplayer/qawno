@@ -178,6 +178,27 @@ void MainWindow::on_actionUndo_triggered() {
   }
 }
 
+bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
+  if (watched == getCurrentEditor()) {
+    if (event->type() == QKeyEvent::KeyPress) {
+      QKeyEvent* ke = static_cast<QKeyEvent*>(event);
+      if (ke->key() == Qt::Key_Tab && ke->modifiers() & Qt::ControlModifier) {
+        if (ke->modifiers() & Qt::ShiftModifier) {
+          // Backwards.
+          ui_->tabWidget->setCurrentIndex((getCurrentView() - 1) % ui_->tabWidget->count());
+        } else {
+          // Forwards.
+          ui_->tabWidget->setCurrentIndex((getCurrentView() + 1) % ui_->tabWidget->count());
+        }
+        return true;
+      }
+    }
+    return false;
+  } else {
+    return QMainWindow::eventFilter(watched, event);
+  }
+}
+
 void MainWindow::on_actionClose_triggered() {
   bool canClose = true;
   int idx = getCurrentView();
@@ -772,5 +793,6 @@ void MainWindow::createTab(const QString& fileName) {
   fileNames_.push_back(fileName);
   editors_.push_back(editor);
   editor->focusWidget();
+  editor->installEventFilter(this);
 }
 

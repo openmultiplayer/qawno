@@ -83,6 +83,7 @@ class MainWindow: public QMainWindow {
   int getCurrentView() const;
   const QString& getCurrentName() const;
   EditorWidget* getCurrentEditor() const;
+  bool eventFilter(QObject* watched, QEvent* event);
 
  private:
   Ui::MainWindow *ui_;
