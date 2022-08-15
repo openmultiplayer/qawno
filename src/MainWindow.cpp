@@ -94,9 +94,11 @@ MainWindow::MainWindow(QWidget *parent)
   if (QApplication::instance()->arguments().size() > 1) {
     loadFile(QApplication::instance()->arguments()[1]);
   } else {
-    QString lastOpenedFileName = settings.value("LastFile").toString();
-    if (!lastOpenedFileName.isEmpty()) {
-      loadFile(lastOpenedFileName);
+    QStringList lastOpenedFileNames = settings.value("LastFiles").toStringList();
+    for (auto const & i : lastOpenedFileNames) {
+      if (!i.isEmpty()) {
+        loadFile(i);
+      }
     }
   }
   connect(ui_->tabWidget, SIGNAL(currentChanged(int)), SLOT(currentChanged(int)));
@@ -151,7 +153,11 @@ void MainWindow::on_actionOpen_triggered() {
 
   dir = QFileInfo(fileName).dir().path();
   settings.setValue("LastOpenDir", dir);
-  settings.setValue("LastFile", fileName);
+  QStringList files {};
+  for (auto const & i : fileNames_) {
+    files.push_back(i);
+  }
+  settings.setValue("LastFiles", files);
 }
 
 void MainWindow::on_actionPaste_triggered() {
@@ -313,9 +319,13 @@ void MainWindow::on_actionSaveAs_triggered() {
 
   dir = QFileInfo(fileName).dir().path();
   settings.setValue("LastSaveDir", dir);
-  settings.setValue("LastFile", fileName);
-
+  QStringList files {};
   fileNames_[getCurrentView()] = fileName;
+  for (auto const & i : fileNames_) {
+    files.push_back(i);
+  }
+  settings.setValue("LastFiles", files);
+
   ui_->tabWidget->setTabText(getCurrentView(), fileName);
   return on_actionSave_triggered();
 }
