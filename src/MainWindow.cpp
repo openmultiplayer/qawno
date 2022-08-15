@@ -116,10 +116,6 @@ void MainWindow::on_actionNew_triggered() {
 }
 
 void MainWindow::on_actionOpen_triggered() {
-  if (!isFileEmpty()) {
-    return;
-  }
-
   QSettings settings;
   QString dir = settings.value("LastOpenDir").toString();
 
