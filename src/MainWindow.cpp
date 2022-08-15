@@ -126,11 +126,17 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::loadNativeList() {
+  QListWidgetItem* child;
+  QFont* fileFont = new QFont("Sans Serif", 20, 2);
+  QFont* funcFont = new QFont("Sans Serif", 12, 2);
   // Loop through all `includes/*.inc` files (ensure they aren't directories).
   QDir includes("./include", "*.inc", QDir::IgnoreCase, QDir::Files | QDir::Readable);
   for (auto const & fileName : includes.entryInfoList()) {
     QFile f{fileName.absoluteFilePath()};
     if (f.open(QFile::ReadOnly | QFile::Text)) {
+      child = new QListWidgetItem(fileName.fileName(), ui_->functions);
+      child->setFont(*fileFont);
+      child->setTextAlignment(4);
       // Find every line that starts with `native`.
       while (!f.atEnd()) {
         QByteArray line = f.readLine();
@@ -146,6 +152,14 @@ void MainWindow::loadNativeList() {
         if (idx < len) {
           if (strncmp(data + idx, "native ", 7) == 0) {
             //printf("Line: %.*s", len - idx, data + idx);
+            while (len--) {
+              // Trim trailing space.
+              if (data[len] > ' ') {
+                break;
+              }
+            }
+            child = new QListWidgetItem(QString(std::string(data + idx, len - idx).c_str()), ui_->functions);
+            child->setFont(*funcFont);
           }
         }
       }
