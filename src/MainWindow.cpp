@@ -181,46 +181,31 @@ void MainWindow::on_actionUndo_triggered() {
 
 bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
   //
-  int k;
-  switch (event->type()) {
-  case QKeyEvent::KeyPress:
+  if (event->type() == QKeyEvent::KeyPress) {
     switch (static_cast<QKeyEvent*>(event)->key()) {
-    case Qt::Key_Shift:
-      shiftDown_ = true;
-      break;
-    case Qt::Key_Control:
-      ctrlDown_ = true;
-      break;
     case Qt::Key_Tab:
-      if (ctrlDown_) {
-        // Tab switcher.
-        if (shiftDown_) {
-          // Backwards.
-          ui_->tabWidget->setCurrentIndex((getCurrentView() - 1) % ui_->tabWidget->count());
-        //} else if (ui_->actionMRU->isChecked()) {
-        } else {
-          // Forwards.
+      if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
+        // Tab switcher forwards.
+        //if (ui_->actionMRU->isChecked()) {
+        //} else {
           ui_->tabWidget->setCurrentIndex((getCurrentView() + 1) % ui_->tabWidget->count());
-        }
+        //}
         // Stop propagation.
         return true;
       }
       break;
-    default:
-      k = static_cast<QKeyEvent*>(event)->key();
-      printf("%d", k);
-    }
-    break;
-  case QKeyEvent::KeyRelease:
-    switch (static_cast<QKeyEvent*>(event)->key()) {
-    case Qt::Key_Shift:
-      shiftDown_ = false;
-      break;
-    case Qt::Key_Control:
-      ctrlDown_ = false;
+    case Qt::Key_Backtab:
+      if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
+        // Tab switcher backwards.
+        //if (ui_->actionMRU->isChecked()) {
+        //} else {
+          ui_->tabWidget->setCurrentIndex((getCurrentView() - 1) % ui_->tabWidget->count());
+        //}
+        // Stop propagation.
+        return true;
+      }
       break;
     }
-    break;
   }
   // Pass it on.
   return QMainWindow::eventFilter(watched, event);
