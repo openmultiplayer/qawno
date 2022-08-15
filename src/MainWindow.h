@@ -65,6 +65,7 @@ class MainWindow: public QMainWindow {
   void on_actionOutputFont_triggered();
 
   void on_actionDarkMode_triggered();
+  void on_actionMRU_triggered();
 
   void on_actionCompiler_triggered();
   void on_actionServer_triggered();

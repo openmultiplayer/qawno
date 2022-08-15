@@ -687,6 +687,12 @@ void MainWindow::on_actionDarkMode_triggered() {
   }
 }
 
+void MainWindow::on_actionMRU_triggered() {
+  QSettings settings;
+  bool useDarkMode = !settings.value("MRU", false).toBool();
+  settings.setValue("MRU", useDarkMode);
+}
+
 void MainWindow::on_actionCompiler_triggered() {
   Compiler compiler;
   CompilerSettingsDialog dialog;
