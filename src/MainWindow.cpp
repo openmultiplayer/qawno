@@ -148,8 +148,7 @@ void MainWindow::on_actionOpen_triggered() {
   QString filter = tr("Pawn scripts (*.pwn *.inc)");
   QString fileName = QFileDialog::getOpenFileName(this, caption, dir, filter);
 
-  int cur = getCurrentIndex();
-  bool close = isNewFile() && !isFileModified();
+  bool close = fileNames_.count() == 1 && isNewFile() && !isFileModified();
   // Is the file already open?  If so just switch to the tab.
   for (int i = fileNames_.count(); i--; ) {
     if (fileNames_[i] == fileName) {
@@ -163,10 +162,10 @@ void MainWindow::on_actionOpen_triggered() {
   }
 
   if (close) {
-    // Opening a file replaces an empty new file.
-    editors_.remove(cur);
-    fileNames_.remove(cur);
-    ui_->tabWidget->removeTab(cur);
+    // Opening a first file replaces the initial new file.
+    editors_.remove(0);
+    fileNames_.remove(0);
+    ui_->tabWidget->removeTab(0);
   }
 
   dir = QFileInfo(fileName).dir().path();
