@@ -109,6 +109,8 @@ MainWindow::MainWindow(QWidget *parent)
   connect(ui_->tabWidget, SIGNAL(tabCloseRequested(int)), SLOT(tabCloseRequested(int)));
   QApplication::instance()->installEventFilter(this);
 
+  loadNativeList();
+
   updateTitle();
 }
 
@@ -121,6 +123,34 @@ MainWindow::~MainWindow() {
   }
 
   delete ui_;
+}
+
+void MainWindow::loadNativeList() {
+  // Loop through all `includes/*.inc` files (ensure they aren't directories).
+  QDir includes("./include", "*.inc", QDir::IgnoreCase, QDir::Files | QDir::Readable);
+  for (auto const & fileName : includes.entryInfoList()) {
+    QFile f{fileName.absoluteFilePath()};
+    if (f.open(QFile::ReadOnly | QFile::Text)) {
+      // Find every line that starts with `native`.
+      while (!f.atEnd()) {
+        QByteArray line = f.readLine();
+        // Skip leading whitespace.
+        int idx = 0, len = line.size();
+        char const* data = line.constData();
+        while (idx < len) {
+          if (data[idx] > ' ') {
+            break;
+          }
+          ++idx;
+        }
+        if (idx < len) {
+          if (strncmp(data + idx, "native ", 7) == 0) {
+            printf("Line: %.*s", len - idx, data + idx);
+          }
+        }
+      }
+    }
+  }
 }
 
 void MainWindow::currentChanged(int index) {
