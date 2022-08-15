@@ -95,7 +95,9 @@ MainWindow::MainWindow(QWidget *parent)
     loadFile(QApplication::instance()->arguments()[1]);
   } else {
     QStringList lastOpenedFileNames = settings.value("LastFiles").toStringList();
-    for (auto const & i : lastOpenedFileNames) {
+    if (lastOpenedFileNames.count() == 0) {
+      createTab("");
+    } else for (auto const & i : lastOpenedFileNames) {
       if (!i.isEmpty()) {
         loadFile(i);
       }
@@ -136,7 +138,6 @@ void MainWindow::tabCloseRequested(int index) {
 
 void MainWindow::on_actionNew_triggered() {
   createTab("");
-  ui_->tabWidget->setCurrentIndex(editors_.count() - 1);
 }
 
 void MainWindow::on_actionOpen_triggered() {
@@ -147,6 +148,8 @@ void MainWindow::on_actionOpen_triggered() {
   QString filter = tr("Pawn scripts (*.pwn *.inc)");
   QString fileName = QFileDialog::getOpenFileName(this, caption, dir, filter);
 
+  int cur = getCurrentIndex();
+  bool close = isNewFile() && !isFileModified();
   // Is the file already open?  If so just switch to the tab.
   for (int i = fileNames_.count(); i--; ) {
     if (fileNames_[i] == fileName) {
@@ -157,6 +160,13 @@ void MainWindow::on_actionOpen_triggered() {
 
   if (!loadFile(fileName)) {
     return;
+  }
+
+  if (close) {
+    // Opening a file replaces an empty new file.
+    editors_.remove(cur);
+    fileNames_.remove(cur);
+    ui_->tabWidget->removeTab(cur);
   }
 
   dir = QFileInfo(fileName).dir().path();
@@ -219,7 +229,7 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
           }
           ui_->tabWidget->setCurrentIndex(mru_[count - 1 - mruIndex_]);
         } else {
-          ui_->tabWidget->setCurrentIndex((getCurrentView() + 1) % count);
+          ui_->tabWidget->setCurrentIndex((getCurrentIndex() + 1) % count);
         }
         // Stop propagation.
         return true;
@@ -235,7 +245,7 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
           }
           ui_->tabWidget->setCurrentIndex(mru_[count - 1 - mruIndex_]);
         } else {
-          ui_->tabWidget->setCurrentIndex((getCurrentView() - 1 + count) % count);
+          ui_->tabWidget->setCurrentIndex((getCurrentIndex() - 1 + count) % count);
         }
         // Stop propagation.
         return true;
@@ -258,7 +268,7 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
 
 void MainWindow::on_actionClose_triggered() {
   bool canClose = true;
-  int cur = getCurrentView();
+  int cur = getCurrentIndex();
   if (cur < 0) {
     return;
   }
@@ -296,6 +306,10 @@ void MainWindow::on_actionClose_triggered() {
     QSettings settings;
     settings.setValue("LastFiles", files);
     ui_->tabWidget->removeTab(cur);
+
+    if (fileNames_.count() == 0) {
+      createTab("");
+    }
   }
 
   updateTitle();
@@ -303,7 +317,7 @@ void MainWindow::on_actionClose_triggered() {
 
 void MainWindow::on_actionQuit_triggered() {
   bool canClose = true;
-  int cur = getCurrentView();
+  int cur = getCurrentIndex();
 
   for (int i = 0, j = ui_->tabWidget->count(); i != j; ++i) {
     ui_->tabWidget->setCurrentIndex(i);
@@ -347,10 +361,10 @@ void MainWindow::on_actionSave_triggered() {
     return;
   }
 
-  QFile file(fileNames_[getCurrentView()]);
+  QFile file(fileNames_[getCurrentIndex()]);
   if (!file.open(QIODevice::WriteOnly)) {
     QString message =
-      tr("Could not save to %1: %2.").arg(fileNames_[getCurrentView()], file.errorString());
+      tr("Could not save to %1: %2.").arg(fileNames_[getCurrentIndex()], file.errorString());
     QMessageBox::critical(this,
                           QCoreApplication::applicationName(),
                           message,
@@ -378,13 +392,13 @@ void MainWindow::on_actionSaveAs_triggered() {
   dir = QFileInfo(fileName).dir().path();
   settings.setValue("LastSaveDir", dir);
   QStringList files {};
-  fileNames_[getCurrentView()] = fileName;
+  fileNames_[getCurrentIndex()] = fileName;
   for (auto const & i : fileNames_) {
     files.push_back(i);
   }
   settings.setValue("LastFiles", files);
 
-  ui_->tabWidget->setTabText(getCurrentView(), fileName);
+  ui_->tabWidget->setTabText(getCurrentIndex(), fileName);
   return on_actionSave_triggered();
 }
 
@@ -701,7 +715,7 @@ void MainWindow::on_actionServer_triggered() {
 }
 
 void MainWindow::on_actionSaveAll_triggered() {
-  int cur = getCurrentView(), count = fileNames_.count();
+  int cur = getCurrentIndex(), count = fileNames_.count();
   if (count == 0) {
     return;
   }
@@ -723,7 +737,7 @@ void MainWindow::on_actionCompile_triggered() {
     return;
   }
   Compiler compiler;
-  const QString& fileName = fileNames_[getCurrentView()];
+  const QString& fileName = fileNames_[getCurrentIndex()];
   ui_->output->clear();
   ui_->output->appendPlainText(compiler.commandFor(fileName));
   ui_->output->appendPlainText("\n");
@@ -736,7 +750,7 @@ void MainWindow::on_actionRun_triggered() {
     return;
   }
   on_actionCompile_triggered();
-  server_.run(fileNames_[getCurrentView()]);
+  server_.run(fileNames_[getCurrentIndex()]);
 }
 
 void MainWindow::on_actionAbout_triggered() {
@@ -795,17 +809,17 @@ const QString& MainWindow::getCurrentName() const {
   if (fileNames_.isEmpty()) {
     return none;
   }
-  return fileNames_[getCurrentView()];
+  return fileNames_[getCurrentIndex()];
 }
 
 EditorWidget* MainWindow::getCurrentEditor() const {
   if (fileNames_.isEmpty()) {
     return 0;
   }
-  return editors_[getCurrentView()];
+  return editors_[getCurrentIndex()];
 }
 
-int MainWindow::getCurrentView() const {
+int MainWindow::getCurrentIndex() const {
   return ui_->tabWidget->currentIndex();
 }
 
@@ -817,7 +831,7 @@ void MainWindow::updateTitle() {
   } else if (isNewFile()) {
     title = "Untitled File";
   } else {
-    title = QFileInfo(fileNames_[getCurrentView()]).fileName();
+    title = QFileInfo(fileNames_[getCurrentIndex()]).fileName();
     if (isFileModified()) {
       title.append("*");
     }
@@ -845,7 +859,6 @@ bool MainWindow::loadFile(const QString &fileName) {
   }
 
   createTab(fileName);
-  ui_->tabWidget->setCurrentIndex(ui_->tabWidget->count() - 1);
   editors_.last()->setPlainText(file.readAll());
   setFileModified(false);
 
@@ -853,16 +866,16 @@ bool MainWindow::loadFile(const QString &fileName) {
 }
 
 bool MainWindow::isNewFile() const {
-  return fileNames_.isEmpty() || fileNames_[getCurrentView()].isEmpty();
+  return fileNames_.isEmpty() || fileNames_[getCurrentIndex()].isEmpty();
 }
 
 bool MainWindow::isFileModified() const {
-  return !editors_.isEmpty() && editors_[getCurrentView()]->document()->isModified();
+  return !editors_.isEmpty() && editors_[getCurrentIndex()]->document()->isModified();
 }
 
 void MainWindow::setFileModified(bool isModified) {
   if (!editors_.isEmpty()) {
-    editors_[getCurrentView()]->document()->setModified(isModified);
+    editors_[getCurrentIndex()]->document()->setModified(isModified);
     updateTitle();
   }
 }
@@ -871,7 +884,7 @@ bool MainWindow::isFileEmpty() const {
   if (editors_.isEmpty()) {
     return true;
   }
-  QTextDocument *document = editors_[getCurrentView()]->document();
+  QTextDocument *document = editors_[getCurrentIndex()]->document();
   return document->isEmpty()
     || (isNewFile() && !document->toPlainText().contains(QRegExp("\\S")));
 }
@@ -898,5 +911,6 @@ void MainWindow::createTab(const QString& fileName) {
   fileNames_.push_back(fileName);
   editors_.push_back(editor);
   editor->focusWidget();
+  ui_->tabWidget->setCurrentIndex(ui_->tabWidget->count() - 1);
 }
 

@@ -85,7 +85,7 @@ class MainWindow: public QMainWindow {
   bool isFileModified() const;
   void setFileModified(bool isModified);
   bool isFileEmpty() const;
-  int getCurrentView() const;
+  int getCurrentIndex() const;
   const QString& getCurrentName() const;
   EditorWidget* getCurrentEditor() const;
   bool eventFilter(QObject* watched, QEvent* event);
