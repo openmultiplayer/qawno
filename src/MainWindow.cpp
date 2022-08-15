@@ -250,14 +250,14 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
 
 void MainWindow::on_actionClose_triggered() {
   bool canClose = true;
-  int idx = getCurrentView();
-  if (idx < 0) {
+  int cur = getCurrentView();
+  if (cur < 0) {
     return;
   }
 
   if (isFileModified() && !isFileEmpty()) {
     QString message = (!isNewFile())
-      ? tr("Save changes to %1?").arg(fileNames_.at(idx))
+      ? tr("Save changes to %1?").arg(fileNames_.at(cur))
       : tr("Save changes to a new file?");
     int result = QMessageBox::question(this,
                                        QCoreApplication::applicationName(),
@@ -279,12 +279,55 @@ void MainWindow::on_actionClose_triggered() {
   }
 
   if (canClose) {
-    ui_->tabWidget->removeTab(idx);
-    editors_.remove(idx);
-    fileNames_.remove(idx);
+    ui_->tabWidget->removeTab(cur);
+    editors_.remove(cur);
+    fileNames_.remove(cur);
+    QStringList files {};
+    for (auto const & i : fileNames_) {
+      files.push_back(i);
+    }
+    QSettings settings;
+    settings.setValue("LastFiles", files);
   }
 
   updateTitle();
+}
+
+void MainWindow::on_actionQuit_triggered() {
+  bool canClose = true;
+  int cur = getCurrentView();
+
+  for (int i = 0, j = ui_->tabWidget->count(); i != j; ++i) {
+    ui_->tabWidget->setCurrentIndex(i);
+    if (isFileModified() && !isFileEmpty()) {
+      QString message = (!isNewFile())
+        ? tr("Save changes to %1?").arg(fileNames_.at(i))
+        : tr("Save changes to a new file?");
+      int result = QMessageBox::question(this,
+                                         QCoreApplication::applicationName(),
+                                         message,
+                                         QMessageBox::Yes | QMessageBox::No
+                                                          | QMessageBox::Cancel);
+      switch (result) {
+        case QMessageBox::Yes:
+          on_actionSave_triggered();
+          canClose = canClose && !isFileModified();
+          break;
+        case QMessageBox::No:
+          break;
+        case QMessageBox::Cancel:
+          canClose = false;
+          break;
+      }
+    }
+  }
+
+  if (canClose) {
+    QApplication::instance()->quit();
+  } else if (cur != -1) {
+    ui_->tabWidget->setCurrentIndex(cur);
+    updateTitle();
+  }
 }
 
 void MainWindow::on_actionSave_triggered() {
@@ -712,7 +755,7 @@ void MainWindow::on_editor_cursorPositionChanged() {
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
-  on_actionClose_triggered();
+  on_actionQuit_triggered();
   if (isFileEmpty()) {
     event->accept();
   } else {

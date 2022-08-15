@@ -473,7 +473,7 @@
    <sender>actionQuit</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>close()</slot>
+   <slot>quit()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>

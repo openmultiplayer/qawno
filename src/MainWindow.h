@@ -41,6 +41,7 @@ class MainWindow: public QMainWindow {
   void on_actionNew_triggered();
   void on_actionOpen_triggered();
   void on_actionClose_triggered();
+  void on_actionQuit_triggered();
   void on_actionSave_triggered();
   void on_actionSaveAs_triggered();
   void on_actionSaveAll_triggered();
