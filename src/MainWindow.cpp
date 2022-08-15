@@ -145,7 +145,7 @@ void MainWindow::loadNativeList() {
         }
         if (idx < len) {
           if (strncmp(data + idx, "native ", 7) == 0) {
-            printf("Line: %.*s", len - idx, data + idx);
+            //printf("Line: %.*s", len - idx, data + idx);
           }
         }
       }
