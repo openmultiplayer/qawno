@@ -197,6 +197,7 @@ void MainWindow::on_actionUndo_triggered() {
 
 bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
   //
+  int count = ui_->tabWidget->count();
   switch (event->type()) {
   case QKeyEvent::KeyPress:
     switch (static_cast<QKeyEvent*>(event)->key()) {
@@ -205,9 +206,12 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
         // Tab switcher forwards.
         if (ui_->actionMRU->isChecked()) {
           ++mruIndex_;
-          ui_->tabWidget->setCurrentIndex(mru_[(ui_->tabWidget->count() - 1 - mruIndex_) % ui_->tabWidget->count()]);
+          if (mruIndex_ == count) {
+            mruIndex_ = 0;
+          }
+          ui_->tabWidget->setCurrentIndex(mru_[count - 1 - mruIndex_]);
         } else {
-          ui_->tabWidget->setCurrentIndex((getCurrentView() + 1) % ui_->tabWidget->count());
+          ui_->tabWidget->setCurrentIndex((getCurrentView() + 1) % count);
         }
         // Stop propagation.
         return true;
@@ -218,9 +222,12 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
         // Tab switcher backwards.
         if (ui_->actionMRU->isChecked()) {
           --mruIndex_;
-          ui_->tabWidget->setCurrentIndex(mru_[(ui_->tabWidget->count() - 1 - mruIndex_) % ui_->tabWidget->count()]);
+          if (mruIndex_ == -1) {
+            mruIndex_ = count - 1;
+          }
+          ui_->tabWidget->setCurrentIndex(mru_[count - 1 - mruIndex_]);
         } else {
-          ui_->tabWidget->setCurrentIndex((getCurrentView() - 1) % ui_->tabWidget->count());
+          ui_->tabWidget->setCurrentIndex((getCurrentView() - 1 + count) % count);
         }
         // Stop propagation.
         return true;
