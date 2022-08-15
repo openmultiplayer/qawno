@@ -20,7 +20,8 @@
    <iconset resource="../qawno.qrc">
     <normaloff>:/assets/images/qawno.ico</normaloff>:/assets/images/qawno.ico</iconset>
   </property>
-  <widget class="QWidget" name="centralWidget">
+
+  <widget class="QWidget" name="outerWidget">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
      <horstretch>0</horstretch>
@@ -30,7 +31,7 @@
    <property name="acceptDrops">
     <bool>true</bool>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout" stretch="0">
+   <layout class="QHBoxLayout" name="horizontalLayout" stretch="0">
     <property name="leftMargin">
      <number>0</number>
     </property>
@@ -44,26 +45,75 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QSplitter" name="splitter">
+     <widget class="QSplitter" name="divider">
       <property name="acceptDrops">
        <bool>true</bool>
       </property>
       <property name="orientation">
-       <enum>Qt::Vertical</enum>
+       <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QTabWidget" name="tabWidget">
+      <widget class="QWidget" name="centralWidget">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>3</verstretch>
+         <horstretch>6</horstretch>
+         <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="acceptDrops">
+        <bool>true</bool>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout" stretch="0">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QSplitter" name="splitter">
+          <property name="acceptDrops">
+           <bool>true</bool>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <widget class="QTabWidget" name="tabWidget">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>3</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+          <widget class="OutputWidget" name="output">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>1</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="acceptDrops">
+            <bool>false</bool>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </widget>
+        </item>
+       </layout>
       </widget>
-      <widget class="OutputWidget" name="output">
+      <widget class="OutputWidget" name="functions">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>1</verstretch>
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
         </sizepolicy>
        </property>
        <property name="acceptDrops">
