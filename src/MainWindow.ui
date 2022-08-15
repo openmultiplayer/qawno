@@ -20,7 +20,6 @@
    <iconset resource="../qawno.qrc">
     <normaloff>:/assets/images/qawno.ico</normaloff>:/assets/images/qawno.ico</iconset>
   </property>
-
   <widget class="QWidget" name="outerWidget">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -109,7 +108,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="OutputWidget" name="functions">
+      <widget class="QListWidget" name="functions">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>1</horstretch>
@@ -118,9 +117,6 @@
        </property>
        <property name="acceptDrops">
         <bool>false</bool>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
        </property>
       </widget>
      </widget>
@@ -418,9 +414,9 @@
    <property name="text">
     <string>Most recent tab switch</string>
    </property>
-    <property name="toolTip">
-      <string>Using ctrl+tab switches to the most recently used (MRU) tab, not in order.</string>
-    </property>
+   <property name="toolTip">
+    <string>Using ctrl+tab switches to the most recently used (MRU) tab, not in order.</string>
+   </property>
   </action>
  </widget>
  <customwidgets>
