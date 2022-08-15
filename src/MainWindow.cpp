@@ -120,10 +120,12 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::currentChanged(int index) {
-  // Remove this index from the MRU list.
-  mru_.removeAll(index);
-  // And push it to the top.
-  mru_.push(index);
+  if (index != -1) {
+    // Remove this index from the MRU list.
+    mru_.removeAll(index);
+    // And push it to the top.
+    mru_.push(index);
+  }
   updateTitle();
 }
 
@@ -285,7 +287,6 @@ void MainWindow::on_actionClose_triggered() {
   }
 
   if (canClose) {
-    ui_->tabWidget->removeTab(cur);
     editors_.remove(cur);
     fileNames_.remove(cur);
     QStringList files {};
@@ -294,6 +295,7 @@ void MainWindow::on_actionClose_triggered() {
     }
     QSettings settings;
     settings.setValue("LastFiles", files);
+    ui_->tabWidget->removeTab(cur);
   }
 
   updateTitle();
@@ -810,10 +812,10 @@ int MainWindow::getCurrentView() const {
 void MainWindow::updateTitle() {
   QString title;
 
-  if (isNewFile()) {
-    title = "Untitled File";
-  } else if (fileNames_.isEmpty()) {
+  if (fileNames_.isEmpty()) {
     title = "No File";
+  } else if (isNewFile()) {
+    title = "Untitled File";
   } else {
     title = QFileInfo(fileNames_[getCurrentView()]).fileName();
     if (isFileModified()) {
