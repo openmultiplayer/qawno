@@ -98,6 +98,8 @@ class MainWindow: public QMainWindow {
   QVector<QString> fileNames_;
   int findStart_ = 0;
   int findRound_ = 0;
+  bool ctrlDown_ = false;
+  bool shiftDown_ = false;
 };
 
 #endif // MAINWINDOW_H

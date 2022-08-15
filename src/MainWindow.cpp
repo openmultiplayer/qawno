@@ -74,7 +74,7 @@ MainWindow::MainWindow(QWidget *parent)
 
   bool useDarkMode = settings.value("DarkMode", false).toBool();
   ui_->actionDarkMode->setChecked(useDarkMode);
-
+  
   if (useDarkMode) {
     ui_->splitter->setPalette(darkModePalette);
   } else {
@@ -94,6 +94,7 @@ MainWindow::MainWindow(QWidget *parent)
       loadFile(lastOpenedFileName);
     }
   }
+  QApplication::instance()->installEventFilter(this);
 
   updateTitle();
 }
@@ -179,24 +180,50 @@ void MainWindow::on_actionUndo_triggered() {
 }
 
 bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
-  if (watched == getCurrentEditor()) {
-    if (event->type() == QKeyEvent::KeyPress) {
-      QKeyEvent* ke = static_cast<QKeyEvent*>(event);
-      if (ke->key() == Qt::Key_Tab && ke->modifiers() & Qt::ControlModifier) {
-        if (ke->modifiers() & Qt::ShiftModifier) {
+  //
+  int k;
+  switch (event->type()) {
+  case QKeyEvent::KeyPress:
+    switch (static_cast<QKeyEvent*>(event)->key()) {
+    case Qt::Key_Shift:
+      shiftDown_ = true;
+      break;
+    case Qt::Key_Control:
+      ctrlDown_ = true;
+      break;
+    case Qt::Key_Tab:
+      if (ctrlDown_) {
+        // Tab switcher.
+        if (shiftDown_) {
           // Backwards.
           ui_->tabWidget->setCurrentIndex((getCurrentView() - 1) % ui_->tabWidget->count());
+        //} else if (ui_->actionMRU->isChecked()) {
         } else {
           // Forwards.
           ui_->tabWidget->setCurrentIndex((getCurrentView() + 1) % ui_->tabWidget->count());
         }
+        // Stop propagation.
         return true;
       }
+      break;
+    default:
+      k = static_cast<QKeyEvent*>(event)->key();
+      printf("%d", k);
     }
-    return false;
-  } else {
-    return QMainWindow::eventFilter(watched, event);
+    break;
+  case QKeyEvent::KeyRelease:
+    switch (static_cast<QKeyEvent*>(event)->key()) {
+    case Qt::Key_Shift:
+      shiftDown_ = false;
+      break;
+    case Qt::Key_Control:
+      ctrlDown_ = false;
+      break;
+    }
+    break;
   }
+  // Pass it on.
+  return QMainWindow::eventFilter(watched, event);
 }
 
 void MainWindow::on_actionClose_triggered() {
@@ -793,6 +820,5 @@ void MainWindow::createTab(const QString& fileName) {
   fileNames_.push_back(fileName);
   editors_.push_back(editor);
   editor->focusWidget();
-  editor->installEventFilter(this);
 }
 
