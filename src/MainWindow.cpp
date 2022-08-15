@@ -82,8 +82,10 @@ MainWindow::MainWindow(QWidget *parent)
 
   if (useDarkMode) {
     ui_->splitter->setPalette(darkModePalette);
+    ui_->tabWidget->setPalette(darkModePalette);
   } else {
     ui_->splitter->setPalette(defaultPalette);
+    ui_->tabWidget->setPalette(defaultPalette);
   }
 
   resize(settings.value("WindowSize", QSize(800, 600)).toSize());
@@ -670,17 +672,18 @@ void MainWindow::on_actionOutputFont_triggered() {
 }
 
 void MainWindow::on_actionDarkMode_triggered() {
-  if (!getCurrentEditor()) {
-    return;
-  }
   QSettings settings;
   bool useDarkMode = !settings.value("DarkMode", false).toBool();
   settings.setValue("DarkMode", useDarkMode);
-  getCurrentEditor()->toggleDarkMode(useDarkMode);
+  for (auto i : editors_) {
+    i->toggleDarkMode(useDarkMode);
+  }
   if (useDarkMode) {
     ui_->splitter->setPalette(darkModePalette);
+    ui_->tabWidget->setPalette(darkModePalette);
   } else {
     ui_->splitter->setPalette(defaultPalette);
+    ui_->tabWidget->setPalette(defaultPalette);
   }
 }
 
