@@ -17,6 +17,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QStack>
 #include "Server.h"
 #include "EditorWidget.h"
 
@@ -73,6 +74,8 @@ class MainWindow: public QMainWindow {
   void on_editor_textChanged();
   void on_editor_cursorPositionChanged();
 
+  void currentChanged(int index);
+
  private:
   void updateTitle();
   bool loadFile(const QString& fileName);
@@ -96,10 +99,10 @@ class MainWindow: public QMainWindow {
   QPalette defaultPalette;
   QPalette darkModePalette;
   QVector<QString> fileNames_;
+  QStack<int> mru_;
   int findStart_ = 0;
   int findRound_ = 0;
-  bool ctrlDown_ = false;
-  bool shiftDown_ = false;
+  int mruIndex_ = 0;
 };
 
 #endif // MAINWINDOW_H

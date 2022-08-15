@@ -136,6 +136,7 @@
     </widget>
     <addaction name="menuFont"/>
     <addaction name="actionDarkMode"/>
+    <addaction name="actionMRU"/>
     <addaction name="separator"/>
     <addaction name="actionCompiler"/>
     <addaction name="actionServer"/>
@@ -359,6 +360,17 @@
    <property name="text">
     <string>Dark Mode</string>
    </property>
+  </action>
+  <action name="actionMRU">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Most recent tab switch</string>
+   </property>
+    <property name="toolTip">
+      <string>Using ctrl+tab switches to the most recently used (MRU) tab, not in order.</string>
+    </property>
   </action>
  </widget>
  <customwidgets>

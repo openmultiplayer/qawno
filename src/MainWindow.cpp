@@ -43,8 +43,10 @@
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow(parent),
     ui_(new Ui::MainWindow),
+    editors_(),
     server_(),
-    fileNames_()
+    fileNames_(),
+    mru_()
 {
   ui_->setupUi(this);
   ui_->tabWidget->setTabsClosable(true);
@@ -75,6 +77,9 @@ MainWindow::MainWindow(QWidget *parent)
   bool useDarkMode = settings.value("DarkMode", false).toBool();
   ui_->actionDarkMode->setChecked(useDarkMode);
   
+  bool useMRU = settings.value("MRU", false).toBool();
+  ui_->actionMRU->setChecked(useMRU);
+
   if (useDarkMode) {
     ui_->splitter->setPalette(darkModePalette);
   } else {
@@ -94,6 +99,7 @@ MainWindow::MainWindow(QWidget *parent)
       loadFile(lastOpenedFileName);
     }
   }
+  connect(ui_->tabWidget, SIGNAL(currentChanged(int)), SLOT(currentChanged(int)));
   QApplication::instance()->installEventFilter(this);
 
   updateTitle();
@@ -108,6 +114,14 @@ MainWindow::~MainWindow() {
   }
 
   delete ui_;
+}
+
+void MainWindow::currentChanged(int index) {
+  // Remove this index from the MRU list.
+  mru_.removeAll(index);
+  // And push it to the top.
+  mru_.push(index);
+  updateTitle();
 }
 
 void MainWindow::on_actionNew_triggered() {
@@ -177,15 +191,18 @@ void MainWindow::on_actionUndo_triggered() {
 
 bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
   //
-  if (event->type() == QKeyEvent::KeyPress) {
+  switch (event->type()) {
+  case QKeyEvent::KeyPress:
     switch (static_cast<QKeyEvent*>(event)->key()) {
     case Qt::Key_Tab:
       if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
         // Tab switcher forwards.
-        //if (ui_->actionMRU->isChecked()) {
-        //} else {
+        if (ui_->actionMRU->isChecked()) {
+          ++mruIndex_;
+          ui_->tabWidget->setCurrentIndex(mru_[(ui_->tabWidget->count() - 1 - mruIndex_) % ui_->tabWidget->count()]);
+        } else {
           ui_->tabWidget->setCurrentIndex((getCurrentView() + 1) % ui_->tabWidget->count());
-        //}
+        }
         // Stop propagation.
         return true;
       }
@@ -193,15 +210,26 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
     case Qt::Key_Backtab:
       if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
         // Tab switcher backwards.
-        //if (ui_->actionMRU->isChecked()) {
-        //} else {
+        if (ui_->actionMRU->isChecked()) {
+          --mruIndex_;
+          ui_->tabWidget->setCurrentIndex(mru_[(ui_->tabWidget->count() - 1 - mruIndex_) % ui_->tabWidget->count()]);
+        } else {
           ui_->tabWidget->setCurrentIndex((getCurrentView() - 1) % ui_->tabWidget->count());
-        //}
+        }
         // Stop propagation.
         return true;
       }
       break;
     }
+    break;
+  case QKeyEvent::KeyRelease:
+    switch (static_cast<QKeyEvent*>(event)->key()) {
+    case Qt::Key_Control:
+      // If they release ctrl, reset the MRU switcher, regardless of what else is happening.
+      mruIndex_ = 0;
+      break;
+    }
+    break;
   }
   // Pass it on.
   return QMainWindow::eventFilter(watched, event);
@@ -781,6 +809,7 @@ bool MainWindow::isFileEmpty() const {
 }
 
 void MainWindow::createTab(const QString& fileName) {
+  mru_.push(ui_->tabWidget->count());
   QWidget* tab = new QWidget();
   tab->setObjectName(fileName);
   QHBoxLayout* horizontalLayout = new QHBoxLayout(tab);
