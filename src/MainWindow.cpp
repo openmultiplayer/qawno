@@ -268,6 +268,16 @@ void MainWindow::currentRowChanged(int index) {
 struct suggestions_s {
   QString const* Name;
   int Rank;
+
+  bool operator<(suggestions_s const& right) const {
+    if (Rank == right.Rank) {
+      // Sort alphabetically.
+      return Name->compare(*right.Name) < 0;
+    } else {
+      // Sort by inverse rank (lowest, potentially negative, first).
+      return Rank < right.Rank;
+    }
+  }
 };
 
 void MainWindow::textChanged() {
@@ -322,10 +332,6 @@ void MainWindow::textChanged() {
                 // the names, so that those symbols that are used more move up the list quickly.
                 // Probably double the likelihood every time a symbol is selected and subtract this
                 // value from the length.
-                (void)0;
-                std::stringstream ss;
-                ss << "Found: " << name.toStdString() << " for " << QString(data + start, len).toStdString() << "\n";
-                OutputDebugString(ss.str().c_str());
                 // Get the final sort position.
                 suggestions.push_back({ &name, j - likelihoods_[idx] });
                 break;
@@ -334,6 +340,14 @@ void MainWindow::textChanged() {
           }
         }
         ++idx;
+      }
+      if (suggestions.size()) {
+        std::sort(suggestions.begin(), suggestions.end());
+        for (auto const& it : suggestions) {
+          std::stringstream ss;
+          ss << "Found: " << it.Name->toStdString() << " for " << QString(data + start, len).toStdString() << "\n";
+          OutputDebugString(ss.str().c_str());
+        }
       }
     }
   }
