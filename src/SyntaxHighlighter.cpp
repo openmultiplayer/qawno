@@ -253,7 +253,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text) {
         state = Preprocessor;
         setFormat(i, 1, colorScheme_.preprocessor);
       } else if (text[i] == '<') {
-        if (text.contains("#include")) {
+        if (text.contains("#include") || text.contains("#tryinclude")) {
           int count = 0;
           while (count < text.length()) {
             ++count;
