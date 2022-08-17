@@ -311,6 +311,10 @@ void MainWindow::textChanged() {
                 // to match come first (so `Get` first lists the actual `Get` functions, before
                 // things like `TogglePlayerScoresPingsUpdate` which just happen to have `g`, `e`,
                 // and `t` somewhere in that order.
+                // TODO: We should also store "likelihood" metrics with the names, so that those
+                // symbols that are used more move up the list quickly.  Probably double the
+                // likelihood every time a symbol is selected, and multiply the ranking from the
+                // length by this (or divide, or most likely subtract thinking about it).
                 (void)0;
                 std::stringstream ss;
                 ss << "Found: " << name.toStdString() << " for " << QString(data + start, len).toStdString() << "\n";
