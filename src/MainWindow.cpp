@@ -137,7 +137,7 @@ void MainWindow::loadNativeList() {
   for (auto const & fileName : includes.entryInfoList()) {
     QFile f{fileName.absoluteFilePath()};
     if (f.open(QFile::ReadOnly | QFile::Text)) {
-      child = new QListWidgetItem(fileName.fileName(), ui_->functions);
+      child = new QListWidgetItem("\n" + fileName.fileName() + "\n", ui_->functions);
       child->setFont(*fileFont);
       child->setTextAlignment(4);
       child->setFlags(child->flags() & ~Qt::ItemIsSelectable & ~Qt::ItemIsEnabled);
