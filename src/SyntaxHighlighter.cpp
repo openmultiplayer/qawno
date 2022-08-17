@@ -14,10 +14,6 @@
 // along with qawno. If not, see <http://www.gnu.org/licenses/>.
 
 #include "SyntaxHighlighter.h"
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <Windows.h>
 
 SyntaxHighlighter::ColorScheme SyntaxHighlighter::defaultColorScheme = {
   Qt::darkBlue,
@@ -145,9 +141,6 @@ bool SyntaxHighlighter::isKeyword(const QString &s) {
 }
 
 void SyntaxHighlighter::highlightBlock(const QString &text) {
-  std::stringstream ss;
-  ss << "Block: \"" << text.toStdString() << "\"\n";
-  OutputDebugString(ss.str().c_str());
   setFormat(0, text.length(), colorScheme_.defaultColor);
 
   enum State {
