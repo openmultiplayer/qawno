@@ -127,7 +127,7 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::loadNativeList() {
-  static QString unused("unused");
+  static QString unused("="); // This will never match a typed symbol in the auto-complete.
   QListWidgetItem* child;
   QFont* fileFont = new QFont("Sans Serif", 20, 2);
   QFont* funcFont = new QFont("Sans Serif", 12, 2);
@@ -209,6 +209,8 @@ void MainWindow::loadNativeList() {
                 child->setFont(*headFont);
                 child->setTextAlignment(4);
                 child->setFlags(child->flags() & ~Qt::ItemIsSelectable & ~Qt::ItemIsEnabled);
+                natives_.pop_back();
+                natives_.push_back(unused);
               } else {
                 child = new QListWidgetItem(QString(std::string(data + idx, (size_t)len - idx).c_str()), ui_->functions);
                 child->setFont(*funcFont);
@@ -245,6 +247,47 @@ void MainWindow::currentRowChanged(int index) {
     statusBar()->showMessage("");
   } else {
     statusBar()->showMessage(natives_[index]);
+  }
+}
+
+void MainWindow::textChanged() {
+  // Called when the current text changes, every time.  We may need to debounce this a little bit
+  // because we are going to be scanning through a long list of strings every keypress otherwise.
+  // Get the current editor.
+  EditorWidget* editor = getCurrentEditor();
+  if (!editor) {
+    return;
+  }
+  QTextCursor cursor = editor->textCursor();
+  if (cursor.hasSelection()) {
+    return;
+  }
+  // Get the current cursor position and the current text.
+  int start = cursor.selectionStart();
+  QString text = editor->toPlainText();
+  QChar const* data = text.constData();
+  int len = 0;
+  while (start--) {
+    QChar ch = data[start];
+    // Test if the current character is a valid symbol character.
+    if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '_' || ch == '@') {
+      ++len;
+    } else {
+      break;
+    }
+  }
+  ++start;
+  // We now have the extent of the current symbol.  If it is more than three characters and starts
+  // with a non-number, search for auto-complete matches.
+  if (len >= 3) {
+    QChar ch = data[start];
+    // Test if the current character is a valid symbol character.
+    if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '_' || ch == '@') {
+      // Loop through all the known symbols.
+      for (auto const & name : natives_) {
+        // Do nothing for now, we're just testing the speed.
+      }
+    }
   }
 }
 
@@ -1030,6 +1073,7 @@ void MainWindow::createTab(const QString& fileName) {
   fileNames_.push_back(fileName);
   editors_.push_back(editor);
   editor->focusWidget();
+  connect(editor, SIGNAL(textChanged()), SLOT(textChanged()));
   ui_->tabWidget->setCurrentIndex(ui_->tabWidget->count() - 1);
 }
 

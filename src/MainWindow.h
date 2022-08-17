@@ -79,6 +79,7 @@ class MainWindow: public QMainWindow {
   void currentChanged(int index);
   void tabCloseRequested(int index);
   void currentRowChanged(int index);
+  void textChanged();
 
  private:
   void updateTitle();
