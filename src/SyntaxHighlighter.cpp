@@ -49,6 +49,7 @@ SyntaxHighlighter::SyntaxHighlighter(QObject *parent)
   colorScheme_ = defaultColorScheme;
 
   keywords_
+    << "_"
     << "__addressof"
     << "__emit"
     << "__nameof"
