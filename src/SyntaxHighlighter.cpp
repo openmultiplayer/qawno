@@ -45,11 +45,6 @@ SyntaxHighlighter::SyntaxHighlighter(QObject *parent)
   colorScheme_ = defaultColorScheme;
 
   keywords_
-    << "_"
-    << "__addressof"
-    << "__emit"
-    << "__nameof"
-    << "__pragma"
     << "@"
     << "@foreign"
     << "@global"
@@ -60,6 +55,11 @@ SyntaxHighlighter::SyntaxHighlighter(QObject *parent)
     << "@task"
     << "@test"
     << "@timer"
+    << "_"
+    << "__addressof"
+    << "__emit"
+    << "__nameof"
+    << "__pragma"
     << "assert"
     << "break"
     << "case"
