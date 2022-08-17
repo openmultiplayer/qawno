@@ -28,7 +28,7 @@ SyntaxHighlighter::ColorScheme SyntaxHighlighter::defaultColorScheme = {
   Qt::darkMagenta,
   Qt::darkMagenta,
   Qt::darkRed,
-  Qt::blue
+  QColor(0x906040)
 };
 
 SyntaxHighlighter::ColorScheme SyntaxHighlighter::darkModeColorScheme = {
@@ -52,6 +52,7 @@ SyntaxHighlighter::SyntaxHighlighter(QObject *parent)
     << "__addressof"
     << "__emit"
     << "__nameof"
+    << "__pragma"
     << "assert"
     << "break"
     << "case"
