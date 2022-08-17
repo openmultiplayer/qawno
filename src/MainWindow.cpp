@@ -205,7 +205,7 @@ void MainWindow::loadNativeList() {
                 //   native #Heading();
                 //
                 // Purely for Qawno titles.
-                child = new QListWidgetItem(QString(std::string(data + idx + 1, (size_t)len - idx - 1).c_str()), ui_->functions);
+                child = new QListWidgetItem("\n" + QString(std::string(data + idx + 1, (size_t)len - idx - 1).c_str()) + "\n", ui_->functions);
                 child->setFont(*headFont);
                 child->setTextAlignment(4);
                 child->setFlags(child->flags() & ~Qt::ItemIsSelectable & ~Qt::ItemIsEnabled);
