@@ -278,8 +278,19 @@ void SyntaxHighlighter::highlightBlock(const QString &text) {
 end:
   // Some styles automatically end at the end of a line.
   switch (state) {
+  case Identifier: {
+    QString ident;
+    int start = text.length() - 1;
+    while (start >= 0 && isIdentifierChar(text[start])) {
+      ident.prepend(text[start--]);
+    }
+    if (isKeyword(ident)) {
+      setFormat(start + 1, ident.length(), colorScheme_.keyword);
+    }
+    setCurrentBlockState((int)Unknown);
+    break;
+  }
   case CommentBegin:
-  case Identifier:
   case IdentifierEnd:
   case NumericLiteral:
   case Preprocessor:
