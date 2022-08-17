@@ -103,15 +103,15 @@ class MainWindow: public QMainWindow {
  private:
   QPalette defaultPalette;
   QPalette darkModePalette;
-  QVector<QString> fileNames_;
+  QStringList fileNames_;
   // The full name, return, and parameters, of defined natives in the side-panel.  This list exactly
   // matches that list in order, INCLUDING filenames (for simplicity), but they aren't selectable so
   // we can never insert them.
-  QVector<QString> natives_;
+  QStringList natives_;
   // This is shared between all open editors, the neat side-effect being that we can get a cheap and
   // easy way to auto-complete text from custom includes without actually having to parse the
   // transitive includes.  Obviously not all includes, but combined with natives it is a lot.
-  QVector<QString> predictions_;
+  QStringList predictions_;
   QStack<int> mru_;
   int findStart_ = 0;
   int findRound_ = 0;

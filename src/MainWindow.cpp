@@ -276,7 +276,7 @@ void MainWindow::on_actionOpen_triggered() {
   if (close) {
     // Opening a first file replaces the initial new file.
     editors_.remove(0);
-    fileNames_.remove(0);
+    fileNames_.removeAt(0);
     ui_->tabWidget->removeTab(0);
   }
 
@@ -409,7 +409,7 @@ void MainWindow::on_actionClose_triggered() {
 
   if (canClose) {
     editors_.remove(cur);
-    fileNames_.remove(cur);
+    fileNames_.removeAt(cur);
     QStringList files {};
     for (auto const & i : fileNames_) {
       files.push_back(i);
