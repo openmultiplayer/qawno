@@ -141,12 +141,7 @@ bool SyntaxHighlighter::isHexDigit(QChar c) {
 }
 
 bool SyntaxHighlighter::isKeyword(const QString &s) {
-  foreach (const QString &keyword, keywords_) {
-    if (s == keyword) {
-      return true;
-    }
-  }
-  return false;
+  return keywords_.contains(s);
 }
 
 void SyntaxHighlighter::highlightBlock(const QString &text) {
