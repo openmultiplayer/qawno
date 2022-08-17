@@ -226,7 +226,9 @@ void MainWindow::loadNativeList() {
                 QString name(std::string(data + idx, (size_t)len - idx).c_str());
                 child = new QListWidgetItem(name, ui_->functions);
                 child->setFont(*funcFont);
+                // Add the native to the list of auto-complete predictions with default likelihood.
                 predictions_.push_back(name);
+                likelihoods_.push_back(1);
               }
             } else {
               natives_.pop_back();
@@ -263,6 +265,11 @@ void MainWindow::currentRowChanged(int index) {
   }
 }
 
+struct suggestions_s {
+  QString const* Name;
+  int Rank;
+};
+
 void MainWindow::textChanged() {
   // Called when the current text changes, every time.  We may need to debounce this a little bit
   // because we are going to be scanning through a long list of strings every keypress otherwise.
@@ -297,6 +304,8 @@ void MainWindow::textChanged() {
     // Test if the first character is a valid initial symbol character (i.e. not a number).
     if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || ch == '@') {
       // Loop through all the known symbols.
+      int idx = 0;
+      QVector<suggestions_s> suggestions {};
       for (auto const & name : predictions_) {
         int upper = name.length();
         if (upper >= len) {
@@ -306,23 +315,25 @@ void MainWindow::textChanged() {
               ++i;
               if (i == len) {
                 // We've found a candidate, all the characters from `data` (the word currently
-                // being typed).
-                // TODO: Sort the matches by `j`, so that the ones that take the fewest characters
-                // to match come first (so `Get` first lists the actual `Get` functions, before
-                // things like `TogglePlayerScoresPingsUpdate` which just happen to have `g`, `e`,
-                // and `t` somewhere in that order.
-                // TODO: We should also store "likelihood" metrics with the names, so that those
-                // symbols that are used more move up the list quickly.  Probably double the
-                // likelihood every time a symbol is selected, and multiply the ranking from the
-                // length by this (or divide, or most likely subtract thinking about it).
+                // being typed).  We sort the matches by `j`, so that the ones that take the fewest
+                // characters to match come first (so `Get` first lists the actual `Get` functions,
+                // before things like `TogglePlayerScoresPingsUpdate` which just happen to have `g`,
+                // `e`, and `t` somewhere in that order.  We also store "likelihood" metrics with
+                // the names, so that those symbols that are used more move up the list quickly.
+                // Probably double the likelihood every time a symbol is selected and subtract this
+                // value from the length.
                 (void)0;
                 std::stringstream ss;
                 ss << "Found: " << name.toStdString() << " for " << QString(data + start, len).toStdString() << "\n";
                 OutputDebugString(ss.str().c_str());
+                // Get the final sort position.
+                suggestions.push_back({ &name, j - likelihoods_[idx] });
+                break;
               }
             }
           }
         }
+        ++idx;
       }
     }
   }

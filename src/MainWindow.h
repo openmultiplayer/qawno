@@ -113,6 +113,7 @@ class MainWindow: public QMainWindow {
   // easy way to auto-complete text from custom includes without actually having to parse the
   // transitive includes.  Obviously not all includes, but combined with natives it is a lot.
   QStringList predictions_;
+  QVector<int> likelihoods_;
   QStack<int> mru_;
   int findStart_ = 0;
   int findRound_ = 0;
