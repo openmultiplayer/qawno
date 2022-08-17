@@ -1013,6 +1013,7 @@ void MainWindow::createTab(const QString& fileName) {
   tab->setObjectName(fileName);
   QHBoxLayout* horizontalLayout = new QHBoxLayout(tab);
   horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+  horizontalLayout->setMargin(0);
   EditorWidget* editor = new EditorWidget(tab);
   editor->setObjectName(QString::fromUtf8("editor"));
   QSizePolicy sizePolicy2(QSizePolicy::Expanding, QSizePolicy::Expanding);
