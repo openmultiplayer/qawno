@@ -149,7 +149,6 @@ void SyntaxHighlighter::highlightBlock(const QString &text) {
     Comment,
     CommentEnd,
     Identifier,
-    IdentifierEnd,
     NumericLiteral,
     CharacterLiteral,
     StringLiteral,
@@ -194,21 +193,17 @@ void SyntaxHighlighter::highlightBlock(const QString &text) {
         setFormat(i, 1, colorScheme_.identifier);
       } else {
         --i;
-        state = IdentifierEnd;
+        QString ident;
+        int start = i;
+        while (start >= 0 && isIdentifierChar(text[start])) {
+          ident.prepend(text[start--]);
+        }
+        if (isKeyword(ident)) {
+          setFormat(start + 1, ident.length(), colorScheme_.keyword);
+        }
+        state = Unknown;
       }
       break;
-    case IdentifierEnd: {
-      QString ident;
-      int start = i - 1;
-      while (start >= 0 && isIdentifierChar(text[start])) {
-        ident.prepend(text[start--]);
-      }
-      if (isKeyword(ident)) {
-        setFormat(start + 1, ident.length(), colorScheme_.keyword);
-      }
-      state = Unknown;
-      break;
-    }
     case NumericLiteral:
       if (text[i].isDigit() || isHexDigit(text[i]) || text[i] == '.') {
         setFormat(i, 1, colorScheme_.number);
@@ -291,7 +286,6 @@ end:
     break;
   }
   case CommentBegin:
-  case IdentifierEnd:
   case NumericLiteral:
   case Preprocessor:
     setCurrentBlockState((int)Unknown);
