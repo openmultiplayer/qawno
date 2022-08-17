@@ -14,6 +14,10 @@
 // along with qawno. If not, see <http://www.gnu.org/licenses/>.
 
 #include "SyntaxHighlighter.h"
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <Windows.h>
 
 SyntaxHighlighter::ColorScheme SyntaxHighlighter::defaultColorScheme = {
   Qt::darkBlue,
@@ -134,6 +138,9 @@ bool SyntaxHighlighter::isKeyword(const QString &s) {
 }
 
 void SyntaxHighlighter::highlightBlock(const QString &text) {
+  std::stringstream ss;
+  ss << "Block: \"" << text.toStdString() << "\"\n";
+  OutputDebugString(ss.str().c_str());
   setFormat(0, text.length(), colorScheme_.defaultColor);
 
   enum State {
@@ -163,7 +170,6 @@ void SyntaxHighlighter::highlightBlock(const QString &text) {
     case CommentBegin:
       if (text[i] == '/') {
         setFormat(i - 1, text.length() - i + 1, colorScheme_.cppComment);
-        state = Unknown;
         goto end;
       } else if (text[i] == '*') {
         setFormat(i - 1, 2, colorScheme_.cComment);
@@ -174,8 +180,11 @@ void SyntaxHighlighter::highlightBlock(const QString &text) {
       break;
     case CommentEnd:
       setFormat(i, 1, colorScheme_.cComment);
-      if (text[i] == '/') {
+      if (text[i] == '/')
+      {
         state = Unknown;
+      } else if (text[i] == '*') {
+        state = CommentEnd;
       } else {
         state = Comment;
       }
@@ -267,5 +276,22 @@ void SyntaxHighlighter::highlightBlock(const QString &text) {
   }
 
 end:
-  setCurrentBlockState((int)state);
+  // Some styles automatically end at the end of a line.
+  switch (state) {
+  case CommentBegin:
+  case Identifier:
+  case IdentifierEnd:
+  case NumericLiteral:
+  case Preprocessor:
+    setCurrentBlockState((int)Unknown);
+    break;
+  case Unknown:
+  case Comment:
+  case CommentEnd:
+  case CharacterLiteral:
+  case StringLiteral:
+  case PreprocessorNextLine:
+    setCurrentBlockState((int)state);
+    break;
+  }
 }
