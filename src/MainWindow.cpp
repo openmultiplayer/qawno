@@ -129,6 +129,7 @@ void MainWindow::loadNativeList() {
   QListWidgetItem* child;
   QFont* fileFont = new QFont("Sans Serif", 20, 2);
   QFont* funcFont = new QFont("Sans Serif", 12, 2);
+  QFont* headFont = new QFont("Sans Serif", 12, 2);
   // Loop through all `includes/*.inc` files (ensure they aren't directories).
   QDir includes("./include", "*.inc", QDir::IgnoreCase, QDir::Files | QDir::Readable);
   for (auto const & fileName : includes.entryInfoList()) {
@@ -137,6 +138,7 @@ void MainWindow::loadNativeList() {
       child = new QListWidgetItem(fileName.fileName(), ui_->functions);
       child->setFont(*fileFont);
       child->setTextAlignment(4);
+      child->setFlags(child->flags() & ~Qt::ItemIsSelectable & ~Qt::ItemIsEnabled);
       // Find every line that starts with `native`.
       while (!f.atEnd()) {
         QByteArray line = f.readLine();
@@ -151,17 +153,64 @@ void MainWindow::loadNativeList() {
         }
         if (idx < len) {
           if (strncmp(data + idx, "native ", 7) == 0) {
-            //printf("Line: %.*s", len - idx, data + idx);
-            while (len--) {
-              // Trim trailing space.
-              if (data[len] > ' ') {
+            idx += 7;
+
+            // Work forwards to the start of text.
+            while (data[idx] <= ' ') {
+              if (data[idx] == '\n' || data[idx] == '\r') {
+                goto not_a_native;
+              }
+              ++idx;
+            }
+
+            // Work back to the end of the parameters (skips `= other;` too).
+            do {
+              --len;
+              if (len == idx) {
+                goto not_a_native;
+              }
+            } while (data[len] != ')');
+
+            // Extract the full name, return, and parameters.
+            natives_.push_back(QString(std::string(data + idx, (size_t)len - idx + 1).c_str()));
+
+            // Extract just the name.
+            len = idx;
+            for ( ; ; ) {
+              if (data[len] == '\n' || data[len] == '\r') {
+                goto not_a_native;
+              }
+              if (data[len] == ':') {
+                // Skip the return tag.
+                idx = len + 1;
+              }
+              if (data[len] == '(') {
+                // Found the parameters start.
                 break;
               }
+              ++len;
             }
-            child = new QListWidgetItem(QString(std::string(data + idx, len - idx).c_str()), ui_->functions);
-            child->setFont(*funcFont);
+            // Found some function name.
+            if (idx < len) {
+              if (data[idx] == '#') {
+                // Special syntax:
+                //
+                //   native #Heading();
+                //
+                // Purely for Qawno titles.
+                child = new QListWidgetItem(QString(std::string(data + idx + 1, (size_t)len - idx - 1).c_str()), ui_->functions);
+                child->setFont(*headFont);
+                child->setTextAlignment(4);
+                child->setFlags(child->flags() & ~Qt::ItemIsSelectable & ~Qt::ItemIsEnabled);
+              } else {
+                child = new QListWidgetItem(QString(std::string(data + idx, (size_t)len - idx).c_str()), ui_->functions);
+                child->setFont(*funcFont);
+              }
+            }
           }
         }
+not_a_native:
+        (void)0;
       }
     }
   }
