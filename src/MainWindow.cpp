@@ -40,6 +40,8 @@
 
 #include "ui_MainWindow.h"
 
+#include <sstream>
+
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow(parent),
     ui_(new Ui::MainWindow),
@@ -281,11 +283,27 @@ void MainWindow::textChanged() {
   // with a non-number, search for auto-complete matches.
   if (len >= 3) {
     QChar ch = data[start];
-    // Test if the current character is a valid symbol character.
-    if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '_' || ch == '@') {
+    // Test if the first character is a valid initial symbol character (i.e. not a number).
+    if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || ch == '@') {
       // Loop through all the known symbols.
       for (auto const & name : natives_) {
-        // Do nothing for now, we're just testing the speed.
+        int upper = name.length();
+        if (upper >= len) {
+          for (int i = 0, j = 0; j != upper; ++j) {
+            // Case-insensitive comparison.
+            if (name[j].toUpper() == data[start + i].toUpper()) {
+              ++i;
+              if (i == len) {
+                // We've found a candidate, all the characters from `data` (the word currently
+                // being typed)
+                (void)0;
+                std::stringstream ss;
+                ss << "Found" << name.toStdString() << " for " << QString(data + start, len).toStdString() << "\n";
+                OutputDebugString(ss.str().c_str());
+              }
+            }
+          }
+        }
       }
     }
   }
