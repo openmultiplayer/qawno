@@ -129,7 +129,8 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::loadNativeList() {
-  static QString unused("="); // This will never match a typed symbol in the auto-complete.
+  // Declare an invalid symbol for list items that aren't real symbols.
+  static QString unused("=");
   QListWidgetItem* child;
   QFont* fileFont = new QFont("Sans Serif", 20, 2);
   QFont* funcFont = new QFont("Sans Serif", 12, 2);
@@ -200,6 +201,14 @@ void MainWindow::loadNativeList() {
               ++len;
             }
             // Found some function name.
+            while (data[idx] <= ' ') {
+              ++idx;
+            }
+            do {
+              --len;
+            }
+            while (data[len] <= ' ');
+            ++len;
             if (idx < len) {
               if (data[idx] == '#') {
                 // Special syntax:
@@ -214,8 +223,10 @@ void MainWindow::loadNativeList() {
                 natives_.pop_back();
                 natives_.push_back(unused);
               } else {
-                child = new QListWidgetItem(QString(std::string(data + idx, (size_t)len - idx).c_str()), ui_->functions);
+                QString name(std::string(data + idx, (size_t)len - idx).c_str());
+                child = new QListWidgetItem(name, ui_->functions);
                 child->setFont(*funcFont);
+                predictions_.push_back(name);
               }
             } else {
               natives_.pop_back();
@@ -286,7 +297,7 @@ void MainWindow::textChanged() {
     // Test if the first character is a valid initial symbol character (i.e. not a number).
     if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || ch == '@') {
       // Loop through all the known symbols.
-      for (auto const & name : natives_) {
+      for (auto const & name : predictions_) {
         int upper = name.length();
         if (upper >= len) {
           for (int i = 0, j = 0; j != upper; ++j) {
@@ -295,10 +306,14 @@ void MainWindow::textChanged() {
               ++i;
               if (i == len) {
                 // We've found a candidate, all the characters from `data` (the word currently
-                // being typed)
+                // being typed).
+                // TODO: Sort the matches by `j`, so that the ones that take the fewest characters
+                // to match come first (so `Get` first lists the actual `Get` functions, before
+                // things like `TogglePlayerScoresPingsUpdate` which just happen to have `g`, `e`,
+                // and `t` somewhere in that order.
                 (void)0;
                 std::stringstream ss;
-                ss << "Found" << name.toStdString() << " for " << QString(data + start, len).toStdString() << "\n";
+                ss << "Found: " << name.toStdString() << " for " << QString(data + start, len).toStdString() << "\n";
                 OutputDebugString(ss.str().c_str());
               }
             }
