@@ -107,6 +107,7 @@ MainWindow::MainWindow(QWidget *parent)
   }
   connect(ui_->tabWidget, SIGNAL(currentChanged(int)), SLOT(currentChanged(int)));
   connect(ui_->tabWidget, SIGNAL(tabCloseRequested(int)), SLOT(tabCloseRequested(int)));
+  connect(ui_->functions, SIGNAL(currentRowChanged(int)), SLOT(currentRowChanged(int)));
   QApplication::instance()->installEventFilter(this);
 
   loadNativeList();
@@ -126,6 +127,7 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::loadNativeList() {
+  static QString unused("unused");
   QListWidgetItem* child;
   QFont* fileFont = new QFont("Sans Serif", 20, 2);
   QFont* funcFont = new QFont("Sans Serif", 12, 2);
@@ -139,6 +141,8 @@ void MainWindow::loadNativeList() {
       child->setFont(*fileFont);
       child->setTextAlignment(4);
       child->setFlags(child->flags() & ~Qt::ItemIsSelectable & ~Qt::ItemIsEnabled);
+      // Pad the natives list so indexing works, though we never see this in the status bar.
+      natives_.push_back(unused);
       // Find every line that starts with `native`.
       while (!f.atEnd()) {
         QByteArray line = f.readLine();
@@ -178,6 +182,9 @@ void MainWindow::loadNativeList() {
             len = idx;
             for ( ; ; ) {
               if (data[len] == '\n' || data[len] == '\r') {
+                // Remove this from the list again.  We can't add the name after here because we've
+                // clobbered the indexes.
+                natives_.pop_back();
                 goto not_a_native;
               }
               if (data[len] == ':') {
@@ -206,6 +213,8 @@ void MainWindow::loadNativeList() {
                 child = new QListWidgetItem(QString(std::string(data + idx, (size_t)len - idx).c_str()), ui_->functions);
                 child->setFont(*funcFont);
               }
+            } else {
+              natives_.pop_back();
             }
           }
         }
@@ -229,6 +238,14 @@ void MainWindow::currentChanged(int index) {
 void MainWindow::tabCloseRequested(int index) {
   ui_->tabWidget->setCurrentIndex(index);
   on_actionClose_triggered();
+}
+
+void MainWindow::currentRowChanged(int index) {
+  if (index == -1) {
+    statusBar()->showMessage("");
+  } else {
+    statusBar()->showMessage(natives_[index]);
+  }
 }
 
 void MainWindow::on_actionNew_triggered() {
