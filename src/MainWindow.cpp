@@ -746,6 +746,96 @@ void MainWindow::scrollByLines(int n) {
   }
 }
 
+void MainWindow::on_actionDelline_triggered() {
+  if (auto editor = getCurrentEditor()) {
+    // Delete the line.
+    QTextCursor cursor = editor->textCursor();
+    int position = cursor.position();
+    int midpoint = cursor.positionInBlock();
+    cursor.setPosition(position - midpoint, QTextCursor::MoveAnchor);
+    cursor.setPosition(position + cursor.block().length() - midpoint, QTextCursor::KeepAnchor);
+    cursor.insertText("");
+  }
+}
+
+void MainWindow::on_actionDupline_triggered() {
+  if (auto editor = getCurrentEditor()) {
+    // Duplicate the line.
+    QTextCursor cursor = editor->textCursor();
+    int position = cursor.position();
+    int midpoint = cursor.positionInBlock();
+    QString text = cursor.block().text();
+    cursor.insertText(text.right(text.length() - midpoint));
+    cursor.insertText("\n");
+    cursor.insertText(text.left(midpoint));
+    cursor.setPosition(position);
+    editor->setTextCursor(cursor);
+  }
+}
+
+void MainWindow::on_actionComment_triggered() {
+  if (auto editor = getCurrentEditor()) {
+    // Comment the line.
+    QTextCursor cursor = editor->textCursor();
+    if (cursor.hasSelection()) {
+      // TODO: Block comment.
+      QString text = editor->document()->toPlainText();
+      QChar* data = text.data();
+      int start = cursor.selectionStart();
+      int end = cursor.selectionEnd();
+      if (end - start >= 4 && data[start] == '/' && data[start + 1] == '*' && data[end - 1] == '/' && data[end - 2] == '*') {
+        // Uncomment.
+        if (end - start >= 6 && data[start + 2] == ' ' && data[end - 3] == ' ') {
+          cursor.insertText(text.mid(start + 3, end - start - 6));
+          cursor.setPosition(start, QTextCursor::MoveAnchor);
+          cursor.setPosition(end - 6, QTextCursor::KeepAnchor);
+        } else {
+          cursor.insertText(text.mid(start + 4, end - start - 4));
+          cursor.setPosition(start, QTextCursor::MoveAnchor);
+          cursor.setPosition(end - 4, QTextCursor::KeepAnchor);
+        }
+      } else {
+        // Comment.
+        cursor.insertText("/* " + text.mid(start, end - start) + " */");
+        cursor.setPosition(start, QTextCursor::MoveAnchor);
+        cursor.setPosition(end + 6, QTextCursor::KeepAnchor);
+      }
+    } else {
+      // Line comment.
+      int position = cursor.position();
+      int midpoint = cursor.positionInBlock();
+      QString text = cursor.block().text();
+      QChar* data = text.data();
+      int len = text.length();
+      for (int i = 0; i != len; ++i) {
+        if (data[i] == '/' && i + 1 != len && data[i + 1] == '/') {
+          // Remove a comment.
+          if (i + 2 != len && data[i + 2] == ' ') {
+            // Add a comment.
+            cursor.setPosition(position - midpoint + i, QTextCursor::MoveAnchor);
+            cursor.setPosition(position - midpoint + i + 3, QTextCursor::KeepAnchor);
+            cursor.insertText("");
+            cursor.setPosition(position - 3, QTextCursor::MoveAnchor);
+          } else {
+            cursor.setPosition(position - midpoint + i, QTextCursor::MoveAnchor);
+            cursor.setPosition(position - midpoint + i + 2, QTextCursor::KeepAnchor);
+            cursor.insertText("");
+            cursor.setPosition(position - 2, QTextCursor::MoveAnchor);
+          }
+          break;
+        } else if (data[i] > ' ') {
+          // Add a comment.
+          cursor.setPosition(position - midpoint + i, QTextCursor::MoveAnchor);
+          cursor.insertText("// ");
+          cursor.setPosition(position + 3, QTextCursor::MoveAnchor);
+          break;
+        }
+      }
+    }
+    editor->setTextCursor(cursor);
+  }
+}
+
 bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
   int count = ui_->tabWidget->count();
   switch (event->type()) {
@@ -768,102 +858,6 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
       } else if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
         // Scroll down.
         scrollByLines(-1);
-        return true;
-      }
-      break;
-    case Qt::Key_D:
-      if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
-        if (auto editor = getCurrentEditor()) {
-          // Duplicate the line.
-          QTextCursor cursor = editor->textCursor();
-          int position = cursor.position();
-          int midpoint = cursor.positionInBlock();
-          QString text = cursor.block().text();
-          cursor.insertText(text.right(text.length() - midpoint));
-          cursor.insertText("\n");
-          cursor.insertText(text.left(midpoint));
-          cursor.setPosition(position);
-          editor->setTextCursor(cursor);
-        }
-        return true;
-      }
-      break;
-    case Qt::Key_L:
-      if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
-        if (auto editor = getCurrentEditor()) {
-          // Delete the line.
-          QTextCursor cursor = editor->textCursor();
-          int position = cursor.position();
-          int midpoint = cursor.positionInBlock();
-          cursor.setPosition(position - midpoint, QTextCursor::MoveAnchor);
-          cursor.setPosition(position + cursor.block().length() - midpoint, QTextCursor::KeepAnchor);
-          cursor.insertText("");
-        }
-        return true;
-      }
-      break;
-    case Qt::Key_K:
-      if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
-        if (auto editor = getCurrentEditor()) {
-          // Comment the line.
-          QTextCursor cursor = editor->textCursor();
-          if (cursor.hasSelection()) {
-            // TODO: Block comment.
-            QString text = editor->document()->toPlainText();
-            QChar* data = text.data();
-            int start = cursor.selectionStart();
-            int end = cursor.selectionEnd();
-            if (end - start >= 4 && data[start] == '/' && data[start + 1] == '*' && data[end - 1] == '/' && data[end - 2] == '*') {
-              // Uncomment.
-              if (end - start >= 6 && data[start + 2] == ' ' && data[end - 3] == ' ') {
-                cursor.insertText(text.mid(start + 3, end - start - 6));
-                cursor.setPosition(start, QTextCursor::MoveAnchor);
-                cursor.setPosition(end - 6, QTextCursor::KeepAnchor);
-              } else {
-                cursor.insertText(text.mid(start + 4, end - start - 4));
-                cursor.setPosition(start, QTextCursor::MoveAnchor);
-                cursor.setPosition(end - 4, QTextCursor::KeepAnchor);
-              }
-            } else {
-              // Comment.
-              cursor.insertText("/* " + text.mid(start, end - start) + " */");
-              cursor.setPosition(start, QTextCursor::MoveAnchor);
-              cursor.setPosition(end + 6, QTextCursor::KeepAnchor);
-            }
-          } else {
-            // Line comment.
-            int position = cursor.position();
-            int midpoint = cursor.positionInBlock();
-            QString text = cursor.block().text();
-            QChar* data = text.data();
-            int len = text.length();
-            for (int i = 0; i != len; ++i) {
-              if (data[i] == '/' && i + 1 != len && data[i + 1] == '/') {
-                // Remove a comment.
-                if (i + 2 != len && data[i + 2] == ' ') {
-                  // Add a comment.
-                  cursor.setPosition(position - midpoint + i, QTextCursor::MoveAnchor);
-                  cursor.setPosition(position - midpoint + i + 3, QTextCursor::KeepAnchor);
-                  cursor.insertText("");
-                  cursor.setPosition(position - 3, QTextCursor::MoveAnchor);
-                } else {
-                  cursor.setPosition(position - midpoint + i, QTextCursor::MoveAnchor);
-                  cursor.setPosition(position - midpoint + i + 2, QTextCursor::KeepAnchor);
-                  cursor.insertText("");
-                  cursor.setPosition(position - 2, QTextCursor::MoveAnchor);
-                }
-                break;
-              } else if (data[i] > ' ') {
-                // Add a comment.
-                cursor.setPosition(position - midpoint + i, QTextCursor::MoveAnchor);
-                cursor.insertText("// ");
-                cursor.setPosition(position + 3, QTextCursor::MoveAnchor);
-                break;
-              }
-            }
-          }
-          editor->setTextCursor(cursor);
-        }
         return true;
       }
       break;
