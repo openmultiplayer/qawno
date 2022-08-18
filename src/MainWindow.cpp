@@ -42,6 +42,7 @@
 #include "StatusBar.h"
 
 #include "ui_MainWindow.h"
+#include <Windows.h>
 
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow(parent),
@@ -767,6 +768,23 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
       } else if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
         // Scroll down.
         scrollByLines(-1);
+        return true;
+      }
+      break;
+    case Qt::Key_D:
+      if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
+        if (auto editor = getCurrentEditor()) {
+          // Duplicate the line.
+          QTextCursor cursor = editor->textCursor();
+          int position = cursor.position();
+          int midpoint = cursor.positionInBlock();
+          QString text = cursor.block().text();
+          cursor.insertText(text.right(text.length() - midpoint));
+          cursor.insertText("\n");
+          cursor.insertText(text.left(midpoint));
+          cursor.setPosition(position);
+          editor->setTextCursor(cursor);
+        }
         return true;
       }
       break;
