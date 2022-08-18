@@ -85,6 +85,7 @@ class MainWindow: public QMainWindow {
 
  private:
   void updateTitle();
+  void replaceSuggestion();
   void loadNativeList();
   bool loadFile(const QString& fileName);
   bool isNewFile() const;

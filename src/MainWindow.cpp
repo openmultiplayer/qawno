@@ -354,6 +354,41 @@ void MainWindow::textChanged() {
   }
 }
 
+void MainWindow::replaceSuggestion() {
+  QString const& replacement = popup_->currentRow() == -1 ? popup_->item(0)->text() : popup_->currentItem()->text();
+  EditorWidget* editor = getCurrentEditor();
+  if (!editor) {
+    return;
+  }
+  QTextCursor cursor = editor->textCursor();
+  if (cursor.hasSelection()) {
+    return;
+  }
+  // Get the current cursor position and the current text.
+  int start = cursor.selectionStart();
+  QString text = editor->toPlainText();
+  QChar const* data = text.constData();
+  int len = 0;
+  while (start--) {
+    QChar ch = data[start];
+    // Test if the current character is a valid symbol character.
+    if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '_' || ch == '@') {
+      ++len;
+    } else {
+      break;
+    }
+  }
+  ++start;
+  // We now have the extent of the current symbol.  If it is more than three characters and starts
+  // with a non-number, search for auto-complete matches.
+  cursor.setPosition(start, QTextCursor::MoveAnchor);
+  cursor.setPosition(start + len , QTextCursor::KeepAnchor);
+  cursor.insertText(replacement);
+  // Increase how popular this replacement is.
+  predictions_[replacement] *= 2;
+  hidePopup();
+}
+
 void MainWindow::on_actionNew_triggered() {
   createTab("");
 }
@@ -441,13 +476,18 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
     switch (static_cast<QKeyEvent*>(event)->key()) {
     case Qt::Key_Down:
     case Qt::Key_Up:
-    case Qt::Key_Enter:
-    case Qt::Key_Return:
       if (popup_) {
         // If there's an auto-complete window open, forward these keys to it.
         recurse = true;
         popup_->forwardEvent(event);
         recurse = false;
+        return true;
+      }
+      break;
+    case Qt::Key_Enter:
+    case Qt::Key_Return:
+      if (popup_) {
+        replaceSuggestion();
         return true;
       }
       break;
