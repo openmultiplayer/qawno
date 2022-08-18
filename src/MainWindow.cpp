@@ -25,6 +25,8 @@
 #include <QRegExp>
 #include <QSettings>
 #include <QUndoStack>
+#include <QLabel>
+#include <QPushButton>
 
 #include "AboutDialog.h"
 #include "Compiler.h"
@@ -264,21 +266,6 @@ void MainWindow::currentRowChanged(int index) {
   }
 }
 
-struct suggestions_s {
-  QString const* Name;
-  int Rank;
-
-  bool operator<(suggestions_s const& right) const {
-    if (Rank == right.Rank) {
-      // Sort alphabetically.
-      return Name->compare(*right.Name) < 0;
-    } else {
-      // Sort by inverse rank (lowest, potentially negative, first).
-      return Rank < right.Rank;
-    }
-  }
-};
-
 void MainWindow::textChanged() {
   // Called when the current text changes, every time.  We may need to debounce this a little bit
   // because we are going to be scanning through a long list of strings every keypress otherwise.
@@ -313,7 +300,7 @@ void MainWindow::textChanged() {
     // Test if the first character is a valid initial symbol character (i.e. not a number).
     if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || ch == '@') {
       // Loop through all the known symbols.
-      QVector<suggestions_s> suggestions {};
+      suggestions_.clear();
       for (auto it = predictions_.constBegin(), end = predictions_.constEnd(); it != end; ++it) {
         auto const& name = it.key();
         int upper = name.length();
@@ -332,20 +319,30 @@ void MainWindow::textChanged() {
                 // Probably double the likelihood every time a symbol is selected and subtract this
                 // value from the length.
                 // Get the final sort position.
-                suggestions.push_back({ &name, j - it.value() });
+                suggestions_.push_back({ &name, j - it.value() });
                 break;
               }
             }
           }
         }
       }
-      if (suggestions.size()) {
-        std::sort(suggestions.begin(), suggestions.end());
-        for (auto const& it : suggestions) {
+      if (suggestions_.size()) {
+        // There are some suggestions.  Sort them.
+        std::sort(suggestions_.begin(), suggestions_.end());
+        for (auto const& it : suggestions_) {
           std::stringstream ss;
           ss << "Found: " << it.Name->toStdString() << " for " << QString(data + start, len).toStdString() << "\n";
           OutputDebugString(ss.str().c_str());
         }
+        // Determine where to draw the suggestions box.
+        QRect rect = editor->cursorRect();
+        int bottom = rect.bottom();
+        int right = rect.right();
+        QPushButton* popup = new QPushButton("Hello");// , editor);// , Qt::SplashScreen | Qt::WindowStaysOnTopHint);
+        popup->setParent(this);
+        popup->setGeometry(100, 100, 200, 200);
+        popup->show();
+        //popup->move(right, bottom);
       }
     }
   }

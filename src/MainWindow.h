@@ -102,6 +102,21 @@ class MainWindow: public QMainWindow {
   void createTab(const QString& title);
 
  private:
+  struct suggestions_s {
+    QString const* Name;
+    int Rank;
+
+    bool operator<(suggestions_s const& right) const {
+      if (Rank == right.Rank) {
+        // Sort alphabetically.
+        return Name->compare(*right.Name) < 0;
+      } else {
+        // Sort by inverse rank (lowest, potentially negative, first).
+        return Rank < right.Rank;
+      }
+    }
+  };
+
   QPalette defaultPalette;
   QPalette darkModePalette;
   QStringList fileNames_;
@@ -113,6 +128,7 @@ class MainWindow: public QMainWindow {
   // easy way to auto-complete text from custom includes without actually having to parse the
   // transitive includes.  Obviously not all includes, but combined with natives it is a lot.
   QHash<QString, int> predictions_;
+  QVector<suggestions_s> suggestions_;
   QStack<int> mru_;
   int findStart_ = 0;
   int findRound_ = 0;
