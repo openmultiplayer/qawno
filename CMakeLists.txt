@@ -49,6 +49,7 @@ set(HEADERS
   src/GoToDialog.h
   src/MainWindow.h
   src/OutputWidget.h
+  src/PopupWidget.h
   src/ReplaceDialog.h
   src/Server.h
   src/StatusBar.h

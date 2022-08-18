@@ -342,7 +342,7 @@ void MainWindow::textChanged() {
         std::sort(suggestions_.begin(), suggestions_.end());
         // Determine where to draw the suggestions box.
         QRect rect = editor->cursorRect();
-        popup_ = new QListWidget(editor);
+        popup_ = new PopupWidget(editor);
         popup_->setParent(editor);
         popup_->setGeometry(rect.right() + 60, rect.bottom(), 170, 200);
         for (auto const& it : suggestions_) {
@@ -431,11 +431,26 @@ void MainWindow::on_actionUndo_triggered() {
 }
 
 bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
-  //
+  static bool recurse = false;
+  if (recurse) {
+    return false;
+  }
   int count = ui_->tabWidget->count();
   switch (event->type()) {
   case QKeyEvent::KeyPress:
     switch (static_cast<QKeyEvent*>(event)->key()) {
+    case Qt::Key_Down:
+    case Qt::Key_Up:
+    case Qt::Key_Enter:
+    case Qt::Key_Return:
+      if (popup_) {
+        // If there's an auto-complete window open, forward these keys to it.
+        recurse = true;
+        popup_->forwardEvent(event);
+        recurse = false;
+        return true;
+      }
+      break;
     case Qt::Key_Tab:
       if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
         // Tab switcher forwards.

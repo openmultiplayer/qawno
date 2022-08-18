@@ -18,9 +18,9 @@
 
 #include <QMainWindow>
 #include <QStack>
-#include <QListWidget>
 #include "Server.h"
 #include "EditorWidget.h"
+#include "PopupWidget.h"
 
 namespace Ui {
   class MainWindow;
@@ -131,7 +131,7 @@ class MainWindow: public QMainWindow {
   // transitive includes.  Obviously not all includes, but combined with natives it is a lot.
   QHash<QString, int> predictions_;
   QVector<suggestions_s> suggestions_;
-  QListWidget* popup_ = nullptr;
+  PopupWidget* popup_ = nullptr;
   QStack<int> mru_;
   int findStart_ = 0;
   int findRound_ = 0;
