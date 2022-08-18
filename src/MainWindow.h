@@ -81,10 +81,10 @@ class MainWindow: public QMainWindow {
   void tabCloseRequested(int index);
   void currentRowChanged(int index);
   void textChanged();
+  void hidePopup();
 
  private:
   void updateTitle();
-  void hidePopup();
   void loadNativeList();
   bool loadFile(const QString& fileName);
   bool isNewFile() const;

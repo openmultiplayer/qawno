@@ -1152,6 +1152,7 @@ void MainWindow::createTab(const QString& fileName) {
   editors_.push_back(editor);
   editor->focusWidget();
   connect(editor, SIGNAL(textChanged()), SLOT(textChanged()));
+  connect(editor, SIGNAL(cursorPositionChanged()), SLOT(hidePopup()));
   ui_->tabWidget->setCurrentIndex(ui_->tabWidget->count() - 1);
 }
 
