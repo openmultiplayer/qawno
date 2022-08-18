@@ -227,8 +227,7 @@ void MainWindow::loadNativeList() {
                 child = new QListWidgetItem(name, ui_->functions);
                 child->setFont(*funcFont);
                 // Add the native to the list of auto-complete predictions with default likelihood.
-                predictions_.push_back(name);
-                likelihoods_.push_back(1);
+                predictions_.insert(name, 1);
               }
             } else {
               natives_.pop_back();
@@ -314,9 +313,9 @@ void MainWindow::textChanged() {
     // Test if the first character is a valid initial symbol character (i.e. not a number).
     if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || ch == '@') {
       // Loop through all the known symbols.
-      int idx = 0;
       QVector<suggestions_s> suggestions {};
-      for (auto const & name : predictions_) {
+      for (auto it = predictions_.constBegin(), end = predictions_.constEnd(); it != end; ++it) {
+        auto const& name = it.key();
         int upper = name.length();
         if (upper >= len) {
           for (int i = 0, j = 0; j != upper; ++j) {
@@ -333,13 +332,12 @@ void MainWindow::textChanged() {
                 // Probably double the likelihood every time a symbol is selected and subtract this
                 // value from the length.
                 // Get the final sort position.
-                suggestions.push_back({ &name, j - likelihoods_[idx] });
+                suggestions.push_back({ &name, j - it.value() });
                 break;
               }
             }
           }
         }
-        ++idx;
       }
       if (suggestions.size()) {
         std::sort(suggestions.begin(), suggestions.end());
