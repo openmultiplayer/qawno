@@ -417,10 +417,37 @@ void MainWindow::textChanged() {
   }
 }
 
+void MainWindow::finishSymbol(QString const& symbol, bool add) {
+  // Add or remove the symbol to the predictions list.
+  if (symbol.length() < 3) {
+    (void)0;
+  } else if (add) {
+    if (predictions_.contains(symbol)) {
+      ++predictions_[symbol].Count;
+    } else {
+      predictions_.insert(symbol, { 1, 1 });
+    }
+  } else {
+    if (predictions_.contains(symbol)) {
+      predictions_s& prediction = predictions_[symbol];
+      if (prediction.Count < 2) {
+        predictions_.remove(symbol);
+      } else {
+        --prediction.Count;
+      }
+    }
+  }
+}
+
 enum file_parse_state_e {
   file_parse_state_number,
   file_parse_state_symbol,
   file_parse_state_unknown,
+  file_parse_state_line_comment,
+  file_parse_state_block_comment,
+  file_parse_state_character,
+  file_parse_state_string,
+  file_parse_state_preproc,
 };
 
 void MainWindow::parseFile(QString const text, bool add) {
@@ -430,13 +457,11 @@ void MainWindow::parseFile(QString const text, bool add) {
   QChar const* data = text.data();
   int len = text.length();
   QString symbol = "";
+  bool escape = false;
   while (len--) {
     QChar ch = *data++;
     if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || ch == '@') {
       switch (state) {
-      case file_parse_state_number:
-        // Ignore this character.
-        break;
       case file_parse_state_symbol:
         // Add this character to the current symbol.
         symbol += ch;
@@ -449,9 +474,6 @@ void MainWindow::parseFile(QString const text, bool add) {
       }
     } else if ((ch >= '0' && ch <= '9')) {
       switch (state) {
-      case file_parse_state_number:
-        // Ignore this character.
-        break;
       case file_parse_state_symbol:
         // Add this character to the current symbol.
         symbol += ch;
@@ -461,39 +483,143 @@ void MainWindow::parseFile(QString const text, bool add) {
         state = file_parse_state_number;
         break;
       }
-    } else {
+    } else if (ch == '/') {
+      if (len && *data == '/') {
+        switch (state) {
+        case file_parse_state_symbol:
+          finishSymbol(symbol, add);
+          // Fallthrough.
+        case file_parse_state_number:
+        case file_parse_state_unknown:
+          state = file_parse_state_line_comment;
+          ++data;
+          --len;
+          break;
+        }
+      } else if (len && *data == '*') {
+        switch (state) {
+        case file_parse_state_symbol:
+          finishSymbol(symbol, add);
+          // Fallthrough.
+        case file_parse_state_number:
+        case file_parse_state_unknown:
+          state = file_parse_state_block_comment;
+          ++data;
+          --len;
+          break;
+        }
+      } else {
+        switch (state) {
+        case file_parse_state_symbol:
+          finishSymbol(symbol, add);
+          // Fallthrough.
+        case file_parse_state_number:
+          state = file_parse_state_unknown;
+          break;
+        }
+      }
+    } else if (ch == '*') {
+      if (len && *data == '/') {
+        switch (state) {
+        case file_parse_state_block_comment:
+          state = file_parse_state_unknown;
+          ++data;
+          --len;
+          break;
+        case file_parse_state_symbol:
+          finishSymbol(symbol, add);
+          // Fallthrough.
+        case file_parse_state_number:
+          state = file_parse_state_unknown;
+          break;
+        }
+      } else {
+        switch (state) {
+        case file_parse_state_symbol:
+          finishSymbol(symbol, add);
+          // Fallthrough.
+        case file_parse_state_number:
+          state = file_parse_state_unknown;
+          break;
+        }
+      }
+    } else if (ch == '#') {
       switch (state) {
+      case file_parse_state_symbol:
+        finishSymbol(symbol, add);
+        // Fallthrough.
       case file_parse_state_number:
-        // End the number.
-        state = file_parse_state_unknown;
+        state = file_parse_state_preproc;
+        break;
+      }
+    } else if (ch == '"') {
+      switch (state) {
+      case file_parse_state_string:
+        if (!escape) {
+          state = file_parse_state_unknown;
+        }
         break;
       case file_parse_state_symbol:
-        // Add or remove the symbol to the predictions list.
-        if (symbol.length() < 3) {
-          (void)0;
-        } else if (add) {
-          if (predictions_.contains(symbol)) {
-            ++predictions_[symbol].Count;
-          } else {
-            predictions_.insert(symbol, { 1, 1 });
-          }
-        } else {
-          if (predictions_.contains(symbol)) {
-            predictions_s& prediction = predictions_[symbol];
-            if (prediction.Count < 2) {
-              predictions_.remove(symbol);
-            } else {
-              --prediction.Count;
-            }
-          }
+        finishSymbol(symbol, add);
+        // Fallthrough.
+      case file_parse_state_number:
+      case file_parse_state_unknown:
+        state = file_parse_state_string;
+        break;
+      }
+    } else if (ch == '\'') {
+      switch (state) {
+      case file_parse_state_character:
+        if (!escape) {
+          state = file_parse_state_unknown;
         }
+        break;
+      case file_parse_state_symbol:
+        finishSymbol(symbol, add);
+        // Fallthrough.
+      case file_parse_state_number:
+      case file_parse_state_unknown:
+        state = file_parse_state_character;
+        break;
+      }
+    } else if (ch == '\\') {
+      switch (state) {
+      case file_parse_state_string:
+      case file_parse_state_character:
+        escape = !escape;
+        // Don't reset `escape` at the end of the loop.
+        continue;
+      case file_parse_state_symbol:
+        finishSymbol(symbol, add);
+        // Fallthrough.
+      case file_parse_state_number:
+      case file_parse_state_unknown:
+        state = file_parse_state_character;
+        break;
+      }
+    } else if (ch == '\r' || ch == '\n') {
+      switch (state) {
+      case file_parse_state_symbol:
+        finishSymbol(symbol, add);
+        // Fallthrough.
+      case file_parse_state_number:
+      case file_parse_state_line_comment:
+      case file_parse_state_character:
+      case file_parse_state_preproc:
         state = file_parse_state_unknown;
         break;
-      case file_parse_state_unknown:
-        // Ignore this character.
+      }
+    } else {
+      switch (state) {
+      case file_parse_state_symbol:
+        finishSymbol(symbol, add);
+        // Fallthrough.
+      case file_parse_state_number:
+        state = file_parse_state_unknown;
         break;
       }
     }
+    escape = false;
   }
 }
 
