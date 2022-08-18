@@ -815,19 +815,31 @@ void MainWindow::on_actionComment_triggered() {
             cursor.setPosition(position - midpoint + i, QTextCursor::MoveAnchor);
             cursor.setPosition(position - midpoint + i + 3, QTextCursor::KeepAnchor);
             cursor.insertText("");
-            cursor.setPosition(position - 3, QTextCursor::MoveAnchor);
+            if (i >= midpoint) {
+              cursor.setPosition(position, QTextCursor::MoveAnchor);
+            } else {
+              cursor.setPosition(position - 3, QTextCursor::MoveAnchor);
+            }
           } else {
             cursor.setPosition(position - midpoint + i, QTextCursor::MoveAnchor);
             cursor.setPosition(position - midpoint + i + 2, QTextCursor::KeepAnchor);
             cursor.insertText("");
-            cursor.setPosition(position - 2, QTextCursor::MoveAnchor);
+            if (i >= midpoint) {
+              cursor.setPosition(position, QTextCursor::MoveAnchor);
+            } else {
+              cursor.setPosition(position - 2, QTextCursor::MoveAnchor);
+            }
           }
           break;
         } else if (data[i] > ' ') {
           // Add a comment.
           cursor.setPosition(position - midpoint + i, QTextCursor::MoveAnchor);
           cursor.insertText("// ");
-          cursor.setPosition(position + 3, QTextCursor::MoveAnchor);
+          if (i > midpoint) {
+            cursor.setPosition(position, QTextCursor::MoveAnchor);
+          } else {
+            cursor.setPosition(position + 3, QTextCursor::MoveAnchor);
+          }
           break;
         }
       }
