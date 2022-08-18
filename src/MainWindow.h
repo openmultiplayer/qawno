@@ -83,6 +83,7 @@ class MainWindow: public QMainWindow {
 
  private:
   void updateTitle();
+  void hidePopup();
   void loadNativeList();
   bool loadFile(const QString& fileName);
   bool isNewFile() const;
@@ -129,6 +130,7 @@ class MainWindow: public QMainWindow {
   // transitive includes.  Obviously not all includes, but combined with natives it is a lot.
   QHash<QString, int> predictions_;
   QVector<suggestions_s> suggestions_;
+  QWidget* popup_ = nullptr;
   QStack<int> mru_;
   int findStart_ = 0;
   int findRound_ = 0;

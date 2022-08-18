@@ -244,6 +244,7 @@ not_a_native:
 }
 
 void MainWindow::currentChanged(int index) {
+  hidePopup();
   if (index != -1) {
     // Remove this index from the MRU list.
     mru_.removeAll(index);
@@ -254,6 +255,7 @@ void MainWindow::currentChanged(int index) {
 }
 
 void MainWindow::tabCloseRequested(int index) {
+  hidePopup();
   ui_->tabWidget->setCurrentIndex(index);
   on_actionClose_triggered();
 }
@@ -266,7 +268,16 @@ void MainWindow::currentRowChanged(int index) {
   }
 }
 
+void MainWindow::hidePopup() {
+  if (popup_) {
+    popup_->hide();
+    delete popup_;
+    popup_ = nullptr;
+  }
+}
+
 void MainWindow::textChanged() {
+  hidePopup();
   // Called when the current text changes, every time.  We may need to debounce this a little bit
   // because we are going to be scanning through a long list of strings every keypress otherwise.
   // Get the current editor.
@@ -338,11 +349,10 @@ void MainWindow::textChanged() {
         QRect rect = editor->cursorRect();
         int bottom = rect.bottom();
         int right = rect.right();
-        QPushButton* popup = new QPushButton("Hello");// , editor);// , Qt::SplashScreen | Qt::WindowStaysOnTopHint);
-        popup->setParent(this);
-        popup->setGeometry(100, 100, 200, 200);
-        popup->show();
-        //popup->move(right, bottom);
+        popup_ = new QPushButton("Hello");// , editor);// , Qt::SplashScreen | Qt::WindowStaysOnTopHint);
+        popup_->setParent(editor);
+        popup_->setGeometry(right, bottom, 200, 200);
+        popup_->show();
       }
     }
   }
