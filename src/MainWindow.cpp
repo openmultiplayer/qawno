@@ -229,7 +229,7 @@ void MainWindow::loadNativeList() {
                 child = new QListWidgetItem(name, ui_->functions);
                 child->setFont(*funcFont);
                 // Add the native to the list of auto-complete predictions with default likelihood.
-                predictions_.insert(name, 1);
+                predictions_.insert(name, { 1, 1 });
               }
             } else {
               natives_.pop_back();
@@ -244,7 +244,7 @@ not_a_native:
 }
 
 void MainWindow::currentChanged(int index) {
-  finishWord();
+  hidePopup();
   if (index != -1) {
     // Remove this index from the MRU list.
     mru_.removeAll(index);
@@ -255,7 +255,7 @@ void MainWindow::currentChanged(int index) {
 }
 
 void MainWindow::tabCloseRequested(int index) {
-  finishWord();
+  hidePopup();
   ui_->tabWidget->setCurrentIndex(index);
   on_actionClose_triggered();
 }
@@ -268,7 +268,7 @@ void MainWindow::currentRowChanged(int index) {
   }
 }
 
-void MainWindow::finishWord() {
+void MainWindow::hidePopup() {
   if (popup_) {
     popup_->hide();
     delete popup_;
@@ -276,8 +276,12 @@ void MainWindow::finishWord() {
   }
 }
 
+void MainWindow::finishWord() {
+  // Add this word to the prediction list.
+}
+
 void MainWindow::textChanged() {
-  finishWord();
+  hidePopup();
   // Called when the current text changes, every time.  We may need to debounce this a little bit
   // because we are going to be scanning through a long list of strings every keypress otherwise.
   // Get the current editor.
@@ -330,7 +334,7 @@ void MainWindow::textChanged() {
                 // Probably double the likelihood every time a symbol is selected and subtract this
                 // value from the length.
                 // Get the final sort position.
-                suggestions_.push_back({ &name, j - it.value() });
+                suggestions_.push_back({ &name, j - it.value().Rank });
                 break;
               }
             }
@@ -385,8 +389,8 @@ void MainWindow::replaceSuggestion() {
   cursor.setPosition(start + len , QTextCursor::KeepAnchor);
   cursor.insertText(replacement);
   // Increase how popular this replacement is.
-  predictions_[replacement] *= 2;
-  finishWord();
+  predictions_[replacement] = { predictions_[replacement].Rank * 2, predictions_[replacement].Count };
+  hidePopup();
 }
 
 void MainWindow::on_actionNew_triggered() {
@@ -493,7 +497,7 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
       break;
     case Qt::Key_Escape:
       if (popup_) {
-        finishWord();
+        hidePopup();
         return true;
       }
       break;
@@ -1198,7 +1202,7 @@ void MainWindow::createTab(const QString& fileName) {
   editors_.push_back(editor);
   editor->focusWidget();
   connect(editor, SIGNAL(textChanged()), SLOT(textChanged()));
-  connect(editor, SIGNAL(cursorPositionChanged()), SLOT(finishWord()));
+  connect(editor, SIGNAL(cursorPositionChanged()), SLOT(hidePopup()));
   ui_->tabWidget->setCurrentIndex(ui_->tabWidget->count() - 1);
 }
 
