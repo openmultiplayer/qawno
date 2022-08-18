@@ -244,7 +244,7 @@ not_a_native:
 }
 
 void MainWindow::currentChanged(int index) {
-  hidePopup();
+  finishWord();
   if (index != -1) {
     // Remove this index from the MRU list.
     mru_.removeAll(index);
@@ -255,7 +255,7 @@ void MainWindow::currentChanged(int index) {
 }
 
 void MainWindow::tabCloseRequested(int index) {
-  hidePopup();
+  finishWord();
   ui_->tabWidget->setCurrentIndex(index);
   on_actionClose_triggered();
 }
@@ -268,7 +268,7 @@ void MainWindow::currentRowChanged(int index) {
   }
 }
 
-void MainWindow::hidePopup() {
+void MainWindow::finishWord() {
   if (popup_) {
     popup_->hide();
     delete popup_;
@@ -277,7 +277,7 @@ void MainWindow::hidePopup() {
 }
 
 void MainWindow::textChanged() {
-  hidePopup();
+  finishWord();
   // Called when the current text changes, every time.  We may need to debounce this a little bit
   // because we are going to be scanning through a long list of strings every keypress otherwise.
   // Get the current editor.
@@ -386,7 +386,7 @@ void MainWindow::replaceSuggestion() {
   cursor.insertText(replacement);
   // Increase how popular this replacement is.
   predictions_[replacement] *= 2;
-  hidePopup();
+  finishWord();
 }
 
 void MainWindow::on_actionNew_triggered() {
@@ -493,7 +493,7 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
       break;
     case Qt::Key_Escape:
       if (popup_) {
-        hidePopup();
+        finishWord();
         return true;
       }
       break;
@@ -1198,7 +1198,7 @@ void MainWindow::createTab(const QString& fileName) {
   editors_.push_back(editor);
   editor->focusWidget();
   connect(editor, SIGNAL(textChanged()), SLOT(textChanged()));
-  connect(editor, SIGNAL(cursorPositionChanged()), SLOT(hidePopup()));
+  connect(editor, SIGNAL(cursorPositionChanged()), SLOT(finishWord()));
   ui_->tabWidget->setCurrentIndex(ui_->tabWidget->count() - 1);
 }
 

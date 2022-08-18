@@ -81,7 +81,7 @@ class MainWindow: public QMainWindow {
   void tabCloseRequested(int index);
   void currentRowChanged(int index);
   void textChanged();
-  void hidePopup();
+  void finishWord();
 
  private:
   void updateTitle();
@@ -123,16 +123,25 @@ class MainWindow: public QMainWindow {
   QPalette defaultPalette;
   QPalette darkModePalette;
   QStringList fileNames_;
+
   // The full name, return, and parameters, of defined natives in the side-panel.  This list exactly
   // matches that list in order, INCLUDING filenames (for simplicity), but they aren't selectable so
   // we can never insert them.
   QStringList natives_;
+
   // This is shared between all open editors, the neat side-effect being that we can get a cheap and
   // easy way to auto-complete text from custom includes without actually having to parse the
   // transitive includes.  Obviously not all includes, but combined with natives it is a lot.
   QHash<QString, int> predictions_;
   QVector<suggestions_s> suggestions_;
   PopupWidget* popup_ = nullptr;
+
+  // Store the currently edited word for faster lookups.
+  int wordStart_ = -1; // The first character of the current symbol, -1 when it isn't a symbol.
+  int wordCur_ = -1; // The typing position, matches the cursor always.
+  int wordEnd_ = -1; // Same rules as `wordStart_`.
+
+  // Other data.
   QStack<int> mru_;
   int findStart_ = 0;
   int findRound_ = 0;
