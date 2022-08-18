@@ -802,6 +802,50 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
         return true;
       }
       break;
+    case Qt::Key_K:
+      if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
+        if (auto editor = getCurrentEditor()) {
+          // Comment the line.
+          QTextCursor cursor = editor->textCursor();
+          if (cursor.hasSelection()) {
+            // TODO: Block comment.
+          } else {
+            // Line comment.
+            int position = cursor.position();
+            int midpoint = cursor.positionInBlock();
+            QString text = cursor.block().text();
+            QChar* data = text.data();
+            int len = text.length();
+            for (int i = 0; i != len; ++i) {
+              if (data[i] == '/' && i + 1 != len && data[i + 1] == '/') {
+                // Remove a comment.
+                if (i + 2 != len && data[i + 2] == ' ') {
+                  // Add a comment.
+                  cursor.setPosition(position - midpoint + i, QTextCursor::MoveAnchor);
+                  cursor.setPosition(position - midpoint + i + 3, QTextCursor::KeepAnchor);
+                  cursor.insertText("");
+                  cursor.setPosition(position - 3, QTextCursor::MoveAnchor);
+                } else {
+                  cursor.setPosition(position - midpoint + i, QTextCursor::MoveAnchor);
+                  cursor.setPosition(position - midpoint + i + 2, QTextCursor::KeepAnchor);
+                  cursor.insertText("");
+                  cursor.setPosition(position - 2, QTextCursor::MoveAnchor);
+                }
+                break;
+              } else if (data[i] > ' ') {
+                // Add a comment.
+                cursor.setPosition(position - midpoint + i, QTextCursor::MoveAnchor);
+                cursor.insertText("// ");
+                cursor.setPosition(position + 3, QTextCursor::MoveAnchor);
+                break;
+              }
+            }
+            editor->setTextCursor(cursor);
+          }
+        }
+        return true;
+      }
+      break;
     case Qt::Key_Enter:
     case Qt::Key_Return:
       if (popup_) {
