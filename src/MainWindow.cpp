@@ -42,7 +42,7 @@
 
 #include "ui_MainWindow.h"
 
-#include <sstream>
+#include <Windows.h>
 
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow(parent),
@@ -278,6 +278,8 @@ void MainWindow::hidePopup() {
 
 void MainWindow::cursorPositionChanged() {
   hidePopup();
+  prevWord_ = initialWord_;
+  prevEnd_ = wordEnd_;
   startWord();
 }
 
@@ -338,18 +340,17 @@ void MainWindow::textChanged() {
   // because we are going to be scanning through a long list of strings every keypress otherwise.
   hidePopup();
   // Remove the current word from the predictions list, since we're changing it.
-  if (wordEnd_ != -1) {
-    if (predictions_.contains(initialWord_)) {
+  if (wordEnd_ != -1 && prevEnd_ != -1) {
+    if (predictions_.contains(prevWord_)) {
       predictions_s&
-        prediction = predictions_[initialWord_];
+        prediction = predictions_[prevWord_];
       if (prediction.Count < 2) {
-        predictions_.remove(initialWord_);
+        predictions_.remove(prevWord_);
       } else {
         --prediction.Count;
       }
     }
   }
-  startWord();
   if (wordEnd_ == -1) {
     // Not in a symbol, don't care.
   }
@@ -406,12 +407,19 @@ void MainWindow::textChanged() {
     }
   }
   // Add this word to the predictions list.  AFTER showing suggestions so the thing we just typed
-  // doesn't affect the results.
+  // doesn't affect the results.  This gets called randomly when files load and the cursors are
+  // initialised - this is a bug I'm not going to fix, it just means a few random words will be
+  // predicted even if you delete them all.  Actually, I can fix this by setting the initial state
+  // of the file parser to `NUMBER` to ignore those initial words since they're already added once.
   if (initialWord_.length() < 3) {
     (void)0;
   } else if (predictions_.contains(initialWord_)) {
+    OutputDebugString("Add:");
+    OutputDebugString(initialWord_.toStdString().c_str());
     ++predictions_[initialWord_].Count;
   } else {
+    OutputDebugString("Increment:");
+    OutputDebugString(initialWord_.toStdString().c_str());
     predictions_.insert(initialWord_, { 1, 1 });
   }
 }

@@ -146,7 +146,9 @@ class MainWindow: public QMainWindow {
   // Store the currently edited word for faster lookups.
   int wordStart_ = -1; // `-1` when the current text isn't a symbol or number.
   int wordEnd_ = -1; // `-1` when the current text isn't a symbol.
+  int prevEnd_ = -1;
   QString initialWord_; // What the word was before we were editing it.
+  QString prevWord_; // Because the cursor position updates before the text.
 
   // Other data.
   QStack<int> mru_;
