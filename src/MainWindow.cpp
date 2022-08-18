@@ -788,6 +788,20 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
         return true;
       }
       break;
+    case Qt::Key_L:
+      if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
+        if (auto editor = getCurrentEditor()) {
+          // Delete the line.
+          QTextCursor cursor = editor->textCursor();
+          int position = cursor.position();
+          int midpoint = cursor.positionInBlock();
+          cursor.setPosition(position - midpoint, QTextCursor::MoveAnchor);
+          cursor.setPosition(position + cursor.block().length() - midpoint, QTextCursor::KeepAnchor);
+          cursor.insertText("");
+        }
+        return true;
+      }
+      break;
     case Qt::Key_Enter:
     case Qt::Key_Return:
       if (popup_) {
