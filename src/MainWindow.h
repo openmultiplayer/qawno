@@ -85,7 +85,6 @@ class MainWindow: public QMainWindow {
 
  private:
   void hidePopup();
-  void finishWord();
   void startWord();
   void updateTitle();
   void replaceSuggestion();

@@ -281,10 +281,6 @@ void MainWindow::cursorPositionChanged() {
   startWord();
 }
 
-void MainWindow::finishWord() {
-  // Add this word to the prediction list.
-}
-
 void MainWindow::startWord() {
   // Initialise.
   wordStart_ = -1;
@@ -329,6 +325,8 @@ void MainWindow::startWord() {
     // Yes.
     wordStart_ = start;
     wordEnd_ = end;
+    // Save the current word at this position so that when we edit it we can adjust the predictions list.
+    initialWord_ = QString(data + start, end - start);
   } else if ((ch >= '0' && ch <= '9')) {
     // It is a number, which is like a symbol in many ways, but without auto-predict.
     wordStart_ = start;
@@ -336,41 +334,36 @@ void MainWindow::startWord() {
 }
 
 void MainWindow::textChanged() {
-  hidePopup();
   // Called when the current text changes, every time.  We may need to debounce this a little bit
   // because we are going to be scanning through a long list of strings every keypress otherwise.
+  hidePopup();
+  // Remove the current word from the predictions list, since we're changing it.
+  if (wordEnd_ != -1) {
+    if (predictions_.contains(initialWord_)) {
+      predictions_s&
+        prediction = predictions_[initialWord_];
+      if (prediction.Count < 2) {
+        predictions_.remove(initialWord_);
+      } else {
+        --prediction.Count;
+      }
+    }
+  }
+  startWord();
+  if (wordEnd_ == -1) {
+    // Not in a symbol, don't care.
+  }
   // Get the current editor.
   EditorWidget* editor = getCurrentEditor();
-  if (!editor) {
-    return;
-  }
   // Get the current cursor position and the current text.
   int pos = editor->textCursor().selectionStart();
   QString text = editor->toPlainText();
   QChar const* data = text.constData();
   // Check if the character typed starts or continues a new word.
-  if (pos) {
-    QChar ch = data[pos - 1];
-    if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || ch == '@') {
-      if (wordStart_ == -1) {
-        // Typed the first letter of a symbol, and weren't previously in a number or symbol.
-        wordStart_ = pos - 1;
-        wordEnd_ = pos;
-      } else if (wordEnd_ != -1) {
-        // Typed the continuation of a symbol.
-        ++wordEnd_;
-      }
-    } else if ((ch >= '0' && ch <= '9')) {
-      if (wordEnd_ != -1) {
-        // Typed the continuation of a symbol.
-        ++wordEnd_;
-      }
-    }
-  }
   // We now have the extent of the current symbol.  If it is more than three characters and starts
   // with a non-number, search for auto-complete matches.
   int searchLen = pos - wordStart_;
-  if (wordStart_ != -1 && searchLen >= 3) {
+  if (searchLen >= 3) {
     // Loop through all the known symbols.
     suggestions_.clear();
     for (auto it = predictions_.constBegin(), end = predictions_.constEnd(); it != end; ++it) {
@@ -411,6 +404,15 @@ void MainWindow::textChanged() {
       }
       popup_->show();
     }
+  }
+  // Add this word to the predictions list.  AFTER showing suggestions so the thing we just typed
+  // doesn't affect the results.
+  if (initialWord_.length() < 3) {
+    (void)0;
+  } else if (predictions_.contains(initialWord_)) {
+    ++predictions_[initialWord_].Count;
+  } else {
+    predictions_.insert(initialWord_, { 1, 1 });
   }
 }
 
