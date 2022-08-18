@@ -338,24 +338,24 @@ void MainWindow::textChanged() {
                 break;
               }
             }
-          }
         }
-      }
-      if (suggestions_.size()) {
-        // There are some suggestions.  Sort them.
-        std::sort(suggestions_.begin(), suggestions_.end());
-        // Determine where to draw the suggestions box.
-        QRect rect = editor->cursorRect();
-        popup_ = new PopupWidget(editor);
-        popup_->setParent(editor);
-        popup_->setGeometry(rect.right() + 60, rect.bottom(), 170, 200);
-        for (auto const& it : suggestions_) {
-          QListWidgetItem* cur = new QListWidgetItem(*it.Name, popup_);
-        }
-        popup_->show();
       }
     }
+    if (suggestions_.size()) {
+      // There are some suggestions.  Sort them.
+      std::sort(suggestions_.begin(), suggestions_.end());
+      // Determine where to draw the suggestions box.
+      QRect rect = editor->cursorRect();
+      popup_ = new QListWidget(editor);
+      popup_->setParent(editor);
+      popup_->setGeometry(rect.right() + 60, rect.bottom(), 170, 200);
+      for (auto const& it : suggestions_) {
+        QListWidgetItem* cur = new QListWidgetItem(*it.Name, popup_);
+      }
+      popup_->show();
+    }
   }
+}
 }
 
 void MainWindow::replaceSuggestion() {
@@ -470,21 +470,19 @@ void MainWindow::on_actionUndo_triggered() {
 }
 
 bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
-  static bool recurse = false;
-  if (recurse) {
-    return false;
-  }
   int count = ui_->tabWidget->count();
   switch (event->type()) {
   case QKeyEvent::KeyPress:
     switch (static_cast<QKeyEvent*>(event)->key()) {
     case Qt::Key_Down:
+      if (popup_) {
+        popup_->setCurrentRow(popup_->currentRow() + 1);
+        return true;
+      }
+      break;
     case Qt::Key_Up:
       if (popup_) {
-        // If there's an auto-complete window open, forward these keys to it.
-        recurse = true;
-        popup_->forwardEvent(event);
-        recurse = false;
+        popup_->setCurrentRow(popup_->currentRow() - 1);
         return true;
       }
       break;

@@ -18,9 +18,9 @@
 
 #include <QMainWindow>
 #include <QStack>
+#include <QListWidget>
 #include "Server.h"
 #include "EditorWidget.h"
-#include "PopupWidget.h"
 
 namespace Ui {
   class MainWindow;
@@ -140,7 +140,7 @@ class MainWindow: public QMainWindow {
   // transitive includes.  Obviously not all includes, but combined with natives it is a lot.
   QHash<QString, predictions_s> predictions_;
   QVector<suggestions_s> suggestions_;
-  PopupWidget* popup_ = nullptr;
+  QListWidget* popup_ = nullptr;
 
   // Store the currently edited word for faster lookups.
   int wordStart_ = -1; // The first character of the current symbol, -1 when it isn't a symbol.
