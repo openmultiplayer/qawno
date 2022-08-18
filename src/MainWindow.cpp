@@ -809,6 +809,40 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
           QTextCursor cursor = editor->textCursor();
           if (cursor.hasSelection()) {
             // TODO: Block comment.
+            QString text = editor->document()->toPlainText();
+            QChar* data = text.data();
+            int start = cursor.selectionStart();
+            int end = cursor.selectionEnd();
+            if (end - start >= 4 && data[start] == '/' && data[start + 1] == '*' && data[end - 1] == '/' && data[end - 2] == '*') {
+              if (end - start >= 6 && data[start + 2] == ' ' && data[end - 3] == ' ') {
+                cursor.setPosition(end - 3, QTextCursor::MoveAnchor);
+                cursor.setPosition(end, QTextCursor::KeepAnchor);
+                cursor.insertText("");
+                cursor.setPosition(start, QTextCursor::MoveAnchor);
+                cursor.setPosition(start + 3, QTextCursor::KeepAnchor);
+                cursor.insertText("");
+                cursor.setPosition(start, QTextCursor::MoveAnchor);
+                cursor.setPosition(end - 6, QTextCursor::KeepAnchor);
+              } else {
+                cursor.setPosition(end - 2, QTextCursor::MoveAnchor);
+                cursor.setPosition(end, QTextCursor::KeepAnchor);
+                cursor.insertText("");
+                cursor.setPosition(start, QTextCursor::MoveAnchor);
+                cursor.setPosition(start + 2, QTextCursor::KeepAnchor);
+                cursor.insertText("");
+                cursor.setPosition(start, QTextCursor::MoveAnchor);
+                cursor.setPosition(end - 4, QTextCursor::KeepAnchor);
+              }
+              // Uncomment.
+            } else {
+              // Comment.
+              cursor.setPosition(end, QTextCursor::MoveAnchor);
+              cursor.insertText(" */");
+              cursor.setPosition(start, QTextCursor::MoveAnchor);
+              cursor.insertText("/* ");
+              cursor.setPosition(start, QTextCursor::MoveAnchor);
+              cursor.setPosition(end + 6, QTextCursor::KeepAnchor);
+            }
           } else {
             // Line comment.
             int position = cursor.position();
