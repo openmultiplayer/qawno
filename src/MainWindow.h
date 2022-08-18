@@ -98,6 +98,7 @@ class MainWindow: public QMainWindow {
   const QString& getCurrentName() const;
   EditorWidget* getCurrentEditor() const;
   bool eventFilter(QObject* watched, QEvent* event);
+  void parseFile(QString const text, bool add);
 
  private:
   Ui::MainWindow *ui_;

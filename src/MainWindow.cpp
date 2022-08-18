@@ -42,8 +42,6 @@
 
 #include "ui_MainWindow.h"
 
-#include <Windows.h>
-
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow(parent),
     ui_(new Ui::MainWindow),
@@ -342,8 +340,7 @@ void MainWindow::textChanged() {
   // Remove the current word from the predictions list, since we're changing it.
   if (wordEnd_ != -1 && prevEnd_ != -1) {
     if (predictions_.contains(prevWord_)) {
-      predictions_s&
-        prediction = predictions_[prevWord_];
+      predictions_s& prediction = predictions_[prevWord_];
       if (prediction.Count < 2) {
         predictions_.remove(prevWord_);
       } else {
@@ -414,13 +411,89 @@ void MainWindow::textChanged() {
   if (initialWord_.length() < 3) {
     (void)0;
   } else if (predictions_.contains(initialWord_)) {
-    OutputDebugString("Add:");
-    OutputDebugString(initialWord_.toStdString().c_str());
     ++predictions_[initialWord_].Count;
   } else {
-    OutputDebugString("Increment:");
-    OutputDebugString(initialWord_.toStdString().c_str());
     predictions_.insert(initialWord_, { 1, 1 });
+  }
+}
+
+enum file_parse_state_e {
+  file_parse_state_number,
+  file_parse_state_symbol,
+  file_parse_state_unknown,
+};
+
+void MainWindow::parseFile(QString const text, bool add) {
+  // When adding we start in parse state `number` because any symbols at position 0 are already
+  // added to the predictions list by the text edit callback.
+  file_parse_state_e state = add ? file_parse_state_number : file_parse_state_unknown;
+  QChar const* data = text.data();
+  int len = text.length();
+  QString symbol = "";
+  while (len--) {
+    QChar ch = *data++;
+    if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || ch == '@') {
+      switch (state) {
+      case file_parse_state_number:
+        // Ignore this character.
+        break;
+      case file_parse_state_symbol:
+        // Add this character to the current symbol.
+        symbol += ch;
+        break;
+      case file_parse_state_unknown:
+        // Start a new symbol.
+        symbol = ch;
+        state = file_parse_state_symbol;
+        break;
+      }
+    } else if ((ch >= '0' && ch <= '9')) {
+      switch (state) {
+      case file_parse_state_number:
+        // Ignore this character.
+        break;
+      case file_parse_state_symbol:
+        // Add this character to the current symbol.
+        symbol += ch;
+        break;
+      case file_parse_state_unknown:
+        // Start a new number.
+        state = file_parse_state_number;
+        break;
+      }
+    } else {
+      switch (state) {
+      case file_parse_state_number:
+        // End the number.
+        state = file_parse_state_unknown;
+        break;
+      case file_parse_state_symbol:
+        // Add or remove the symbol to the predictions list.
+        if (symbol.length() < 3) {
+          (void)0;
+        } else if (add) {
+          if (predictions_.contains(symbol)) {
+            ++predictions_[symbol].Count;
+          } else {
+            predictions_.insert(symbol, { 1, 1 });
+          }
+        } else {
+          if (predictions_.contains(symbol)) {
+            predictions_s& prediction = predictions_[symbol];
+            if (prediction.Count < 2) {
+              predictions_.remove(symbol);
+            } else {
+              --prediction.Count;
+            }
+          }
+        }
+        state = file_parse_state_unknown;
+        break;
+      case file_parse_state_unknown:
+        // Ignore this character.
+        break;
+      }
+    }
   }
 }
 
@@ -646,6 +719,7 @@ void MainWindow::on_actionClose_triggered() {
   }
 
   if (canClose) {
+    parseFile(getCurrentEditor()->toPlainText(), false);
     editors_.remove(cur);
     fileNames_.removeAt(cur);
     QStringList files {};
@@ -1217,6 +1291,7 @@ bool MainWindow::loadFile(const QString &fileName) {
 
   createTab(fileName);
   editors_.last()->setPlainText(file.readAll());
+  parseFile(editors_.last()->toPlainText(), true);
   setFileModified(false);
 
   return true;
