@@ -245,6 +245,7 @@ not_a_native:
 
 void MainWindow::currentChanged(int index) {
   hidePopup();
+  startWord();
   if (index != -1) {
     // Remove this index from the MRU list.
     mru_.removeAll(index);
@@ -255,7 +256,6 @@ void MainWindow::currentChanged(int index) {
 }
 
 void MainWindow::tabCloseRequested(int index) {
-  hidePopup();
   ui_->tabWidget->setCurrentIndex(index);
   on_actionClose_triggered();
 }
@@ -276,8 +276,63 @@ void MainWindow::hidePopup() {
   }
 }
 
+void MainWindow::cursorPositionChanged() {
+  hidePopup();
+  startWord();
+}
+
 void MainWindow::finishWord() {
   // Add this word to the prediction list.
+}
+
+void MainWindow::startWord() {
+  // Initialise.
+  wordStart_ = -1;
+  wordEnd_ = -1;
+  // We are typing or clicked somewhere new.  Save the extents of the current symbol.
+  EditorWidget* editor = getCurrentEditor();
+  if (!editor) {
+    return;
+  }
+  QTextCursor cursor = editor->textCursor();
+  if (cursor.hasSelection()) {
+    return;
+  }
+  int start = cursor.selectionStart();
+  int end = start;
+  QString text = editor->toPlainText();
+  QChar const* data = text.constData();
+  int len = 0;
+  while (start) {
+    QChar ch = data[--start];
+    // Test if the current character is a valid symbol character.
+    if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '_' || ch == '@') {
+      ++len;
+    } else {
+      ++start;
+      break;
+    }
+  }
+  while (end < text.length()) {
+    QChar ch = data[end++];
+    // Test if the current character is a valid symbol character.
+    if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '_' || ch == '@') {
+      ++len;
+    } else {
+      --end;
+      break;
+    }
+  }
+  QChar ch = data[start];
+  // Test if the first character is a valid initial symbol character (i.e. not a number).
+  if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || ch == '@') {
+    // Yes.
+    wordStart_ = start;
+    wordEnd_ = end;
+  } else if ((ch >= '0' && ch <= '9')) {
+    // It is a number, which is like a symbol in many ways, but without auto-predict.
+    wordStart_ = start;
+  }
 }
 
 void MainWindow::textChanged() {
@@ -289,55 +344,57 @@ void MainWindow::textChanged() {
   if (!editor) {
     return;
   }
-  QTextCursor cursor = editor->textCursor();
-  if (cursor.hasSelection()) {
-    return;
-  }
   // Get the current cursor position and the current text.
-  int start = cursor.selectionStart();
+  int pos = editor->textCursor().selectionStart();
   QString text = editor->toPlainText();
   QChar const* data = text.constData();
-  int len = 0;
-  while (start--) {
-    QChar ch = data[start];
-    // Test if the current character is a valid symbol character.
-    if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '_' || ch == '@') {
-      ++len;
-    } else {
-      break;
+  // Check if the character typed starts or continues a new word.
+  if (pos) {
+    QChar ch = data[pos - 1];
+    if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || ch == '@') {
+      if (wordStart_ == -1) {
+        // Typed the first letter of a symbol, and weren't previously in a number or symbol.
+        wordStart_ = pos - 1;
+        wordEnd_ = pos;
+      } else if (wordEnd_ != -1) {
+        // Typed the continuation of a symbol.
+        ++wordEnd_;
+      }
+    } else if ((ch >= '0' && ch <= '9')) {
+      if (wordEnd_ != -1) {
+        // Typed the continuation of a symbol.
+        ++wordEnd_;
+      }
     }
   }
-  ++start;
   // We now have the extent of the current symbol.  If it is more than three characters and starts
   // with a non-number, search for auto-complete matches.
-  if (len >= 3) {
-    QChar ch = data[start];
-    // Test if the first character is a valid initial symbol character (i.e. not a number).
-    if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || ch == '@') {
-      // Loop through all the known symbols.
-      suggestions_.clear();
-      for (auto it = predictions_.constBegin(), end = predictions_.constEnd(); it != end; ++it) {
-        auto const& name = it.key();
-        int upper = name.length();
-        if (upper >= len) {
-          for (int i = 0, j = 0; j != upper; ++j) {
-            // Case-insensitive comparison.
-            if (name[j].toUpper() == data[start + i].toUpper()) {
-              ++i;
-              if (i == len) {
-                // We've found a candidate, all the characters from `data` (the word currently
-                // being typed).  We sort the matches by `j`, so that the ones that take the fewest
-                // characters to match come first (so `Get` first lists the actual `Get` functions,
-                // before things like `TogglePlayerScoresPingsUpdate` which just happen to have `g`,
-                // `e`, and `t` somewhere in that order.  We also store "likelihood" metrics with
-                // the names, so that those symbols that are used more move up the list quickly.
-                // Probably double the likelihood every time a symbol is selected and subtract this
-                // value from the length.
-                // Get the final sort position.
-                suggestions_.push_back({ &name, j - it.value().Rank });
-                break;
-              }
+  int searchLen = pos - wordStart_;
+  if (wordStart_ != -1 && searchLen >= 3) {
+    // Loop through all the known symbols.
+    suggestions_.clear();
+    for (auto it = predictions_.constBegin(), end = predictions_.constEnd(); it != end; ++it) {
+      auto const& name = it.key();
+      int matchLen = name.length();
+      if (matchLen >= searchLen) {
+        for (int i = wordStart_, j = 0; j != matchLen; ++j) {
+          // Case-insensitive comparison.
+          if (name[j].toUpper() == data[i].toUpper()) {
+            ++i;
+            if (i == pos) {
+              // We've found a candidate, all the characters from `data` (the word currently
+              // being typed).  We sort the matches by `j`, so that the ones that take the fewest
+              // characters to match come first (so `Get` first lists the actual `Get` functions,
+              // before things like `TogglePlayerScoresPingsUpdate` which just happen to have `g`,
+              // `e`, and `t` somewhere in that order.  We also store "likelihood" metrics with
+              // the names, so that those symbols that are used more move up the list quickly.
+              // Probably double the likelihood every time a symbol is selected and subtract this
+              // value from the length.
+              // Get the final sort position.
+              suggestions_.push_back({ &name, j - it.value().Rank });
+              break;
             }
+          }
         }
       }
     }
@@ -355,7 +412,6 @@ void MainWindow::textChanged() {
       popup_->show();
     }
   }
-}
 }
 
 void MainWindow::replaceSuggestion() {
@@ -391,6 +447,7 @@ void MainWindow::replaceSuggestion() {
   // Increase how popular this replacement is.
   predictions_[replacement] = { predictions_[replacement].Rank * 2, predictions_[replacement].Count };
   hidePopup();
+  startWord();
 }
 
 void MainWindow::on_actionNew_triggered() {
@@ -547,6 +604,8 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
 }
 
 void MainWindow::on_actionClose_triggered() {
+  hidePopup();
+
   bool canClose = true;
   int cur = getCurrentIndex();
   if (cur < 0) {
@@ -593,6 +652,7 @@ void MainWindow::on_actionClose_triggered() {
   }
 
   updateTitle();
+  startWord();
 }
 
 void MainWindow::on_actionQuit_triggered() {
@@ -1200,7 +1260,7 @@ void MainWindow::createTab(const QString& fileName) {
   editors_.push_back(editor);
   editor->focusWidget();
   connect(editor, SIGNAL(textChanged()), SLOT(textChanged()));
-  connect(editor, SIGNAL(cursorPositionChanged()), SLOT(hidePopup()));
+  connect(editor, SIGNAL(cursorPositionChanged()), SLOT(cursorPositionChanged()));
   ui_->tabWidget->setCurrentIndex(ui_->tabWidget->count() - 1);
 }
 

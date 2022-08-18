@@ -81,10 +81,12 @@ class MainWindow: public QMainWindow {
   void tabCloseRequested(int index);
   void currentRowChanged(int index);
   void textChanged();
-  void hidePopup();
-  void finishWord();
+  void cursorPositionChanged();
 
  private:
+  void hidePopup();
+  void finishWord();
+  void startWord();
   void updateTitle();
   void replaceSuggestion();
   void loadNativeList();
@@ -143,9 +145,8 @@ class MainWindow: public QMainWindow {
   QListWidget* popup_ = nullptr;
 
   // Store the currently edited word for faster lookups.
-  int wordStart_ = -1; // The first character of the current symbol, -1 when it isn't a symbol.
-  int wordCur_ = -1; // The typing position, matches the cursor always.
-  int wordEnd_ = -1; // Same rules as `wordStart_`.
+  int wordStart_ = -1; // `-1` when the current text isn't a symbol or number.
+  int wordEnd_ = -1; // `-1` when the current text isn't a symbol.
   QString initialWord_; // What the word was before we were editing it.
 
   // Other data.
