@@ -451,6 +451,12 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
         return true;
       }
       break;
+    case Qt::Key_Escape:
+      if (popup_) {
+        hidePopup();
+        return true;
+      }
+      break;
     case Qt::Key_Tab:
       if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
         // Tab switcher forwards.
