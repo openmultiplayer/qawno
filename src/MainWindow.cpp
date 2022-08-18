@@ -340,18 +340,14 @@ void MainWindow::textChanged() {
       if (suggestions_.size()) {
         // There are some suggestions.  Sort them.
         std::sort(suggestions_.begin(), suggestions_.end());
-        for (auto const& it : suggestions_) {
-          std::stringstream ss;
-          ss << "Found: " << it.Name->toStdString() << " for " << QString(data + start, len).toStdString() << "\n";
-          OutputDebugString(ss.str().c_str());
-        }
         // Determine where to draw the suggestions box.
         QRect rect = editor->cursorRect();
-        int bottom = rect.bottom();
-        int right = rect.right();
-        popup_ = new QPushButton("Hello");// , editor);// , Qt::SplashScreen | Qt::WindowStaysOnTopHint);
+        popup_ = new QListWidget(editor);
         popup_->setParent(editor);
-        popup_->setGeometry(right, bottom, 200, 200);
+        popup_->setGeometry(rect.right() + 60, rect.bottom(), 170, 200);
+        for (auto const& it : suggestions_) {
+          QListWidgetItem* cur = new QListWidgetItem(*it.Name, popup_);
+        }
         popup_->show();
       }
     }
