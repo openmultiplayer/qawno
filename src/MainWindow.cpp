@@ -27,6 +27,7 @@
 #include <QUndoStack>
 #include <QLabel>
 #include <QPushButton>
+#include <QScrollBar>
 
 #include "AboutDialog.h"
 #include "Compiler.h"
@@ -740,7 +741,10 @@ void MainWindow::on_actionUndo_triggered() {
 
 void MainWindow::scrollByLines(int n) {
   if (auto editor = getCurrentEditor()) {
-    editor->scrollContents(0, 100);
+    QTextBlock block = editor->firstVisibleBlock();
+    QPointF contentOffset = editor->contentOffset();
+    QRectF boundingGeometry = editor->blockBoundingGeometry(block);
+    editor->verticalScrollBar()->setValue(editor->verticalScrollBar()->value() + n);
   //  //editor->scroll(0, 1);
   //  QTextCursor from = editor->textCursor();
   //  editor->vis
@@ -770,7 +774,7 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
         return true;
       } else if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
         // Scroll down.
-        scrollByLines(1);
+        scrollByLines(-1);
         return true;
       }
       break;
