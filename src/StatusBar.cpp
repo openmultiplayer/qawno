@@ -20,6 +20,10 @@ StatusBar::StatusBar(QWidget *parent)
 {
 }
 
-void StatusBar::setCursorPosition(int line, int column) {
-  showMessage(tr("Line %1, Column %2").arg(line).arg(column));
+void StatusBar::setCursorPosition(int line, int column, int selected) {
+  if (selected) {
+    showMessage(tr("Line %1, Column %2, Selected %3").arg(line).arg(column).arg(selected));
+  } else {
+    showMessage(tr("Line %1, Column %2").arg(line).arg(column));
+  }
 }

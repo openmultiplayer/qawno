@@ -24,7 +24,7 @@ class StatusBar: public QStatusBar {
  public:
   StatusBar(QWidget *parent = 0);
 
-  void setCursorPosition(int line, int column);
+  void setCursorPosition(int line, int column, int selected);
 };
 
 #endif // STATUSBAR_H

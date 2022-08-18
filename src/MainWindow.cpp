@@ -259,11 +259,19 @@ void MainWindow::tabCloseRequested(int index) {
 }
 
 void MainWindow::currentRowChanged(int index) {
-  //if (index == -1) {
-  //  statusBar()->showMessage("");
-  //} else {
-  //  statusBar()->showMessage(natives_[index]);
-  //}
+  if (index == -1) {
+    if (!getCurrentEditor()) {
+      return;
+    }
+    QTextCursor cursor = getCurrentEditor()->textCursor();
+    int line = cursor.blockNumber() + 1;
+    int column = cursor.columnNumber() + 1;
+    int selected = cursor.selectionEnd() - cursor.selectionStart();
+    dynamic_cast<StatusBar*>(statusBar())->setCursorPosition(line, column, selected);
+    statusBar()->showMessage("");
+  } else {
+    statusBar()->showMessage(natives_[index]);
+  }
 }
 
 void MainWindow::hidePopup() {
@@ -1325,7 +1333,8 @@ void MainWindow::on_editor_cursorPositionChanged() {
   QTextCursor cursor = getCurrentEditor()->textCursor();
   int line = cursor.blockNumber() + 1;
   int column = cursor.columnNumber() + 1;
-  dynamic_cast<StatusBar*>(statusBar())->setCursorPosition(line, column);
+  int selected = cursor.selectionEnd() - cursor.selectionStart();
+  dynamic_cast<StatusBar*>(statusBar())->setCursorPosition(line, column, selected);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
