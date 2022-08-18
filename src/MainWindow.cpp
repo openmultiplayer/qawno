@@ -387,7 +387,7 @@ void MainWindow::on_editor_textChanged() {
               // Probably double the likelihood every time a symbol is selected and subtract this
               // value from the length.
               // Get the final sort position.
-              suggestions_.push_back({ &name, j - it.value().Rank });
+              suggestions_.push_back({ &name, j - it.value().Count - it.value().Rank });
               break;
             }
           }
@@ -659,7 +659,7 @@ void MainWindow::replaceSuggestion() {
   cursor.setPosition(start + len , QTextCursor::KeepAnchor);
   cursor.insertText(replacement);
   // Increase how popular this replacement is.
-  predictions_[replacement] = { predictions_[replacement].Rank * 2, predictions_[replacement].Count };
+  predictions_[replacement] = { predictions_[replacement].Rank + 1, predictions_[replacement].Count };
   hidePopup();
   startWord();
 }
