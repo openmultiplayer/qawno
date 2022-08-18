@@ -61,10 +61,6 @@ class EditorWidget: public QPlainTextEdit {
 
   void toggleDarkMode(bool toggle);
 
-  using QPlainTextEdit::firstVisibleBlock;
-  using QPlainTextEdit::contentOffset;
-  using QPlainTextEdit::blockBoundingGeometry;
-
  public slots:
   void jumpToLine(long line);
 

@@ -741,15 +741,7 @@ void MainWindow::on_actionUndo_triggered() {
 
 void MainWindow::scrollByLines(int n) {
   if (auto editor = getCurrentEditor()) {
-    QTextBlock block = editor->firstVisibleBlock();
-    QPointF contentOffset = editor->contentOffset();
-    QRectF boundingGeometry = editor->blockBoundingGeometry(block);
     editor->verticalScrollBar()->setValue(editor->verticalScrollBar()->value() + n);
-  //  //editor->scroll(0, 1);
-  //  QTextCursor from = editor->textCursor();
-  //  editor->vis
-  //  from.blockNumber();
-  //  QTextBlock to = ()editor->document()->findBlockByLineNumber(4);
   }
 }
 
