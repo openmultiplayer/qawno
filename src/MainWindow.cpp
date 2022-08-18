@@ -259,11 +259,11 @@ void MainWindow::tabCloseRequested(int index) {
 }
 
 void MainWindow::currentRowChanged(int index) {
-  if (index == -1) {
-    statusBar()->showMessage("");
-  } else {
-    statusBar()->showMessage(natives_[index]);
-  }
+  //if (index == -1) {
+  //  statusBar()->showMessage("");
+  //} else {
+  //  statusBar()->showMessage(natives_[index]);
+  //}
 }
 
 void MainWindow::hidePopup() {
@@ -272,13 +272,6 @@ void MainWindow::hidePopup() {
     delete popup_;
     popup_ = nullptr;
   }
-}
-
-void MainWindow::cursorPositionChanged() {
-  hidePopup();
-  prevWord_ = initialWord_;
-  prevEnd_ = wordEnd_;
-  startWord();
 }
 
 void MainWindow::startWord() {
@@ -333,7 +326,9 @@ void MainWindow::startWord() {
   }
 }
 
-void MainWindow::textChanged() {
+void MainWindow::on_editor_textChanged() {
+  updateTitle();
+
   // Called when the current text changes, every time.  We may need to debounce this a little bit
   // because we are going to be scanning through a long list of strings every keypress otherwise.
   hidePopup();
@@ -1319,14 +1314,14 @@ void MainWindow::on_actionAboutQt_triggered() {
   QMessageBox::aboutQt(this);
 }
 
-void MainWindow::on_editor_textChanged() {
-  updateTitle();
-}
-
 void MainWindow::on_editor_cursorPositionChanged() {
   if (!getCurrentEditor()) {
     return;
   }
+  hidePopup();
+  prevWord_ = initialWord_;
+  prevEnd_ = wordEnd_;
+  startWord();
   QTextCursor cursor = getCurrentEditor()->textCursor();
   int line = cursor.blockNumber() + 1;
   int column = cursor.columnNumber() + 1;
@@ -1470,8 +1465,8 @@ void MainWindow::createTab(const QString& fileName) {
   fileNames_.push_back(fileName);
   editors_.push_back(editor);
   editor->focusWidget();
-  connect(editor, SIGNAL(textChanged()), SLOT(textChanged()));
-  connect(editor, SIGNAL(cursorPositionChanged()), SLOT(cursorPositionChanged()));
+  connect(editor, SIGNAL(textChanged()), SLOT(on_editor_textChanged()));
+  connect(editor, SIGNAL(cursorPositionChanged()), SLOT(on_editor_cursorPositionChanged()));
   ui_->tabWidget->setCurrentIndex(ui_->tabWidget->count() - 1);
 }
 
