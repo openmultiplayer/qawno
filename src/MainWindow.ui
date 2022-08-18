@@ -161,6 +161,9 @@
     <addaction name="actionFindNext"/>
     <addaction name="separator"/>
     <addaction name="actionGoToLine"/>
+    <addaction name="actionDelline"/>
+    <addaction name="actionDupline"/>
+    <addaction name="actionComment"/>
    </widget>
    <widget class="QMenu" name="menuBuild">
     <property name="title">
@@ -399,6 +402,39 @@
     <string>Ctrl+G</string>
    </property>
   </action>
+  <action name="actionDelline">
+   <property name="text">
+    <string>Delete Line</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete the current line</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="actionDupline">
+   <property name="text">
+    <string>Duplicate Line</string>
+   </property>
+   <property name="toolTip">
+    <string>Duplicate the current line.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="actionComment">
+   <property name="text">
+    <string>Comment Line/Selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Add // comments to a line, or /**/ comments to a selection.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+K</string>
+   </property>
+  </action>
   <action name="actionDarkMode">
    <property name="checkable">
     <bool>true</bool>
@@ -412,7 +448,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Most recent tab switch</string>
+    <string>MRU Tab Switching</string>
    </property>
    <property name="toolTip">
     <string>Using ctrl+tab switches to the most recently used (MRU) tab, not in order.</string>
@@ -530,6 +566,24 @@
      <y>231</y>
     </hint>
    </hints>
+  </connection>
+  <connection>
+   <sender>actionDelline</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>Delline()</slot>
+  </connection>
+  <connection>
+   <sender>actionDupline</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>Dupline()</slot>
+  </connection>
+  <connection>
+   <sender>actionComment</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>Comment()</slot>
   </connection>
  </connections>
 </ui>
