@@ -748,6 +748,9 @@ void MainWindow::scrollByLines(int n) {
 
 void MainWindow::on_actionColours_triggered() {
   QColor coloUr = QColorDialog::getColor(QColor(0xFF, 0xFF, 0xFF, 0xAA), nullptr, QString(), QColorDialog::ShowAlphaChannel);
+  if (!coloUr.isValid()) {
+    return;
+  }
   if (auto editor = getCurrentEditor()) {
     QTextCursor cursor = editor->textCursor();
     if (cursor.hasSelection()) {
