@@ -760,10 +760,10 @@ void MainWindow::on_actionColours_triggered() {
     QString str = coloUr.name(QColor::HexArgb);
     if (position == 0 || editor->document()->toPlainText()[position - 1] != 'x') {
       // Can't work out what sort of colour we want.  Just put the raw hex.
-      cursor.insertText(str.mid(3, 6));
+      cursor.insertText(str.mid(3, 6).toUpper());
     } else {
       // Has `x` before it, use the alpha.
-      cursor.insertText(str.mid(3, 6) + str.mid(1, 2));
+      cursor.insertText((str.mid(3, 6) + str.mid(1, 2)).toUpper());
     }
   }
 }
