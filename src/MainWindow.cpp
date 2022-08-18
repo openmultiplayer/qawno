@@ -738,6 +738,17 @@ void MainWindow::on_actionUndo_triggered() {
   }
 }
 
+void MainWindow::scrollByLines(int n) {
+  if (auto editor = getCurrentEditor()) {
+    editor->scrollContents(0, 100);
+  //  //editor->scroll(0, 1);
+  //  QTextCursor from = editor->textCursor();
+  //  editor->vis
+  //  from.blockNumber();
+  //  QTextBlock to = ()editor->document()->findBlockByLineNumber(4);
+  }
+}
+
 bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
   int count = ui_->tabWidget->count();
   switch (event->type()) {
@@ -747,11 +758,19 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
       if (popup_) {
         popup_->setCurrentRow(popup_->currentRow() + 1);
         return true;
+      } else if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
+        // Scroll up.
+        scrollByLines(1);
+        return true;
       }
       break;
     case Qt::Key_Up:
       if (popup_) {
         popup_->setCurrentRow(popup_->currentRow() - 1);
+        return true;
+      } else if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
+        // Scroll down.
+        scrollByLines(1);
         return true;
       }
       break;

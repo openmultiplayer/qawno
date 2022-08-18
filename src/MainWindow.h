@@ -98,6 +98,7 @@ class MainWindow: public QMainWindow {
   bool eventFilter(QObject* watched, QEvent* event);
   void finishSymbol(QString const& symbol, bool add);
   void parseFile(QString const text, bool add);
+  void scrollByLines(int n);
 
  private:
   Ui::MainWindow *ui_;
