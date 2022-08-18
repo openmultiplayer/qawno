@@ -164,6 +164,7 @@
     <addaction name="actionDelline"/>
     <addaction name="actionDupline"/>
     <addaction name="actionComment"/>
+    <addaction name="actionColours"/>
    </widget>
    <widget class="QMenu" name="menuBuild">
     <property name="title">
@@ -435,6 +436,17 @@
     <string>Ctrl+K</string>
    </property>
   </action>
+  <action name="actionColours">
+   <property name="text">
+    <string>Colour Selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Show the colour selection dialog (`m` matches sscanf).</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
+   </property>
+  </action>
   <action name="actionDarkMode">
    <property name="checkable">
     <bool>true</bool>
@@ -584,6 +596,12 @@
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>Comment()</slot>
+  </connection>
+  <connection>
+   <sender>actionColours</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>Colours()</slot>
   </connection>
  </connections>
 </ui>

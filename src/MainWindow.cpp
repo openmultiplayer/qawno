@@ -746,6 +746,9 @@ void MainWindow::scrollByLines(int n) {
   }
 }
 
+void MainWindow::on_actionColours_triggered() {
+}
+
 void MainWindow::on_actionDelline_triggered() {
   if (auto editor = getCurrentEditor()) {
     // Delete the line.
