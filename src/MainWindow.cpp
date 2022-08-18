@@ -28,6 +28,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QScrollBar>
+#include <QColorDialog>
 
 #include "AboutDialog.h"
 #include "Compiler.h"
@@ -42,7 +43,6 @@
 #include "StatusBar.h"
 
 #include "ui_MainWindow.h"
-#include <Windows.h>
 
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow(parent),
@@ -747,6 +747,22 @@ void MainWindow::scrollByLines(int n) {
 }
 
 void MainWindow::on_actionColours_triggered() {
+  QColor coloUr = QColorDialog::getColor(QColor(0x00, 0x00, 0x00, 0xAA), nullptr, QString(), QColorDialog::ShowAlphaChannel);
+  if (auto editor = getCurrentEditor()) {
+    QTextCursor cursor = editor->textCursor();
+    if (cursor.hasSelection()) {
+      return;
+    }
+    int position = cursor.position();
+    QString str = coloUr.name(QColor::HexArgb);
+    if (position == 0 || editor->document()->toPlainText()[position - 1] != 'x') {
+      // Can't work out what sort of colour we want.  Just put the raw hex.
+      cursor.insertText(str.mid(3, 6));
+    } else {
+      // Has `x` before it, use the alpha.
+      cursor.insertText(str.mid(3, 6) + str.mid(1, 2));
+    }
+  }
 }
 
 void MainWindow::on_actionDelline_triggered() {
