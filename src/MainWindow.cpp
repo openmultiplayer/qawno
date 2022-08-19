@@ -665,9 +665,7 @@ void MainWindow::replaceSuggestion() {
 }
 
 void MainWindow::on_actionNew_triggered() {
-  createTab("./new.pwn");
-  renameTab(getCurrentIndex(), QString("New ") + (++newCount_));
-  fileNames_.last() = "";
+  loadFile("");
 }
 
 void MainWindow::on_actionOpen_triggered() {
@@ -1141,11 +1139,6 @@ void MainWindow::on_actionSave_triggered() {
   setFileModified(false);
 }
 
-void MainWindow::renameTab(int index, QString const & name) {
-  ui_->tabWidget->widget(index)->setObjectName(name);
-  ui_->tabWidget->setTabText(index, name);
-}
-
 void MainWindow::on_actionSaveAs_triggered() {
   QSettings settings;
   QString dir = settings.value("LastSaveDir").toString();
@@ -1167,7 +1160,7 @@ void MainWindow::on_actionSaveAs_triggered() {
   }
   settings.setValue("LastFiles", files);
 
-  renameTab(getCurrentIndex(), fileInfo.fileName());
+  ui_->tabWidget->setTabText(getCurrentIndex(), QFileInfo(fileInfo).fileName());
   fileNames_[getCurrentIndex()] = fileName;
   return on_actionSave_triggered();
 }
@@ -1588,7 +1581,7 @@ const QString& MainWindow::getCurrentName() const {
 }
 
 EditorWidget* MainWindow::getCurrentEditor() const {
-  if (fileNames_.isEmpty()) {
+  if (editors_.isEmpty()) {
     return 0;
   }
   return editors_[getCurrentIndex()];
@@ -1618,11 +1611,8 @@ void MainWindow::updateTitle() {
 }
 
 bool MainWindow::loadFile(const QString &fileName) {
-  if (fileName.isEmpty()) {
-    return false;
-  }
-
-  QFile file(fileName);
+  bool nu = fileName.isEmpty();
+  QFile file(nu ? "./new.pwn" : fileName);
   if (!file.open(QIODevice::ReadOnly)) {
     QString message = tr("Could not open %1: %2.").arg(fileName)
                                                   .arg(file.errorString());
@@ -1633,11 +1623,11 @@ bool MainWindow::loadFile(const QString &fileName) {
     return false;
   }
 
-  createTab(fileName);
-  renameTab(getCurrentIndex(), file.fileName());
+  fileNames_.push_back(nu ? "" : fileName);
+  createTab(nu ? QString("New %1").arg(++newCount_) : QFileInfo(fileName).fileName());
   editors_.last()->setPlainText(file.readAll());
   parseFile(editors_.last()->toPlainText(), true);
-  setFileModified(false);
+  setFileModified(nu);
 
   return true;
 }
@@ -1682,6 +1672,7 @@ void MainWindow::createTab(const QString& fileName) {
   editor->setAcceptDrops(false);
   horizontalLayout->addWidget(editor);
   ui_->tabWidget->addTab(tab, QString());
+  ui_->tabWidget->setTabText(ui_->tabWidget->indexOf(tab), fileName);
   bool useDarkMode = ui_->actionDarkMode->isChecked();
   editor->toggleDarkMode(useDarkMode);
   editors_.push_back(editor);
@@ -1689,6 +1680,5 @@ void MainWindow::createTab(const QString& fileName) {
   connect(editor, SIGNAL(textChanged()), SLOT(on_editor_textChanged()));
   connect(editor, SIGNAL(cursorPositionChanged()), SLOT(on_editor_cursorPositionChanged()));
   ui_->tabWidget->setCurrentIndex(ui_->tabWidget->count() - 1);
-  fileNames_.push_back(fileName);
 }
 

@@ -92,7 +92,6 @@ class MainWindow: public QMainWindow {
   void replaceSuggestion();
   void loadNativeList();
   bool loadFile(const QString& fileName);
-  void renameTab(int index, QString const& name);
   bool isNewFile() const;
   bool isFileModified() const;
   void setFileModified(bool isModified);
