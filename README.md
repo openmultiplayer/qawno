@@ -63,8 +63,15 @@ Qawno is a simple cross-platform Pawn editor with syntax highlighting, script co
 
 * *Font -> Editor* - Change the font styles and sizes used in the main code editor pane (area ***4***).
 * *Font -> Output* - Change the font styles and sizes used in the compiler output pane (area ***5***).
+* *Dark Mode* - Make the main background for the editor, compiler, and native selector (areas ***4***, ***5***, and ***7***) black, and the code and other writing bright colours on top of this dark background.  Or reverse the effect.
+* *MRU Tab Switching* - You can change which tab (and thus file) is current visible using *Ctrl+Tab* to cycle through the tabs from left to right, or `Ctrl+Shift+Tab` to go from right to left.  This option instead changes that behaviour so that *Ctrl+Tab* instead jumps straight to the tab used previously, making the current tab the previous tab in the process.  Keeping *Ctrl* held down will continue to cycle through in the *Most Recently Used* (*MRU*) order, with *Ctrl+Shift+Tab* still going backwards through this new order.
+* *Compiler* - Set the location and launch parameters for the compiler when using *Build -> Compile*.
+* *Server* - Set the location and launch parameters for the server when using *Build -> Run*.
 
 ![Screenshot](documentation/menu-help.png)
+
+* *About* - Display information about who wrote this Pawn editor.
+* *About Qt* - Display information about the Qt library, used to create this Pawn editor.
 
  Colour Picker
 ---------------
