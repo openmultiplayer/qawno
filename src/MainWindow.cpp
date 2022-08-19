@@ -783,7 +783,7 @@ void MainWindow::on_actionColours_triggered() {
   // Empty padding.
   QColorDialog::setStandardColor(21, QColor(0xFD, 0xDE, 0x95, 0xFF)); // Y_Less yellow
   QColorDialog::setStandardColor(27, QColor(0xF7, 0x7D, 0x10, 0xFF)); // Y_Less orange
-  QColorDialog::setStandardColor(33, QColor(0x84, 0x77, 0xB7, 0xFF)); // open.mp purple
+  QColorDialog::setStandardColor(33, QColor(0x90, 0x65, 0x52, 0xFF)); // SA-MP brown
 
   // Black and white, the same in game text and CGA.
   QColorDialog::setStandardColor(44, QColor(0xFF, 0xFF, 0xFF, 0xFF));
@@ -807,8 +807,8 @@ void MainWindow::on_actionColours_triggered() {
   QColorDialog::setStandardColor(47, QColor(0xAA, 0xAA, 0xAA, 0xFF));
 
   // Extra colours.
-  QColorDialog::setStandardColor(4, QColor(0x90, 0x65, 0x52, 0xFF)); // SA-MP brown
-  QColorDialog::setStandardColor(5, QColor(0xF0, 0x7B, 0x0F, 0xFF)); // SA-MP orange
+  QColorDialog::setStandardColor( 4, QColor(0x84, 0x77, 0xB7, 0xFF)); // open.mp purple
+  QColorDialog::setStandardColor( 5, QColor(0xF0, 0x7B, 0x0F, 0xFF)); // SA-MP orange
 
   lastColour_ = QColorDialog::getColor(lastColour_, nullptr, QString(), QColorDialog::ShowAlphaChannel | QColorDialog::DontUseNativeDialog);
   if (!lastColour_.isValid()) {
