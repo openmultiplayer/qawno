@@ -161,7 +161,7 @@ There are only two, but for larger includes this allows for neat grouping of nat
 /**/ native Example1Impl(value);
 
 /*
-native #The 1st example(value);
+native #The 1st example();
 */
 
 /*
@@ -173,7 +173,7 @@ stock Example1(value)
 }
 
 /*
-native #The 2nd example(value);
+native #The 2nd example();
 */
 
 native Example2(value);
@@ -183,7 +183,7 @@ In Qawno gives:
 
 ![Example natives in the list, with headings.](documentation/natives-3.png)
 
-A real-world include showing some of these tricks can be seen in [https://github.com/Y-Less/sscanf/blob/master/sscanf2.inc](the sscanf plugin).
+A real-world include showing some of these tricks can be seen in [the sscanf plugin](https://github.com/Y-Less/sscanf/blob/master/sscanf2.inc).  The heading were inspired by an earlier trick used by YSI for organising natives in Pawno, but without `#` so they could still be used.
 
 ### 8. Line Numbers
 
