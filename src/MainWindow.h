@@ -155,6 +155,8 @@ class MainWindow: public QMainWindow {
   QString initialWord_; // What the word was before we were editing it.
   QString prevWord_; // Because the cursor position updates before the text.
 
+  QColor lastColour_ = QColor(0xFF, 0xFF, 0xFF, 0xAA);
+
   // Other data.
   QStack<int> mru_;
   int findStart_ = 0;

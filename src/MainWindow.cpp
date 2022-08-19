@@ -747,8 +747,8 @@ void MainWindow::scrollByLines(int n) {
 }
 
 void MainWindow::on_actionColours_triggered() {
-  QColor coloUr = QColorDialog::getColor(QColor(0xFF, 0xFF, 0xFF, 0xAA), nullptr, QString(), QColorDialog::ShowAlphaChannel);
-  if (!coloUr.isValid()) {
+  lastColour_ = QColorDialog::getColor(lastColour_, nullptr, QString(), QColorDialog::ShowAlphaChannel);
+  if (!lastColour_.isValid()) {
     return;
   }
   if (auto editor = getCurrentEditor()) {
@@ -757,7 +757,7 @@ void MainWindow::on_actionColours_triggered() {
       return;
     }
     int position = cursor.position();
-    QString str = coloUr.name(QColor::HexArgb);
+    QString str = lastColour_.name(QColor::HexArgb);
     if (position == 0 || editor->document()->toPlainText()[position - 1] != 'x') {
       // Can't work out what sort of colour we want.  Just put the raw hex.
       cursor.insertText(str.mid(3, 6).toUpper());
