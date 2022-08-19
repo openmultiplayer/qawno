@@ -93,7 +93,7 @@ This is where the compiler displays its messages after being invoked with *Run -
 
 By default this shows the current line and column of the cursor:
 
-![The status bar showing the cursor's current line and column.](documentation/selected-status.png)
+![The status bar showing the cursor's current line and column.](documentation/status.png)
 
 If some text is selected it will also display how much text is selected:
 
