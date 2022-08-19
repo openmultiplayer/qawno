@@ -1141,7 +1141,7 @@ void MainWindow::on_actionSave_triggered() {
 
 void MainWindow::on_actionSaveAs_triggered() {
   QSettings settings;
-  QString dir = settings.value("LastSaveDir").toString();
+  QString dir = settings.value("LastSaveDir", "../gamemodes").toString();
 
   QString caption = tr("Save File As");
   QString filter = tr("Pawn scripts (*.pwn *.inc)");
