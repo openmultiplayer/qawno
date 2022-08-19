@@ -1597,12 +1597,13 @@ void MainWindow::updateTitle() {
   if (fileNames_.isEmpty()) {
     title = "No File";
   } else if (isNewFile()) {
-    title = "Untitled File";
+    title = "Untitled File *";
   } else {
     title = QFileInfo(fileNames_[getCurrentIndex()]).fileName();
     if (isFileModified()) {
-      title.append("*");
+      title.append(" *");
     }
+    ui_->tabWidget->setTabText(getCurrentIndex(), title);
   }
   title.append(" - ");
   title.append(QCoreApplication::applicationName());
@@ -1624,7 +1625,7 @@ bool MainWindow::loadFile(const QString &fileName) {
   }
 
   fileNames_.push_back(nu ? "" : fileName);
-  createTab(nu ? QString("New %1").arg(++newCount_) : QFileInfo(fileName).fileName());
+  createTab(nu ? QString("New %1 *").arg(++newCount_) : QFileInfo(fileName).fileName());
   editors_.last()->setPlainText(file.readAll());
   parseFile(editors_.last()->toPlainText(), true);
   setFileModified(nu);
