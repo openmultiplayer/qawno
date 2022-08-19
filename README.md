@@ -23,11 +23,15 @@ Qawno is a simple cross-platform Pawn editor with syntax highlighting, script co
 
 ![Screenshot](documentation/annotations.png)
 
-1. **The Title Bar.**  Tells you the name of the file currently being edited, and the name of the program (*Qawno*).  If the current file has been changed and not saved this will include a `*` after the filename:
+### 1. The Title Bar.
+
+Tells you the name of the file currently being edited, and the name of the program (*Qawno*).  If the current file has been changed and not saved this will include a `*` after the filename:
 
 ![Screenshot](documentation/unsaved.png)
 
-2. **The Menu Bar.**  Provides visual access to all the editor features and options.
+### 2. The Menu Bar.
+
+Provides visual access to all the editor features and options.
 
 ![Screenshot](documentation/menu-file.png)
 
@@ -52,7 +56,7 @@ Qawno is a simple cross-platform Pawn editor with syntax highlighting, script co
 * *Delete Line* - Will remove the whole line that the cursor is currently on.
 * *Duplicate Line* - Will make a copy of the whole line that the cursor is currently on below the current line.
 * *Comment Line/Selection* - If the cursor is on a normal line with nothing selected, this will comment out the current line by adding `//` to the start.  If a block of text is selected this will instead comment out that block using `/* */`.  Pressing this option again on the same line or block will reverse the action, so performing it on a line or block already commented out will uncomment the line or block.
-* *Colour Selection* - Opens the colour selection dialog (colour picker).  This makes inserting hex colour codes simpler by allowing you to choose them visually, and by pre-defining and saving useful or common ones.
+* *Colour Selection* - Opens the colour selection dialog (colour picker).  This makes inserting hex colour codes simpler by allowing you to choose them visually, and by pre-defining and saving useful or common ones.  See below for full documentation on this feature.
 
 ![Screenshot](documentation/menu-build.png)
 
@@ -72,6 +76,42 @@ Qawno is a simple cross-platform Pawn editor with syntax highlighting, script co
 
 * *About* - Display information about who wrote this Pawn editor.
 * *About Qt* - Display information about the Qt library, used to create this Pawn editor.
+
+### 3. The Tab Bar
+
+This shows you all the files you currently have open.  Clicking on any of the tabs will bring that file to the fore so you can edit it.  If there are a lot of tabs open (or tabs with long paths) the tab bar will have small arrows for scrolling the list.
+
+### 4. The Editor
+
+This is where you type code to be run later.
+
+### 5. Compiler Output
+
+This is where the compiler displays its messages after being invoked with *Run -> Compile*.
+
+### 6. The Status Bar
+
+By default this shows the current line and column of the cursor.  If some text is selected it will also display how much text is selected:
+
+![Colour Picker](documentation/selected-text.png)
+![Colour Picker](documentation/selected-status.png)
+
+If a native is selected from the native list (area ***7***) the status bar will display the full prototype (design) for the selected native:
+
+![Colour Picker](documentation/native-native.png)
+![Colour Picker](documentation/native-status.png)
+
+Clicking on 
+
+![Colour Picker](documentation/native.png)
+
+### 3. The Tab Bar
+
+This shows you all the files you currently have open.  Clicking on any of the tabs will bring that file to the fore so you can edit it.  If there are a lot of tabs open (or tabs with long paths) the tab bar will have small arrows for scrolling the list.
+
+### 3. The Tab Bar
+
+This shows you all the files you currently have open.  Clicking on any of the tabs will bring that file to the fore so you can edit it.  If there are a lot of tabs open (or tabs with long paths) the tab bar will have small arrows for scrolling the list.
 
  Colour Picker
 ---------------
