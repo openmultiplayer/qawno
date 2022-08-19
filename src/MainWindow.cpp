@@ -756,11 +756,11 @@ void MainWindow::on_actionColours_triggered() {
   QColorDialog::setStandardColor(18, QColor(0xE2, 0xC0, 0x63, 0xAA)); // ~y~
   QColorDialog::setStandardColor(24, QColor(0xFF, 0xFF, 0x94, 0xAA)); // ~y~~h~
   QColorDialog::setStandardColor(30, QColor(0xFF, 0xFF, 0xDE, 0xAA)); // ~y~~h~~h~ / ~g~~h~~h~~h~~h~
-  QColorDialog::setStandardColor(37, QColor(0x36, 0x68, 0x2C, 0xFF)); // ~g~
+  QColorDialog::setStandardColor(37, QColor(0x36, 0x68, 0x2C, 0xFF)); // ~g~ / Positive Money
   QColorDialog::setStandardColor(43, QColor(0x51, 0x9C, 0x42, 0xFF)); // ~g~~h~
   QColorDialog::setStandardColor(42, QColor(0x79, 0xEA, 0x63, 0xFF)); // ~g~~h~~h~
   QColorDialog::setStandardColor(36, QColor(0xB5, 0xFF, 0x94, 0xFF)); // ~g~~h~~h~~h~
-  QColorDialog::setStandardColor(1, QColor(0xB4, 0x19, 0x1D, 0xFF)); // ~r~
+  QColorDialog::setStandardColor(1, QColor(0xB4, 0x19, 0x1D, 0xFF)); // ~r~ / Negative Money
   QColorDialog::setStandardColor(7, QColor(0xFF, 0x25, 0x2B, 0xFF)); // ~r~~h~
   QColorDialog::setStandardColor(13, QColor(0xFF, 0x37, 0x40, 0xFF)); // ~r~~h~~h~
   QColorDialog::setStandardColor(19, QColor(0xFF, 0x52, 0x60, 0xFF)); // ~r~~h~~h~~h~
@@ -774,22 +774,20 @@ void MainWindow::on_actionColours_triggered() {
   QColorDialog::setStandardColor(32, QColor(0xFC, 0xA5, 0xFF, 0xFF)); // ~p~~h~
   QColorDialog::setStandardColor(38, QColor(0xFF, 0xF7, 0xFF, 0xFF)); // ~p~~h~~h~
 
-  // One cell of padding, which is also exactly game text and CGA black.
-  QColorDialog::setStandardColor(44, QColor(0x00, 0x00, 0x00, 0xFF));
 
-  QColorDialog::setStandardColor(3, QColor(0xE1, 0xE1, 0xE1, 0xFF)); // Game Text style 2/5
+  // Game Text style 2/5 and stunt bonuses.  May be around 0xDDDDDB.
+  QColorDialog::setStandardColor(3, QColor(0xE1, 0xE1, 0xE1, 0xFF));
   QColorDialog::setStandardColor(9, QColor(0xAC, 0xCB, 0xF1, 0xFF)); // Game Text style 6
+  QColorDialog::setStandardColor(15, QColor(0x96, 0x96, 0x96, 0xFF)); // Radio switch
 
-  // These five can be replaced, they're identical to other Game Text styles or VERY close (within
-  // margin of error for the original collection method, but I don't know which is more correct).
-  QColorDialog::setStandardColor(15, QColor(0x36, 0x68, 0x2C, 0xFF)); // Positive money
-  QColorDialog::setStandardColor(21, QColor(0xB4, 0x19, 0x1D, 0xFF)); // Negative money
-  QColorDialog::setStandardColor(27, QColor(0x96, 0x96, 0x96, 0xFF)); // Radio switch
-  QColorDialog::setStandardColor(33, QColor(0xDD, 0xDD, 0xDB, 0xFF)); // Stunt bonus
-  QColorDialog::setStandardColor(39, QColor(0xFF, 0xFF, 0xFF, 0x96)); // Message box
+  // Empty padding.
+  QColorDialog::setStandardColor(21, QColor(0xFD, 0xDE, 0x95, 0xFF)); // Y_Less yellow
+  QColorDialog::setStandardColor(27, QColor(0xF7, 0x7D, 0x10, 0xFF)); // Y_Less orange
+  QColorDialog::setStandardColor(33, QColor(0x84, 0x77, 0xB7, 0xFF)); // open.mp purple
 
-  // One cell of padding, which is also exactly game text and CGA white.
-  QColorDialog::setStandardColor(45, QColor(0xFF, 0xFF, 0xFF, 0xFF));
+  // Black and white, the same in game text and CGA.
+  QColorDialog::setStandardColor(44, QColor(0xFF, 0xFF, 0xFF, 0xFF));
+  QColorDialog::setStandardColor(45, QColor(0x00, 0x00, 0x00, 0xFF));
 
   // 16 CGA colours (with dark yellow, without black).
   QColorDialog::setStandardColor(10, QColor(0x55, 0x55, 0xFF, 0xFF));
@@ -802,14 +800,14 @@ void MainWindow::on_actionColours_triggered() {
   QColorDialog::setStandardColor(29, QColor(0xFF, 0x55, 0x55, 0xFF));
   QColorDialog::setStandardColor(34, QColor(0xAA, 0x00, 0xAA, 0xFF));
   QColorDialog::setStandardColor(35, QColor(0xFF, 0x55, 0xFF, 0xFF));
+  QColorDialog::setStandardColor(39, QColor(0xAA, 0x55, 0x00, 0xFF));
   QColorDialog::setStandardColor(40, QColor(0xAA, 0xAA, 0x00, 0xFF));
   QColorDialog::setStandardColor(41, QColor(0xFF, 0xFF, 0x55, 0xFF));
-  QColorDialog::setStandardColor(46, QColor(0x55, 0x55, 0x55, 0xAA));
-  QColorDialog::setStandardColor(47, QColor(0xAA, 0xAA, 0xAA, 0xAA));
+  QColorDialog::setStandardColor(46, QColor(0x55, 0x55, 0x55, 0xFF));
+  QColorDialog::setStandardColor(47, QColor(0xAA, 0xAA, 0xAA, 0xFF));
 
   // Extra colours.
-  //QColorDialog::setStandardColor(, QColor(0xAA, 0x55, 0x00, 0xFF)); // CGA Brown.
-  QColorDialog::setStandardColor(4, QColor(0x84, 0x77, 0xB7, 0xFF)); // open.mp purple
+  QColorDialog::setStandardColor(4, QColor(0x90, 0x65, 0x52, 0xFF)); // SA-MP brown
   QColorDialog::setStandardColor(5, QColor(0xF0, 0x7B, 0x0F, 0xFF)); // SA-MP orange
 
   lastColour_ = QColorDialog::getColor(lastColour_, nullptr, QString(), QColorDialog::ShowAlphaChannel | QColorDialog::DontUseNativeDialog);
