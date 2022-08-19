@@ -1498,6 +1498,7 @@ void MainWindow::on_actionCompile_triggered() {
   if (fileNames_.isEmpty()) {
     return;
   }
+  on_actionSaveAll_triggered();
   Compiler compiler;
   const QString& fileName = fileNames_[getCurrentIndex()];
   ui_->output->clear();
