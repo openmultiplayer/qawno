@@ -343,11 +343,6 @@ public OnPlayerClickMap(playerid, Float:fX, Float:fY, Float:fZ)
 	return 1;
 }
 
-public OnPlayerClickTextDraw(playerid, Text:clickedid)
-{
-	return 1;
-}
-
 public OnIncomingConnection(playerid, ip_address[], port)
 {
 	return 1;
