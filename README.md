@@ -198,11 +198,15 @@ You can open multiple files at once by selecting them:
 
 Dragging them on to Qawno:
 
-![Selecting multiple files.](documentation/files-drag.png)
+![Dragging multiple files.](documentation/files-drag.png)
 
 And dropping them there:
 
-![Selecting multiple files.](documentation/files-drop.png)
+![Dropping multiple files.](documentation/files-drop.png)
+
+You can alternatively open multiple files at once using `File -> Open` and selecting multiple files:
+
+![Opening multiple files.](documentation/multi-select.png)
 
  Colour Picker
 ---------------

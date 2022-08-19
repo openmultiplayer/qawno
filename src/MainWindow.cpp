@@ -674,29 +674,36 @@ void MainWindow::on_actionOpen_triggered() {
 
   QString caption = tr("Open File");
   QString filter = tr("Pawn scripts (*.pwn *.inc)");
-  QString fileName = QFileDialog::getOpenFileName(this, caption, dir, filter);
+  QStringList fileNames = QFileDialog::getOpenFileNames(this, caption, dir, filter);
 
+  int loaded = 0;
   bool close = fileNames_.count() == 1 && isNewFile() && !isFileModified();
-  // Is the file already open?  If so just switch to the tab.
-  for (int i = fileNames_.count(); i--; ) {
-    if (fileNames_[i] == fileName) {
-      ui_->tabWidget->setCurrentIndex(i);
-      return;
+  for (auto const& fileName : fileNames) {
+    // Is the file already open?  If so just switch to the tab.
+    for (int i = fileNames_.count(); i--; ) {
+      if (fileNames_[i] == fileName) {
+        ui_->tabWidget->setCurrentIndex(i);
+        continue;
+      }
     }
+
+    if (!loadFile(fileName)) {
+      continue;
+    }
+
+    ++loaded;
   }
 
-  if (!loadFile(fileName)) {
+  if (loaded == 0) {
     return;
-  }
-
-  if (close) {
+  } else if (close) {
     // Opening a first file replaces the initial new file.
     editors_.remove(0);
     fileNames_.removeAt(0);
     ui_->tabWidget->removeTab(0);
   }
 
-  dir = QFileInfo(fileName).dir().path();
+  dir = QFileInfo(fileNames.first()).dir().path();
   settings.setValue("LastOpenDir", dir);
   QStringList files {};
   for (auto const & i : fileNames_) {
