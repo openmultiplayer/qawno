@@ -1558,11 +1558,7 @@ void MainWindow::dropEvent(QDropEvent *event) {
   QList<QUrl> urls = event->mimeData()->urls();
   foreach (QUrl url, urls) {
     if (url.isLocalFile()) {
-      on_actionClose_triggered();
-      if (isFileEmpty()) {
-        loadFile(url.toLocalFile());
-      }
-      break;
+      loadFile(url.toLocalFile());
     }
   }
 }

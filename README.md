@@ -189,6 +189,21 @@ A real-world include showing some of these tricks can be seen in [the sscanf plu
 
 This shows the numbers for each line, i.e. how far down in the file they are.  Compiler warnings and errors use these line numbers to direct you to the problems, and you can jump straight to them by value with `Go To Line...`.
 
+ Opening Files
+---------------
+
+You can open multiple files at once by selecting them:
+
+![Selecting multiple files.](documentation/files-select.png)
+
+Dragging them on to Qawno:
+
+![Selecting multiple files.](documentation/files-drag.png)
+
+And dropping them there:
+
+![Selecting multiple files.](documentation/files-drop.png)
+
  Colour Picker
 ---------------
 
