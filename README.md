@@ -1,11 +1,73 @@
-qawno
-=====
+ Qawno
+=======
 
-Qawno is a simple cross-platform Pawn editor with syntax highlighting and script compilation support.
+Qawno is a simple cross-platform Pawn editor with syntax highlighting, script compilation, and open.mp server launch support.
 
 ![Screenshot](documentation/screenshot.png)
 
-## Colour Picker
+ Features
+----------
+
+* **Syntax Highlighting** - Simplify reading code by visually distinguishing different types of text, comments, strings, keywords, etc.
+* **Auto Completion** - Speeds up code by trying to guess what function you are trying to write, and suggesting complete symbols to insert in to code.
+* **Natives List** - Show known natives (and some other functions) in a side bar for fast reference.  Clicking on these will show their parameters and return types as well.
+* **Tabs** - Open multiple files at once while working on large scripts.
+* **Pawn Compiler** - Compile your code and view the output directly in a panel at the bottom of the program.
+* **open.mp Launch** - Start a server running your code immediately for fast feedback.
+* **Colour Picker** - Select hex numbers representing colours visually (`Ctrl+M`).
+* **Editing Helpers** - Scroll with `Ctrl+Up`/`Ctrl+Down`.  Duplicate a line with `Ctrl+D`.  Delete a line with `Ctrl+L`.  Comment a line with `Ctrl+K`.  Also block comment a selection with `Ctrl+K`.
+* **Find And Replace** - Search for some text, and optionally replace the found location with new text.  Alternatively replace all the instances of that text with the new version.
+
+ Main View
+-----------
+
+![Screenshot](documentation/annotations.png)
+
+1. **The Title Bar.**  Tells you the name of the file currently being edited, and the name of the program (*Qawno*).  If the current file has been changed and not saved this will include a `*` after the filename:
+
+![Screenshot](documentation/unsaved.png)
+
+2. **The Menu Bar.**  Provides visual access to all the editor features and options.
+
+![Screenshot](documentation/menu-file.png)
+
+* *New* - Start a new file in a new tab (shown in area ***3***).
+* *Open* - Open an existing file in a new tab (or the initial tab if the program was just started).
+* *Close* - Close the current file in the current tab.  Will prompt you to save it if the code has been changed.
+* *Save* - Save the current file in the current tab.  Will do *Save As* for new files.
+* *Save As* - Save the current file in the current tab with a specified name and location.
+* *Save All* - Save all the files open in all the tabs.  New files will prompt for a name and location.
+* *Quit* - Close Qawno.  Will remember all the currently open tabs for next time.
+
+![Screenshot](documentation/menu-edit.png)
+
+* *Undo* - Revert the last change made, such as typing, pasting, or replacing.
+* *Redo* - If you undid an action, perform the action again.
+* *Cut* - Put the currently selected code on to the clipboard and delete it from the editing text.
+* *Copy* - Put the currently selected code on to the clipboard.
+* *Paste* - Insert the latest item from the clipboard (if it is text) in to the current position in code.  If code is selected this will replace the selection.
+* *Find...* - Search for some text in the current document.  May optionally replace the found text with new text.
+* *Find Next...* - If an item of text has been found this attempts to move on to the next instance of that text in the current file.
+* *Go To Line...* - Enter a line number and the cursor will move straight to that line (see area ***8***).  Useful for jumping to compiler error locations.
+* *Delete Line* - Will remove the whole line that the cursor is currently on.
+* *Duplicate Line* - Will make a copy of the whole line that the cursor is currently on below the current line.
+* *Comment Line/Selection* - If the cursor is on a normal line with nothing selected, this will comment out the current line by adding `//` to the start.  If a block of text is selected this will instead comment out that block using `/* */`.  Pressing this option again on the same line or block will reverse the action, so performing it on a line or block already commented out will uncomment the line or block.
+* *Colour Selection* - Opens the colour selection dialog (colour picker).  This makes inserting hex colour codes simpler by allowing you to choose them visually, and by pre-defining and saving useful or common ones.
+
+![Screenshot](documentation/menu-build.png)
+
+* *Compile* - Use the pawn compiler to convert the current file in to a .AMX.  Will save *all* open files first as the main script may depend on other files being edited at the same time.
+* *Run* - Compile the code as with *Compile*, and then attempt to run the open.mp server and lauch the current mode.  If a server is already open this will first kill that instance so that clients/players connected will automatically re-connect.
+
+![Screenshot](documentation/menu-settings.png)
+
+* *Font -> Editor* - Change the font styles and sizes used in the main code editor pane (area ***4***).
+* *Font -> Output* - Change the font styles and sizes used in the compiler output pane (area ***5***).
+
+![Screenshot](documentation/menu-help.png)
+
+ Colour Picker
+---------------
 
 Going to *Edit -> Colour Selection* or pressing *Ctrl+M* will bring up the colour selection dialog, shown below:
 
