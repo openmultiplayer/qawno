@@ -102,7 +102,7 @@ MainWindow::MainWindow(QWidget *parent)
   } else {
     QStringList lastOpenedFileNames = settings.value("LastFiles").toStringList();
     if (lastOpenedFileNames.count() == 0) {
-      createTab("");
+      on_actionNew_triggered();
     } else for (auto const & i : lastOpenedFileNames) {
       if (!i.isEmpty()) {
         loadFile(i);
@@ -665,7 +665,9 @@ void MainWindow::replaceSuggestion() {
 }
 
 void MainWindow::on_actionNew_triggered() {
-  createTab("");
+  createTab("./new.pwn");
+  renameTab(getCurrentIndex(), QString("New ") + (++newCount_));
+  fileNames_.last() = "";
 }
 
 void MainWindow::on_actionOpen_triggered() {
@@ -1069,7 +1071,7 @@ void MainWindow::on_actionClose_triggered() {
     ui_->tabWidget->removeTab(cur);
 
     if (fileNames_.count() == 0) {
-      createTab("");
+      on_actionNew_triggered();
     }
   }
 
@@ -1139,6 +1141,11 @@ void MainWindow::on_actionSave_triggered() {
   setFileModified(false);
 }
 
+void MainWindow::renameTab(int index, QString const & name) {
+  ui_->tabWidget->widget(index)->setObjectName(name);
+  ui_->tabWidget->setTabText(index, name);
+}
+
 void MainWindow::on_actionSaveAs_triggered() {
   QSettings settings;
   QString dir = settings.value("LastSaveDir").toString();
@@ -1151,16 +1158,17 @@ void MainWindow::on_actionSaveAs_triggered() {
     return;
   }
 
-  dir = QFileInfo(fileName).dir().path();
+  QFileInfo fileInfo(fileName);
+  dir = fileInfo.dir().path();
   settings.setValue("LastSaveDir", dir);
   QStringList files {};
-  fileNames_[getCurrentIndex()] = fileName;
   for (auto const & i : fileNames_) {
     files.push_back(i);
   }
   settings.setValue("LastFiles", files);
 
-  ui_->tabWidget->setTabText(getCurrentIndex(), fileName);
+  renameTab(getCurrentIndex(), fileInfo.fileName());
+  fileNames_[getCurrentIndex()] = fileName;
   return on_actionSave_triggered();
 }
 
@@ -1626,6 +1634,7 @@ bool MainWindow::loadFile(const QString &fileName) {
   }
 
   createTab(fileName);
+  renameTab(getCurrentIndex(), file.fileName());
   editors_.last()->setPlainText(file.readAll());
   parseFile(editors_.last()->toPlainText(), true);
   setFileModified(false);
@@ -1660,7 +1669,6 @@ bool MainWindow::isFileEmpty() const {
 void MainWindow::createTab(const QString& fileName) {
   mru_.push(ui_->tabWidget->count());
   QWidget* tab = new QWidget();
-  tab->setObjectName(fileName);
   QHBoxLayout* horizontalLayout = new QHBoxLayout(tab);
   horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
   horizontalLayout->setMargin(0);
@@ -1674,14 +1682,13 @@ void MainWindow::createTab(const QString& fileName) {
   editor->setAcceptDrops(false);
   horizontalLayout->addWidget(editor);
   ui_->tabWidget->addTab(tab, QString());
-  ui_->tabWidget->setTabText(ui_->tabWidget->indexOf(tab), fileName);
   bool useDarkMode = ui_->actionDarkMode->isChecked();
   editor->toggleDarkMode(useDarkMode);
-  fileNames_.push_back(fileName);
   editors_.push_back(editor);
   editor->focusWidget();
   connect(editor, SIGNAL(textChanged()), SLOT(on_editor_textChanged()));
   connect(editor, SIGNAL(cursorPositionChanged()), SLOT(on_editor_cursorPositionChanged()));
   ui_->tabWidget->setCurrentIndex(ui_->tabWidget->count() - 1);
+  fileNames_.push_back(fileName);
 }
 

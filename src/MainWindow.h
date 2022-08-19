@@ -92,6 +92,7 @@ class MainWindow: public QMainWindow {
   void replaceSuggestion();
   void loadNativeList();
   bool loadFile(const QString& fileName);
+  void renameTab(int index, QString const& name);
   bool isNewFile() const;
   bool isFileModified() const;
   void setFileModified(bool isModified);
@@ -162,6 +163,7 @@ class MainWindow: public QMainWindow {
   int findStart_ = 0;
   int findRound_ = 0;
   int mruIndex_ = 0;
+  int newCount_ = 0;
   QMap<QString, int> words_;
 };
 
