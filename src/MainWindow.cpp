@@ -97,18 +97,23 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowState(Qt::WindowMaximized);
   }
 
+  int loaded = 0;
   if (QApplication::instance()->arguments().size() > 1) {
-    loadFile(QApplication::instance()->arguments()[1]);
+    if (loadFile(QApplication::instance()->arguments()[1])) {
+      ++loaded;
+    }
   } else {
     QStringList lastOpenedFileNames = settings.value("LastFiles").toStringList();
-    if (lastOpenedFileNames.count() == 0) {
-      on_actionNew_triggered();
-    } else for (auto const & i : lastOpenedFileNames) {
-      if (!i.isEmpty()) {
-        loadFile(i);
+    for (auto const & i : lastOpenedFileNames) {
+      if (!i.isEmpty() && loadFile(i)) {
+        ++loaded;
       }
     }
   }
+  if (loaded == 0) {
+    on_actionNew_triggered();
+  }
+
   connect(ui_->tabWidget, SIGNAL(currentChanged(int)), SLOT(currentChanged(int)));
   connect(ui_->tabWidget, SIGNAL(tabCloseRequested(int)), SLOT(tabCloseRequested(int)));
   connect(ui_->functions, SIGNAL(currentRowChanged(int)), SLOT(currentRowChanged(int)));
