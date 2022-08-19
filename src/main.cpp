@@ -15,9 +15,26 @@
 
 #include <QApplication>
 #include <QCoreApplication>
+#include <QTranslator>
 
 #include <qawno.h>
 #include "MainWindow.h"
+
+#include <string.h>
+
+class ColourTranslator : public QTranslator
+{
+public:
+  QString translate(const char* context, const char* sourceText, const char* disambiguation, int n) const override {
+    static QChar color[] = { 'c', 'o', 'l', 'o', 'r' };
+    static QChar Color[] = { 'C', 'o', 'l', 'o', 'r' };
+    static QChar COLOR[] = { 'C', 'O', 'L', 'O', 'R' };
+    static QChar colour[] = { 'c', 'o', 'l', 'o', 'u', 'r' };
+    static QChar Colour[] = { 'C', 'o', 'l', 'o', 'u', 'r' };
+    static QChar COLOUR[] = { 'C', 'O', 'L', 'O', 'U', 'R' };
+    return QString(sourceText).replace(color, 5, colour, 6).replace(Color, 5, Colour, 6).replace(COLOR, 5, COLOUR, 6);
+  }
+};
 
 int main(int argc, char **argv) {
   QApplication app(argc, argv);
@@ -26,6 +43,7 @@ int main(int argc, char **argv) {
   QCoreApplication::setApplicationVersion(QAWNO_VERSION_STRING);
   QCoreApplication::setOrganizationName("Zeex");
   QCoreApplication::setOrganizationDomain("zeex.github.io");
+  QCoreApplication::installTranslator(new ColourTranslator());
 
   MainWindow mainWindow;
   mainWindow.show();
