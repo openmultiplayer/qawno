@@ -35,5 +35,69 @@ Clicking `Cancel` will not insert anything.
 
 The pre-defined `Basic colours` are forty eight common colours from San Andreas, SA:MP, and open.mp, in three groups:
 
-![Colour Picker](documentation/colours-simple.png)
+![Colour Picker](documentation/colours-annotated-1.png)
+
+These are the selectable game text colours.  From left to right:
+
+First row:
+
+* `(default)` (game texts default colour, and the currently playing radio station).
+* `~h~` (default colour, but slightly lighter).
+* `~h~~h~` (default colour, even lighter still).
+* `~y~`
+* `~y~~h~`
+* `~y~~h~~h~` (the same as `~g~~h~~h~~h~~h~`).
+* `~g~~h~~h~~h~`
+* `~g~~h~~h~`
+
+Second row:
+
+* `~r~` (also the color of negative money).
+* `~r~~h~`
+* `~r~~h~~h~`
+* `~r~~h~~h~~h~`
+* `~r~~h~~h~~h~~h~`
+* `~r~~h~~h~~h~~h~~h~` (the lightest any colour can go without becoming white).
+* `~g~~h~`
+* `~g~` (also the colour of positive money).
+
+Third row:
+
+* `~b~`
+* `~b~~h~`
+* `~b~~h~~h~`
+* `~b~~h~~h~~h~`
+* `~p~`
+* `~p~~h~`
+* `~p~~h~~h~`
+* `~w~` (also any other colour with an extra `~h~`).
+
+Fourth row:
+
+* `~l~`
+
+![Colour Picker](documentation/colours-annotated-2.png)
+
+These are the 17 CGA colours, just a simple set of common primary and secondary colours.  The white and black are the same as the game text colours, and the brown on top is the later "tweaked brown".
+
+![Colour Picker](documentation/colours-annotated-3.png)
+
+The remaining few colours are extras with special meanings.  From left to right again:
+
+First row:
+
+* Game Text styles 2 and 5 default colour, plus the clock colour.
+* Game Text style 6 default colour.
+* Radio station changing text colour
+* Y_Less' avatar's yellow.
+* Y_Less' avatar's orange.
+* Main brown from the SA:MP client icon.
+
+Second row:
+
+* open.mp branding purple.
+
+Third row:
+
+* SA:MP branding orange.
 
