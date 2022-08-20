@@ -297,12 +297,12 @@ The remaining few colours are extras with special meanings.  From left to right 
 
 First row:
 
-* Game Text styles 2 and 5 default colour, plus the clock colour.
 * Game Text style 6 default colour.
+* Game Text style 6 after one `~h~`.
+* Game Text styles 2 and 5 default colour.
+* Clock colour.
 * Radio station changing text colour
-* Y_Less' avatar's yellow.
 * Y_Less' avatar's orange.
-* Main brown from the SA:MP client icon.
 
 Second row:
 

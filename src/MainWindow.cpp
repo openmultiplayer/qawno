@@ -799,13 +799,13 @@ void MainWindow::on_actionColours_triggered() {
   QColorDialog::setStandardColor(38, QColor(0xFF, 0xF7, 0xFF, 0xFF)); // ~p~~h~~h~
 
   // Game Text style 2/5 and stunt bonuses.  May be around 0xDDDDDB.
-  QColorDialog::setStandardColor(3, QColor(0xE1, 0xE1, 0xE1, 0xFF)); // Game Text style 2/5 and clock
-  QColorDialog::setStandardColor(9, QColor(0x95, 0xB0, 0xD1, 0xFF)); // Game Text style 6
-  QColorDialog::setStandardColor(15, QColor(0x96, 0x96, 0x96, 0xFF)); // Radio switch
+  QColorDialog::setStandardColor( 3, QColor(0x95, 0xB0, 0xD1, 0xFF)); // Game Text style 6
+  QColorDialog::setStandardColor( 9, QColor(0xDD, 0xDD, 0xDD, 0xFF)); // GT style 6 ~h~
+  QColorDialog::setStandardColor(15, QColor(0xE1, 0xE1, 0xE1, 0xFF)); // Game Text style 2/5
+  QColorDialog::setStandardColor(21, QColor(0xC3, 0xC3, 0xC3, 0xFF)); // Clock
+  QColorDialog::setStandardColor(27, QColor(0x96, 0x96, 0x96, 0xFF)); // Radio switch
 
   // Empty padding.
-  QColorDialog::setStandardColor(21, QColor(0xFD, 0xDE, 0x95, 0xFF)); // Y_Less yellow
-  QColorDialog::setStandardColor(27, QColor(0xF7, 0x7D, 0x10, 0xFF)); // Y_Less orange
   QColorDialog::setStandardColor(33, QColor(0x90, 0x65, 0x52, 0xFF)); // SA-MP brown
 
   // Black and white, the same in game text and CGA.
