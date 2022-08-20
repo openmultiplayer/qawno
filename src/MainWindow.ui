@@ -136,7 +136,10 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <addaction name="actionNew"/>
+    <addaction name="actionNewGM"/>
+    <addaction name="actionNewFS"/>
+    <addaction name="actionNewInc"/>
+    <addaction name="actionNewBlank"/>
     <addaction name="actionOpen"/>
     <addaction name="actionClose"/>
     <addaction name="separator"/>
@@ -204,15 +207,39 @@
    <addaction name="menuSettings"/>
    <addaction name="menuHelp"/>
   </widget>
-  <action name="actionNew">
+  <action name="actionNewGM">
    <property name="text">
-    <string>&amp;New</string>
+    <string>&amp;New Gamemode</string>
    </property>
    <property name="toolTip">
-    <string>Create a new file</string>
+    <string>Create a new gamemode</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionNewFS">
+   <property name="text">
+    <string>New Filterscript</string>
+   </property>
+   <property name="toolTip">
+    <string>Create a new filterscript</string>
+   </property>
+  </action>
+  <action name="actionNewInc">
+   <property name="text">
+    <string>New Include</string>
+   </property>
+   <property name="toolTip">
+    <string>Create a new include</string>
+   </property>
+  </action>
+  <action name="actionNewBlank">
+   <property name="text">
+    <string>New Blank</string>
+   </property>
+   <property name="toolTip">
+    <string>Create a new blank file</string>
    </property>
   </action>
   <action name="actionOpen">

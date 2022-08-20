@@ -111,7 +111,7 @@ MainWindow::MainWindow(QWidget *parent)
     }
   }
   if (loaded == 0) {
-    on_actionNew_triggered();
+    on_actionNewGM_triggered();
   }
 
   connect(ui_->tabWidget, SIGNAL(currentChanged(int)), SLOT(currentChanged(int)));
@@ -669,8 +669,20 @@ void MainWindow::replaceSuggestion() {
   startWord();
 }
 
-void MainWindow::on_actionNew_triggered() {
-  loadFile("");
+void MainWindow::on_actionNewGM_triggered() {
+  loadFile("./gamemode.new");
+}
+
+void MainWindow::on_actionNewFS_triggered() {
+  loadFile("./filterscript.new");
+}
+
+void MainWindow::on_actionNewInc_triggered() {
+  loadFile("./include.new");
+}
+
+void MainWindow::on_actionNewBlank_triggered() {
+  loadFile("./blank.new");
 }
 
 void MainWindow::on_actionOpen_triggered() {
@@ -1074,7 +1086,7 @@ void MainWindow::on_actionClose_triggered() {
     ui_->tabWidget->removeTab(cur);
 
     if (fileNames_.count() == 0) {
-      on_actionNew_triggered();
+      on_actionNewGM_triggered();
     }
   }
 
@@ -1602,7 +1614,11 @@ void MainWindow::updateTitle() {
   if (fileNames_.isEmpty()) {
     title = "No File";
   } else if (isNewFile()) {
-    title = "Untitled File *";
+    if (isFileModified()) {
+      title = "Untitled File *";
+    } else {
+      title = "Untitled File";
+    }
   } else {
     title = QFileInfo(fileNames_[getCurrentIndex()]).fileName();
     if (isFileModified()) {
@@ -1617,8 +1633,8 @@ void MainWindow::updateTitle() {
 }
 
 bool MainWindow::loadFile(const QString &fileName) {
-  bool nu = fileName.isEmpty();
-  QFile file(nu ? "./new.pwn" : fileName);
+  bool nu = fileName.startsWith(".");
+  QFile file(fileName);
   if (!file.open(QIODevice::ReadOnly)) {
     QString message = tr("Could not open %1: %2.").arg(fileName)
                                                   .arg(file.errorString());
@@ -1630,10 +1646,10 @@ bool MainWindow::loadFile(const QString &fileName) {
   }
 
   fileNames_.push_back(nu ? "" : fileName);
-  createTab(nu ? QString("New %1 *").arg(++newCount_) : QFileInfo(fileName).fileName());
+  createTab(nu ? QString("New %1").arg(++newCount_) : QFileInfo(fileName).fileName());
   editors_.last()->setPlainText(file.readAll());
   parseFile(editors_.last()->toPlainText(), true);
-  setFileModified(nu);
+  setFileModified(false);
 
   return true;
 }

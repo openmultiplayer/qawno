@@ -39,7 +39,10 @@ class MainWindow: public QMainWindow {
   void dropEvent(QDropEvent *event) override;
 
  private slots:
-  void on_actionNew_triggered();
+  void on_actionNewGM_triggered();
+  void on_actionNewFS_triggered();
+  void on_actionNewInc_triggered();
+  void on_actionNewBlank_triggered();
   void on_actionOpen_triggered();
   void on_actionClose_triggered();
   void on_actionQuit_triggered();

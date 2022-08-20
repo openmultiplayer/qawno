@@ -1,0 +1,37 @@
+#if defined _INC_NAME
+	#endinput
+#endif
+#define _INC_NAME
+
+#include <YSI_Data\y_iterate>
+#include <YSI_Coding\y_hooks>
+
+/*
+     ___      _
+    / __| ___| |_ _  _ _ __
+    \__ \/ -_)  _| || | '_ \
+    |___/\___|\__|\_,_| .__/
+                      |_|
+*/
+
+static stock
+	gData;
+
+/*
+      ___
+     / __|___ _ __  _ __  ___ _ _
+    | (__/ _ \ '  \| '  \/ _ \ ' \
+     \___\___/_|_|_|_|_|_\___/_||_|
+
+*/
+
+@hook() OnPlayerConnect(playerid)
+{
+	return 1;
+}
+
+@hook() OnPlayerDisconnect(playerid, reason)
+{
+	return 1;
+}
+
