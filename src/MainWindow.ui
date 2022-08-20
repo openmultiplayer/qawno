@@ -230,6 +230,9 @@
    <property name="text">
     <string>New Include</string>
    </property>
+   <property name="shortcut">
+     <string>Ctrl+I</string>
+   </property>
    <property name="toolTip">
     <string>Create a new include</string>
    </property>

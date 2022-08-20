@@ -35,7 +35,10 @@ Provides visual access to all the editor features and options.
 
 ![The File menu.](documentation/menu-file.png)
 
-* *New* - Start a new file in a new tab (shown in area ***3***).
+* *New Gamemode* - Start a new file in a new tab (shown in area ***3***).  This is the default *new* action (`Ctrl+N`) and creates (*scaffolds*) a basic file for writing a gamemode (also known as a *main script*).
+* *New Filterscript* - Start a new file in a new tab.  Scaffolds a filterscript (*side script*), which are feature script that run along-side the main script.
+* *New Include* - Start a new file in a new tab.  Scaffolds an include, a file that provides functions and features that can be used inside other scripts.  `Ctrl+I` as it is actually the new file type that should be created the most, to fully divide a mode in to multiple files.
+* *New Blank* - Start a new blank file in a new tab.
 * *Open* - Open an existing file in a new tab (or the initial tab if the program was just started).
 * *Close* - Close the current file in the current tab.  Will prompt you to save it if the code has been changed.
 * *Save* - Save the current file in the current tab.  Will do *Save As* for new files.
