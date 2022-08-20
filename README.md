@@ -270,7 +270,7 @@ Second row:
 * `~r~~h~~h~~h~~h~`
 * `~r~~h~~h~~h~~h~~h~` (the lightest any colour can go without becoming white).
 * `~g~~h~`
-* `~g~` (also the colour of positive money).
+* `~g~` (also the colour of positive money and entered vehicles).
 
 Third row:
 
@@ -301,8 +301,8 @@ First row:
 * Game Text style 6 after one `~h~`.
 * Game Text styles 2 and 5 default colour.
 * Clock colour.
-* Radio station changing text colour
-* Y_Less' avatar's orange.
+* Radio station changing text colour.
+* Region names.
 
 Second row:
 

@@ -804,9 +804,7 @@ void MainWindow::on_actionColours_triggered() {
   QColorDialog::setStandardColor(15, QColor(0xE1, 0xE1, 0xE1, 0xFF)); // Game Text style 2/5
   QColorDialog::setStandardColor(21, QColor(0xC3, 0xC3, 0xC3, 0xFF)); // Clock
   QColorDialog::setStandardColor(27, QColor(0x96, 0x96, 0x96, 0xFF)); // Radio switch
-
-  // Empty padding.
-  QColorDialog::setStandardColor(33, QColor(0x90, 0x65, 0x52, 0xFF)); // SA-MP brown
+  QColorDialog::setStandardColor(33, QColor(0xAC, 0xCB, 0xF1, 0xFF)); // Region names
 
   // Black and white, the same in game text and CGA.
   QColorDialog::setStandardColor(44, QColor(0xFF, 0xFF, 0xFF, 0xFF));
