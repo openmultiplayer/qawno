@@ -154,7 +154,6 @@ void MainWindow::loadNativeList() {
         child->setFont(*fileFont);
         child->setTextAlignment(4);
         child->setFlags(child->flags() & ~Qt::ItemIsSelectable & ~Qt::ItemIsEnabled);
-        child->setData(Qt::ToolTipRole, name);
         // Pad the natives list so indexing works, though we never see this in the status bar.
       }
       // Find every line that starts with `native`.
@@ -190,8 +189,8 @@ void MainWindow::loadNativeList() {
             } while (data[len] != ')');
 
             // Extract the full name, return, and parameters.
-            QString withArgs(std::string(data + idx, (size_t)len - idx + 1).c_str());
-
+            QString withArgs = "native " + QString::fromStdString(std::string(data + idx, (size_t)len - idx + 1)) + ";";
+            
             // Extract just the name.
             len = idx;
             for ( ; ; ) {
@@ -226,14 +225,13 @@ void MainWindow::loadNativeList() {
                 //   native #Heading();
                 //
                 // Purely for Qawno titles.
-                QString name(std::string(data + idx + 1, (size_t)len - idx - 1).c_str());
+                QString name = QString::fromStdString(std::string(data + idx + 1, (size_t)len - idx - 1));
                 child = new QListWidgetItem("\n" + name + "\n", ui_->functions);
                 child->setFont(*headFont);
                 child->setTextAlignment(4);
                 child->setFlags(child->flags() & ~Qt::ItemIsSelectable & ~Qt::ItemIsEnabled);
-                child->setData(Qt::ToolTipRole, name);
               } else {
-                QString name(std::string(data + idx, (size_t)len - idx).c_str());
+                QString name = QString::fromStdString(std::string(data + idx, (size_t)len - idx));
                 child = new QListWidgetItem(name, ui_->functions);
                 child->setFont(*funcFont);
                 child->setData(Qt::ToolTipRole, withArgs);
