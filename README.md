@@ -71,7 +71,7 @@ Provides visual access to all the editor features and options.
 * *Font -> Editor* - Change the font styles and sizes used in the main code editor pane (area ***4***).
 * *Font -> Output* - Change the font styles and sizes used in the compiler output pane (area ***5***).
 * *Dark Mode* - Make the main background for the editor, compiler, and native selector (areas ***4***, ***5***, and ***7***) black, and the code and other writing bright colours on top of this dark background.  Or reverse the effect.
-* *MRU Tab Switching* - You can change which tab (and thus file) is current visible using *Ctrl+Tab* to cycle through the tabs from left to right, or `Ctrl+Shift+Tab` to go from right to left.  This option instead changes that behaviour so that *Ctrl+Tab* instead jumps straight to the tab used previously, making the current tab the previous tab in the process.  Keeping *Ctrl* held down will continue to cycle through in the *Most Recently Used* (*MRU*) order, with *Ctrl+Shift+Tab* still going backwards through this new order.
+* *MRU Tab Switching* - You can change which tab (and thus file) is currently visible using *Ctrl+Tab* to cycle through the tabs from left to right, or `Ctrl+Shift+Tab` to go from right to left.  This option changes that behaviour so that *Ctrl+Tab* instead jumps straight to the tab used previously, making the current tab the previous tab in the process.  Keeping *Ctrl* held down will continue to cycle through in the *Most Recently Used* (*MRU*) order, with *Ctrl+Shift+Tab* still going backwards through this new order.
 * *Compiler* - Set the location and launch parameters for the compiler when using *Build -> Compile*.
 * *Server* - Set the location and launch parameters for the server when using *Build -> Run*.
 
@@ -315,7 +315,27 @@ Third row:
  Settings
 ----------
 
-The compiler settings dialog (`Settings -> Compiler`) looks like:
+Several settings are configured in the menu directly, some open further dialogs:
+
+![The Settings menu.](documentation/menu-settings.png)
+
+* *Font -> Editor* - Opens the following dialog to configure the fonts used to write code:
+
+![The editor font settings dialog.](documentation/editor-settings.png)
+
+* *Font -> Output* - Opens the following dialog to configure the fonts used to display compiler output:
+
+![The output font settings dialog.](documentation/output-settings.png)
+
+* *Dark Mode* - Selecting this switches the colours of the editor to something like:
+
+![Qawno in dark mode.](documentation/dark-mode.png)
+
+* *MRU Tab Switching* - You can change which tab (and thus file) is currently visible using *Ctrl+Tab* to cycle through the tabs from left to right, or `Ctrl+Shift+Tab` to go from right to left.  This option changes that behaviour so that *Ctrl+Tab* instead jumps straight to the tab used previously, making the current tab the previous tab in the process.  Keeping *Ctrl* held down will continue to cycle through in the *Most Recently Used* (*MRU*) order, with *Ctrl+Shift+Tab* still going backwards through this new order.
+
+![Most Recently Used (MRU) tab order setting selected.](documentation/mru.png)
+
+* *Compiler* - This opens the following dialog:
 
 ![The compiler settings dialog.](documentation/compiler-settings.png)
 
@@ -323,7 +343,7 @@ The first input is the compiler (`pawncc`) location.  By default this is in the 
 
 The second input is for all the options passed to the compiler.  The compiler options can include several special replacement sequences - `%i`, `%o`, `%p`, `%q`, `%c`, and `%d`.  `%i` is the input file, e.g. `mode.pwn`.  `%o` is the base file name, which is used for mode output operations, e.g. `mode`.  `%p` is the absolute path, excluding a trailing `/`, e.g. `C:/open.mp/gamemodes`.  So the default flags include the sequence `"-r%p/%o"`, which will write the function report to (for example) `C:/open.mp/gamemodes/mode.xml` (the `.xml`) is assumed automatically by `-r` (note that the double quotes are usually required).  `%q` is the Qawno directory, `%c` is the compiler directory, and `%d` is the working directory - these are usually all the same.
 
-The server settings dialog (`Settings -> Server`) looks like:
+* *Server* - This opens the following dialog:
 
 ![The server settings dialog.](documentation/server-settings.png)
 
