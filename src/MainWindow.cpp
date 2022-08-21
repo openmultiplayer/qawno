@@ -887,6 +887,7 @@ void MainWindow::on_actionDelline_triggered() {
     QTextCursor cursor = editor->textCursor();
     int start = cursor.selectionStart();
     int end = cursor.selectionEnd();
+    cursor.setPosition(end);
     int endPosInBlock = cursor.positionInBlock();
     int endBlockLen = cursor.block().length();
     cursor.setPosition(start);
@@ -931,6 +932,7 @@ void MainWindow::on_actionComment_triggered() {
     QTextCursor cursor = editor->textCursor();
     int start = cursor.selectionStart();
     int end = cursor.selectionEnd();
+    cursor.setPosition(end);
     int endPosInBlock = cursor.positionInBlock();
     int endBlockLen = cursor.block().length();
     cursor.setPosition(start);
@@ -943,20 +945,17 @@ void MainWindow::on_actionComment_triggered() {
     QChar const* data = text.data();
     // Newline, line separator, or paragraph separator.
     QRegularExpression search("(^|\\n|\\x{2028}|\\x{2029})[ \\t]*($|[^ \\t/]|/[^/]|/$)");
-    bool commented = text.indexOf(search) == -1;
-    //pos = text.indexOf(QChar::ParagraphSeparator);
-    //do {
-    //  // Skip whitespace.
-    //  if (data[pos] == ' ' || data[pos] == '\t') {
-    //    ++pos;
-    //  } else if (data[pos] == '/' && pos + 1 < len && data[pos + 1] == '/') {
-    //    pos = text.indexOf(QChar::LineFeed, pos) + 1;
-    //  } else {
-    //    uncommented = true;
-    //    break;
-    //  }
-    //} while (pos);
-    editor->setTextCursor(cursor);
+    if (text.indexOf(search) == -1) {
+      // All lines are commented out.
+      QRegularExpression comment("(^|\\n|\\x{2028}|\\x{2029})([ \\t]*)// ?");
+      text.replace(comment, "\\1\\2");
+    } else {
+      // At least one line is uncommented.
+      QRegularExpression comment("(^|\\n|\\x{2028}|\\x{2029})([ \\t]*)");
+      text.replace(comment, "\\1\\2// ");
+    }
+    debug = text.toStdString();
+    cursor.insertText(text);
     return;
     //cursor.blockn
     //editor->document()->r
