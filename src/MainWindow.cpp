@@ -897,14 +897,25 @@ void MainWindow::on_actionDupline_triggered() {
   if (auto editor = getCurrentEditor()) {
     // Duplicate the line.
     QTextCursor cursor = editor->textCursor();
-    int position = cursor.position();
-    int midpoint = cursor.positionInBlock();
-    QString text = cursor.block().text();
-    cursor.insertText(text.right(text.length() - midpoint));
-    cursor.insertText("\n");
-    cursor.insertText(text.left(midpoint));
-    cursor.setPosition(position);
-    editor->setTextCursor(cursor);
+    if (cursor.hasSelection()) {
+      int start = cursor.selectionStart();
+      int end = cursor.selectionEnd();
+      QString text = cursor.selectedText();
+      cursor.setPosition(end);
+      cursor.insertText(text);
+       cursor.setPosition(start, QTextCursor::MoveAnchor);
+      cursor.setPosition(end, QTextCursor::KeepAnchor);
+      editor->setTextCursor(cursor);
+    } else {
+      int position = cursor.position();
+      int midpoint = cursor.positionInBlock();
+      QString text = cursor.block().text();
+      cursor.insertText(text.right(text.length() - midpoint));
+      cursor.insertText("\n");
+      cursor.insertText(text.left(midpoint));
+      cursor.setPosition(position);
+      editor->setTextCursor(cursor);
+    }
   }
 }
 
