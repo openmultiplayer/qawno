@@ -10,11 +10,11 @@
 
 main()
 {
-	printf("");
+	printf(" ");
 	printf("  -------------------------------");
 	printf("  |  My first open.mp gamemode! |");
 	printf("  -------------------------------");
-	printf("");
+	printf(" ");
 }
 
 public OnGameModeInit()
@@ -100,11 +100,11 @@ public OnVehicleDeath(vehicleid, killerid)
 
 public OnFilterScriptInit()
 {
-	printf("");
+	printf(" ");
 	printf("  -----------------------------------------");
 	printf("  |  Error: Script was loaded incorrectly |");
 	printf("  -----------------------------------------");
-	printf("");
+	printf(" ");
 	return 1;
 }
 

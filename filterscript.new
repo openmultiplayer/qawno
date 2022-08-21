@@ -12,11 +12,11 @@
 
 public OnFilterScriptInit()
 {
-	printf("");
+	printf(" ");
 	printf("  -----------------------------------");
 	printf("  |  My first open.mp filterscript! |");
 	printf("  -----------------------------------");
-	printf("");
+	printf(" ");
 }
 
 public OnFilterScriptExit()
