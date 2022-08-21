@@ -192,6 +192,23 @@ A real-world include showing some of these tricks can be seen in [the sscanf plu
 
 This shows the numbers for each line, i.e. how far down in the file they are.  Compiler warnings and errors use these line numbers to direct you to the problems, and you can jump straight to them by value with `Go To Line...`.
 
+ Auto-Complete
+---------------
+
+Typing at least three symbol characters (`a-z`, `A-Z`, `0-9`, `_`, and `@`) will bring up the auto-completion list, with all known symbols containing those characters in that order.  For example typing `ABC` will suggest `CreateObject` (`creAteoBjeCt`), `Get3DTextLabelColor` (`get3dtextlABelColor`), and many more.  The more characters you type, the more refined the results will be.  The results are also ordered by likelihood, so the best matches, and the functions used the most come first:
+
+![Stop using SCM!](documentation/scm-selecting.png)
+
+Pressing `Enter` (`Return`) will instantly insert the top suggestion:
+
+![Write SendClientMessage instead.](documentation/scm-inserting.png)
+
+You can also use the arrow keys to move to a different function before selecting and inserting it.  Doing so will increase the future priority of the chosen function:
+
+![Or something else that contains SCM.](documentation/scm-alternate.png)
+
+The predictions are collected from all open files and the natives list on the right-hand side.  This gives a close approximation to being able to offer suggestions from all of a project.  When a file is opened it is parsed and all names longer than three characters are extracted and stored.  The same is also done while typing.
+
  Opening Files
 ---------------
 
