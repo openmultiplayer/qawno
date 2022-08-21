@@ -88,8 +88,10 @@ class MainWindow: public QMainWindow {
   void tabCloseRequested(int index);
   void currentRowChanged(int index);
   void itemDoubleClicked(QListWidgetItem*);
+  void itemClicked(QListWidgetItem*);
 
  private:
+  QString deprototype(QString func);
   void hidePopup();
   void startWord();
   void updateTitle();

@@ -117,6 +117,7 @@ MainWindow::MainWindow(QWidget *parent)
   connect(ui_->tabWidget, SIGNAL(currentChanged(int)), SLOT(currentChanged(int)));
   connect(ui_->tabWidget, SIGNAL(tabCloseRequested(int)), SLOT(tabCloseRequested(int)));
   connect(ui_->functions, SIGNAL(currentRowChanged(int)), SLOT(currentRowChanged(int)));
+  connect(ui_->functions, SIGNAL(itemClicked(QListWidgetItem*)), SLOT(itemClicked(QListWidgetItem*)));
   connect(ui_->functions, SIGNAL(itemDoubleClicked(QListWidgetItem*)), SLOT(itemDoubleClicked(QListWidgetItem*)));
   QApplication::instance()->installEventFilter(this);
 
@@ -136,6 +137,13 @@ MainWindow::~MainWindow() {
   delete ui_;
 }
 
+QString MainWindow::deprototype(QString func) {
+  // Strip out all tags.  Both `Float:` and `{Float, _}:` style.
+  QRegularExpression tags("[a-zA-Z0-9_@]:|\\{[a-zA-Z0-9_@, ]\\}:");
+  QRegularExpression trailing(",\\s*\\.\\.\\.\\s*\\)");
+  return func.replace("const ", "").replace("&", "").replace(tags, "").replace(trailing, "");
+}
+
 void MainWindow::loadNativeList() {
   // Declare an invalid symbol for list items that aren't real symbols.
   QListWidgetItem* child;
@@ -149,8 +157,7 @@ void MainWindow::loadNativeList() {
     if (f.open(QFile::ReadOnly | QFile::Text)) {
       {
         // Extra scope for `name`.
-        QString name = fileName.fileName();
-        child = new QListWidgetItem("\n" + name + "\n", ui_->functions);
+        child = new QListWidgetItem("\n" + fileName.fileName() + "\n", ui_->functions);
         child->setFont(*fileFont);
         child->setTextAlignment(4);
         child->setFlags(child->flags() & ~Qt::ItemIsSelectable & ~Qt::ItemIsEnabled);
@@ -189,8 +196,8 @@ void MainWindow::loadNativeList() {
             } while (data[len] != ')');
 
             // Extract the full name, return, and parameters.
-            QString withArgs = "native " + QString::fromStdString(std::string(data + idx, (size_t)len - idx + 1)) + ";";
-            
+            QString withArgs = QString::fromStdString(std::string(data + idx, (size_t)len - idx + 1));
+
             // Extract just the name.
             len = idx;
             for ( ; ; ) {
@@ -234,8 +241,8 @@ void MainWindow::loadNativeList() {
                 QString name = QString::fromStdString(std::string(data + idx, (size_t)len - idx));
                 child = new QListWidgetItem(name, ui_->functions);
                 child->setFont(*funcFont);
-                child->setData(Qt::ToolTipRole, withArgs);
-                child->setData(Qt::EditRole, withArgs);
+                child->setData(Qt::ToolTipRole, "native " + withArgs + ";");
+                child->setData(Qt::StatusTipRole, deprototype(withArgs));
                 // Add the native to the list of auto-complete predictions with default likelihood.
                 predictions_.insert(name, { 1, 1 });
               }
@@ -250,6 +257,10 @@ not_a_native:
 }
 
 void MainWindow::itemDoubleClicked(QListWidgetItem*) {
+}
+
+void MainWindow::itemClicked(QListWidgetItem* item) {
+  statusBar()->showMessage(item->data(Qt::ToolTipRole).toString());
 }
 
 void MainWindow::currentChanged(int index) {
@@ -281,7 +292,7 @@ void MainWindow::currentRowChanged(int index) {
     dynamic_cast<StatusBar*>(statusBar())->setCursorPosition(line, column, selected);
     statusBar()->showMessage("");
   } else {
-    statusBar()->showMessage(ui_->functions->currentItem()->data(Qt::EditRole).toString());
+    statusBar()->showMessage(ui_->functions->currentItem()->data(Qt::ToolTipRole).toString());
   }
 }
 
