@@ -942,10 +942,13 @@ void MainWindow::on_actionComment_triggered() {
     QChar const* data = text.data();
     int len = text.length();
     std::string debug = text.toStdString();
-    int pos = 0;
+    int pos = data[22].unicode();
+    pos = data[23].unicode();
     bool uncommented = false;
-    QRegularExpression search("^[ \\t]*([^/]|/[^/])");
+    // Newline, line separator, or paragraph separator.
+    QRegularExpression search("(^|\\n|\\x{2028}|\\x{2029})[ \\t]*([^ \\t/]|/[^/])");
     pos = text.indexOf(search);
+    pos = text.indexOf(QChar::ParagraphSeparator);
     //do {
     //  // Skip whitespace.
     //  if (data[pos] == ' ' || data[pos] == '\t') {
