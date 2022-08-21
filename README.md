@@ -247,6 +247,52 @@ After:
 
 ![After duplicating a multi-line-spanning area with Ctrl+D.](documentation/duplicate-6.png)
 
+### Commenting (Ctrl+K)
+
+When on a line pressing `Ctrl+K` will automatically comment out that line:
+
+Before:
+
+![Before commenting out a single line with Ctrl+K.](documentation/comment-1.png)
+
+After:
+
+![After commenting out a single line with Ctrl+K.](documentation/comment-2.png)
+
+Unless that line is already commented out, in which case it will uncomment it:
+
+Before:
+
+![Before uncommenting a single line with Ctrl+K.](documentation/comment-3.png)
+
+After:
+
+![After uncommenting a single line with Ctrl+K.](documentation/comment-4.png)
+
+The same will happen with multiple commented lines - they will all be uncommented together:
+
+Before:
+
+![Before uncommenting multiple lines with Ctrl+K.](documentation/comment-5.png)
+
+After:
+
+![After uncommenting multiple lines with Ctrl+K.](documentation/comment-6.png)
+
+But if even one line is uncommented, *all* the lines will be commented out, even those that are already commented out.  They will get an additional comment at the start, which allows for round-tripping.  I.e. you can select a large block of code, which might already include comments; comment it out for testing; then uncomment it again to return to exactly what you started with.  If the already commented lines didn't add an extra comment start, they would become uncommented at the end and break code:
+
+Before:
+
+![Before commenting multiple lines with Ctrl+K.](documentation/comment-7.png)
+
+After:
+
+![After commenting multiple lines with Ctrl+K.](documentation/comment-8.png)
+
+Round-Tripped:
+
+![After uncommenting the multiple lines again.](documentation/comment-7.png)
+
 ### Auto-Complete
 
 Typing at least three symbol characters (`a-z`, `A-Z`, `0-9`, `_`, and `@`) will bring up the auto-completion list, with all known symbols containing those characters in that order.  For example typing `ABC` will suggest `CreateObject` (`creAteoBjeCt`), `Get3DTextLabelColor` (`get3dtextlABelColor`), and many more.  The more characters you type, the more refined the results will be.  The results are also ordered by likelihood, so the best matches, and the functions used the most come first:
