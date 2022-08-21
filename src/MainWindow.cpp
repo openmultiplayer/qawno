@@ -138,10 +138,10 @@ MainWindow::~MainWindow() {
 }
 
 QString MainWindow::deprototype(QString func) {
-  // Strip out all tags.  Both `Float:` and `{Float, _}:` style.
-  QRegularExpression tags("[a-zA-Z0-9_@]:|\\{[a-zA-Z0-9_@, ]\\}:");
-  QRegularExpression trailing(",\\s*\\.\\.\\.\\s*\\)");
-  return func.replace("const ", "").replace("&", "").replace(tags, "").replace(trailing, "");
+  // Strip out some tags - `Float:function()` and `{Float, _}:...` style.
+  QRegularExpression ret("^\\s*[a-zA-Z0-9_@]+\\s*:\\s*");
+  QRegularExpression trailing(",?\\s*[a-zA-Z0-9_@]+\\s*:\\s*\\.\\.\\.|,?\\s*\\{[a-zA-Z0-9_@, ]+\\}\\s*:\\s*\\.\\.\\.");
+  return func.replace("const ", "").replace("&", "").replace(ret, "").replace(trailing, "");
 }
 
 void MainWindow::loadNativeList() {
@@ -242,7 +242,7 @@ void MainWindow::loadNativeList() {
                 child = new QListWidgetItem(name, ui_->functions);
                 child->setFont(*funcFont);
                 child->setData(Qt::ToolTipRole, "native " + withArgs + ";");
-                child->setData(Qt::StatusTipRole, deprototype(withArgs));
+                child->setData(Qt::StatusTipRole, withArgs);
                 // Add the native to the list of auto-complete predictions with default likelihood.
                 predictions_.insert(name, { 1, 1 });
               }
@@ -292,7 +292,7 @@ void MainWindow::currentRowChanged(int index) {
     dynamic_cast<StatusBar*>(statusBar())->setCursorPosition(line, column, selected);
     statusBar()->showMessage("");
   } else {
-    statusBar()->showMessage(ui_->functions->currentItem()->data(Qt::ToolTipRole).toString());
+    statusBar()->showMessage(deprototype(ui_->functions->currentItem()->data(Qt::StatusTipRole).toString()));
   }
 }
 
