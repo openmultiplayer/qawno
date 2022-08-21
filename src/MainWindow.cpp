@@ -140,8 +140,10 @@ MainWindow::~MainWindow() {
 QString MainWindow::deprototype(QString func) {
   // Strip out some tags - `Float:function()` and `{Float, _}:...` style.
   QRegularExpression ret("^\\s*[a-zA-Z0-9_@]+\\s*:\\s*");
+  QRegularExpression brackets("\\s*\\[[^\\]]*\\]\\s*");
+  QRegularExpression defval("\\s*=\\s*[^(),]*");
   QRegularExpression trailing(",?\\s*[a-zA-Z0-9_@]+\\s*:\\s*\\.\\.\\.|,?\\s*\\{[a-zA-Z0-9_@, ]+\\}\\s*:\\s*\\.\\.\\.");
-  return func.replace("const ", "").replace("&", "").replace(ret, "").replace(trailing, "");
+  return func.replace("const ", "").replace("&", "").replace(ret, "").replace(trailing, "").replace(brackets, "").replace(defval, "");
 }
 
 void MainWindow::loadNativeList() {
