@@ -117,6 +117,7 @@ MainWindow::MainWindow(QWidget *parent)
   connect(ui_->tabWidget, SIGNAL(currentChanged(int)), SLOT(currentChanged(int)));
   connect(ui_->tabWidget, SIGNAL(tabCloseRequested(int)), SLOT(tabCloseRequested(int)));
   connect(ui_->functions, SIGNAL(currentRowChanged(int)), SLOT(currentRowChanged(int)));
+  connect(ui_->functions, SIGNAL(itemDoubleClicked(QListWidgetItem*)), SLOT(itemDoubleClicked(QListWidgetItem*)));
   QApplication::instance()->installEventFilter(this);
 
   loadNativeList();
@@ -137,7 +138,6 @@ MainWindow::~MainWindow() {
 
 void MainWindow::loadNativeList() {
   // Declare an invalid symbol for list items that aren't real symbols.
-  static QString unused("=");
   QListWidgetItem* child;
   QFont* fileFont = new QFont("Sans Serif", 20, 2);
   QFont* funcFont = new QFont("Sans Serif", 12, 2);
@@ -147,12 +147,16 @@ void MainWindow::loadNativeList() {
   for (auto const & fileName : includes.entryInfoList()) {
     QFile f{fileName.absoluteFilePath()};
     if (f.open(QFile::ReadOnly | QFile::Text)) {
-      child = new QListWidgetItem("\n" + fileName.fileName() + "\n", ui_->functions);
-      child->setFont(*fileFont);
-      child->setTextAlignment(4);
-      child->setFlags(child->flags() & ~Qt::ItemIsSelectable & ~Qt::ItemIsEnabled);
-      // Pad the natives list so indexing works, though we never see this in the status bar.
-      natives_.push_back(unused);
+      {
+        // Extra scope for `name`.
+        QString name = fileName.fileName();
+        child = new QListWidgetItem("\n" + name + "\n", ui_->functions);
+        child->setFont(*fileFont);
+        child->setTextAlignment(4);
+        child->setFlags(child->flags() & ~Qt::ItemIsSelectable & ~Qt::ItemIsEnabled);
+        child->setData(Qt::ToolTipRole, name);
+        // Pad the natives list so indexing works, though we never see this in the status bar.
+      }
       // Find every line that starts with `native`.
       while (!f.atEnd()) {
         QByteArray line = f.readLine();
@@ -186,7 +190,7 @@ void MainWindow::loadNativeList() {
             } while (data[len] != ')');
 
             // Extract the full name, return, and parameters.
-            natives_.push_back(QString(std::string(data + idx, (size_t)len - idx + 1).c_str()));
+            QString withArgs(std::string(data + idx, (size_t)len - idx + 1).c_str());
 
             // Extract just the name.
             len = idx;
@@ -194,7 +198,6 @@ void MainWindow::loadNativeList() {
               if (data[len] == '\n' || data[len] == '\r') {
                 // Remove this from the list again.  We can't add the name after here because we've
                 // clobbered the indexes.
-                natives_.pop_back();
                 goto not_a_native;
               }
               if (data[len] == ':') {
@@ -223,21 +226,21 @@ void MainWindow::loadNativeList() {
                 //   native #Heading();
                 //
                 // Purely for Qawno titles.
-                child = new QListWidgetItem("\n" + QString(std::string(data + idx + 1, (size_t)len - idx - 1).c_str()) + "\n", ui_->functions);
+                QString name(std::string(data + idx + 1, (size_t)len - idx - 1).c_str());
+                child = new QListWidgetItem("\n" + name + "\n", ui_->functions);
                 child->setFont(*headFont);
                 child->setTextAlignment(4);
                 child->setFlags(child->flags() & ~Qt::ItemIsSelectable & ~Qt::ItemIsEnabled);
-                natives_.pop_back();
-                natives_.push_back(unused);
+                child->setData(Qt::ToolTipRole, name);
               } else {
                 QString name(std::string(data + idx, (size_t)len - idx).c_str());
                 child = new QListWidgetItem(name, ui_->functions);
                 child->setFont(*funcFont);
+                child->setData(Qt::ToolTipRole, withArgs);
+                child->setData(Qt::EditRole, withArgs);
                 // Add the native to the list of auto-complete predictions with default likelihood.
                 predictions_.insert(name, { 1, 1 });
               }
-            } else {
-              natives_.pop_back();
             }
           }
         }
@@ -246,6 +249,9 @@ not_a_native:
       }
     }
   }
+}
+
+void MainWindow::itemDoubleClicked(QListWidgetItem*) {
 }
 
 void MainWindow::currentChanged(int index) {
@@ -277,7 +283,7 @@ void MainWindow::currentRowChanged(int index) {
     dynamic_cast<StatusBar*>(statusBar())->setCursorPosition(line, column, selected);
     statusBar()->showMessage("");
   } else {
-    statusBar()->showMessage(natives_[index]);
+    statusBar()->showMessage(ui_->functions->currentItem()->data(Qt::EditRole).toString());
   }
 }
 

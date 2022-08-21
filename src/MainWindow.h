@@ -87,6 +87,7 @@ class MainWindow: public QMainWindow {
   void currentChanged(int index);
   void tabCloseRequested(int index);
   void currentRowChanged(int index);
+  void itemDoubleClicked(QListWidgetItem*);
 
  private:
   void hidePopup();
@@ -138,11 +139,6 @@ class MainWindow: public QMainWindow {
   QPalette defaultPalette;
   QPalette darkModePalette;
   QStringList fileNames_;
-
-  // The full name, return, and parameters, of defined natives in the side-panel.  This list exactly
-  // matches that list in order, INCLUDING filenames (for simplicity), but they aren't selectable so
-  // we can never insert them.
-  QStringList natives_;
 
   // This is shared between all open editors, the neat side-effect being that we can get a cheap and
   // easy way to auto-complete text from custom includes without actually having to parse the
