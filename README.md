@@ -201,7 +201,7 @@ Typing at least three symbol characters (`a-z`, `A-Z`, `0-9`, `_`, and `@`) will
 
 Pressing `Enter` (`Return`) will instantly insert the top suggestion:
 
-![Write SendClientMessage instead.](documentation/scm-inserting.png)
+![Write SendClientMessage instead.](documentation/scm-inserted.png)
 
 You can also use the arrow keys to move to a different function before selecting and inserting it.  Doing so will increase the future priority of the chosen function:
 
