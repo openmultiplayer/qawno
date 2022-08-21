@@ -17,14 +17,15 @@
 #include <QProcess>
 #include <QSettings>
 #include <QDir>
+#include <QCoreApplication>
 
 #include "Server.h"
 
 Server::Server() {
   QSettings settings;
-  path_ = QDir::cleanPath(QDir::currentPath() + "/..");
-  path_ = settings.value("ServerPath", path_).toString();
-  options_ = settings.value("ServerOptions", "").toString().split("\\s*");
+  path_ = settings.value("ServerPath", "../omp-server").toString();
+  options_ = settings.value("ServerOptions", "\"%o\"").toString().split("\\s*");
+  extras_ = settings.value("ServerExtras", "").toString().split("\\s*");
   ZeroMemory(&pi_, sizeof(PROCESS_INFORMATION));
   thread_ = NULL;
 }
@@ -33,6 +34,7 @@ Server::~Server() {
   QSettings settings;
   settings.setValue("ServerPath", path_);
   settings.setValue("ServerOptions", options_.join(" "));
+  settings.setValue("ServerExtras", extras_.join(" "));
 }
 
 QString Server::path() const {
@@ -72,12 +74,29 @@ QString Server::output() const {
 }
 
 QString Server::command() const {
-  return QString("omp-server.exe %1 -- %2").arg(options_.join(" ")).arg(extras_.join(" "));
+  return QString("%1 %2 -- %3").arg(path_).arg(options_.join(" ")).arg(extras_.join(" "));
 }
 
 QString Server::commandFor(const QString &inputFile) const {
-  QString fileName = QFileInfo(inputFile).baseName();
-  return QString("%1/omp-server.exe %2 %3 -- %4").arg(path_).arg(options_.join(" ")).arg(fileName).arg(extras_.join(" "));
+  QString i = QFileInfo(inputFile).fileName();
+  QString p = QFileInfo(inputFile).absolutePath();
+  QString o = QFileInfo(inputFile).baseName();
+
+  QString q = QCoreApplication::applicationDirPath();
+  QFileInfo cmp = QFileInfo(path_);
+  QString c = cmp.isAbsolute() ? cmp.absolutePath() : q + "/" + cmp.path();
+  QString d = QDir::currentPath();
+
+  return QString("%1 %2 -- %3")
+    // Invoke the compiler.
+    .arg(path_).arg(options_.join(" ")).arg(extras_.join(" "))
+    // Custom arguments.
+    .replace("%c", c)
+    .replace("%q", q)
+    .replace("%d", d)
+    .replace("%i", i)
+    .replace("%o", o)
+    .replace("%p", p);
 }
 
 void Server::run(const QString &inputFile) {
@@ -104,7 +123,11 @@ void Server::run(const QString &inputFile) {
     // Spawn a server and wait till it closes to reset some memory.
     std::string cmd = commandFor(inputFile).toStdString();
     std::string path = path_.toStdString();
-    CreateProcess(NULL, (char *)cmd.c_str(), NULL, NULL, FALSE, 0, NULL, (char *)path.c_str(), &si, &pi_);
+    QString q = QCoreApplication::applicationDirPath();
+    QFileInfo cmp = QFileInfo(path_);
+    QString c = cmp.isAbsolute() ? cmp.absolutePath() : q + "/" + cmp.path();
+    std::string pwd = c.toStdString();
+    CreateProcess(NULL, (char *)cmd.c_str(), NULL, NULL, FALSE, 0, NULL, (char *)pwd.c_str(), &si, &pi_);
     thread_ = CreateThread(NULL, 0, &Server::threaded, &pi_, 0, NULL);
   }
 }

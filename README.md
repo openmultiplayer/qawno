@@ -315,17 +315,35 @@ Third row:
  Settings
 ----------
 
-The compiler flags can include several special replacement sequences - `%i`, `%o`, `%p`, `%q`, `%c`, and `%d`.  `%i` is the input file, e.g. `mode.pwn`.  `%o` is the base file name, which is used for mode output operations, e.g. `mode`.  `%p` is the absolute path, excluding a trailing `/`, e.g. `C:/open.mp/gamemodes`.  So the default flags include the sequence `"-r%p/%o"`, which will write the function report to (for example) `C:/open.mp/gamemodes/mode.xml` (the `.xml`) is assumed automatically by `-r` (note that the double quotes are usually required).  `%q` is the Qawno directory, `%c` is the compiler directory, and `%d` is the working directory - these are usually all the same.  
+The compiler settings dialog (`Settings -> Compiler`) looks like:
 
+![The compiler settings dialog.](documentation/compiler-settings.png)
 
+The first input is the compiler (`pawncc`) location.  By default this is in the same directory as Qawno.
 
+The second input is for all the options passed to the compiler.  The compiler options can include several special replacement sequences - `%i`, `%o`, `%p`, `%q`, `%c`, and `%d`.  `%i` is the input file, e.g. `mode.pwn`.  `%o` is the base file name, which is used for mode output operations, e.g. `mode`.  `%p` is the absolute path, excluding a trailing `/`, e.g. `C:/open.mp/gamemodes`.  So the default flags include the sequence `"-r%p/%o"`, which will write the function report to (for example) `C:/open.mp/gamemodes/mode.xml` (the `.xml`) is assumed automatically by `-r` (note that the double quotes are usually required).  `%q` is the Qawno directory, `%c` is the compiler directory, and `%d` is the working directory - these are usually all the same.
 
+The server settings dialog (`Settings -> Server`) looks like:
 
+![The server settings dialog.](documentation/server-settings.png)
 
+The first input is the server (`omp-server`) location.  By default this is one directory above Qawno.
 
+The second input is for all the options passed to the server.  By default only one option is given - `"%o"`, which, as with the same replacements for the compiler, specifies to load the current output file.  All server/config options can be tuned from here, for example:
 
+```
+--config announce=false --config game.time=1 --config max_players=100 --config pawn.legacy_plugins=streamer "%o"
+```
 
+The final input is also for server command-line parameters, but all those that come after `--`.  These are arguments passed directly to the mode itself (see [the documentation for y_args](https://github.com/pawn-lang/YSI-Includes/blob/5.x/YSI_Server/y_args.md)), so are only meaningful to the script.  These extra arguments:
 
+```
+--objects 600 --checkpoints 12
+```
 
+Would, with the default server options, give a final command-line of:
 
+```
+../omp-server "mode" -- --objects 600 --checkpoints 12
+```
 

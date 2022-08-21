@@ -45,6 +45,14 @@ void ServerSettingsDialog::setServerOptions(const QString &options) {
   ui_->serverOptions->setText(options);
 }
 
+QString ServerSettingsDialog::serverExtras() const {
+  return ui_->serverExtras->text();
+}
+
+void ServerSettingsDialog::setServerExtras(const QString &extras) {
+  ui_->serverExtras->setText(extras);
+}
+
 void ServerSettingsDialog::on_browse_clicked() {
   QString path = QFileDialog::getOpenFileName(this,
   #ifdef Q_OS_WIN

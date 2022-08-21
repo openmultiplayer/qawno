@@ -1519,12 +1519,14 @@ void MainWindow::on_actionServer_triggered() {
 
   dialog.setServerPath(server_.path());
   dialog.setServerOptions(server_.options().join(" "));
+  dialog.setServerExtras(server_.extras().join(" "));
 
   dialog.exec();
 
   if (dialog.result() == QDialog::Accepted) {
     server_.setPath(dialog.serverPath());
     server_.setOptions(dialog.serverOptions());
+    server_.setExtras(dialog.serverExtras());
   }
 }
 

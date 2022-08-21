@@ -23,7 +23,7 @@
 
 Compiler::Compiler() {
   QSettings settings;
-  path_ = settings.value("CompilerPath", QDir::currentPath() + "pawncc").toString();
+  path_ = settings.value("CompilerPath", "./pawncc").toString();
   options_ = settings.value("CompilerOptions", "-;+ -(+ -\\ -Z- \"-r%p/%o\" \"-i%q/include\" -d0 -O2 -t4 \"-o%p/%o\" \"%p/%i\"").toString().split("\\s*");
 }
 
@@ -71,7 +71,6 @@ QString Compiler::commandFor(const QString &inputFile) const {
   QString c = cmp.isAbsolute() ? cmp.absolutePath() : q + "/" + cmp.path();
   QString d = QDir::currentPath();
   
-
   // Add the input and output files to the command line.
   // Then replace `-r` with `-rfilename`.
   return QString("%1 %2")

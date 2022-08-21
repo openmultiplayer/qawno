@@ -35,6 +35,9 @@ class ServerSettingsDialog: public QDialog {
 
   QString serverOptions() const;
   void setServerOptions(const QString &options);
+  
+  QString serverExtras() const;
+  void setServerExtras(const QString &extras);
 
  private slots:
   void on_browse_clicked();
