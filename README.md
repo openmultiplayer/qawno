@@ -332,7 +332,7 @@ The first input is the server (`omp-server`) location.  By default this is one d
 The second input is for all the options passed to the server.  By default only one option is given - `"%o"`, which, as with the same replacements for the compiler, specifies to load the current output file.  All server/config options can be tuned from here, for example:
 
 ```
---config announce=false --config game.time=1 --config max_players=100 --config pawn.legacy_plugins=streamer "%o"
+--config pawn.legacy_plugins=streamer "%o"
 ```
 
 The final input is also for server command-line parameters, but all those that come after `--`.  These are arguments passed directly to the mode itself (see [the documentation for y_args](https://github.com/pawn-lang/YSI-Includes/blob/5.x/YSI_Server/y_args.md)), so are only meaningful to the script.  These extra arguments:
@@ -341,9 +341,9 @@ The final input is also for server command-line parameters, but all those that c
 --objects 600 --checkpoints 12
 ```
 
-Would, with the default server options, give a final command-line of:
+Would, with the custom server options shown above, give a final command-line of:
 
 ```
-../omp-server "mode" -- --objects 600 --checkpoints 12
+../omp-server --config pawn.legacy_plugins=streamer "mode" -- --objects 600 --checkpoints 12
 ```
 
