@@ -312,3 +312,20 @@ Third row:
 
 * SA:MP branding orange.
 
+ Settings
+----------
+
+The compiler flags can include several special replacement sequences - `%i`, `%o`, `%p`, `%q`, `%c`, and `%d`.  `%i` is the input file, e.g. `mode.pwn`.  `%o` is the base file name, which is used for mode output operations, e.g. `mode`.  `%p` is the absolute path, excluding a trailing `/`, e.g. `C:/open.mp/gamemodes`.  So the default flags include the sequence `"-r%p/%o"`, which will write the function report to (for example) `C:/open.mp/gamemodes/mode.xml` (the `.xml`) is assumed automatically by `-r` (note that the double quotes are usually required).  `%q` is the Qawno directory, `%c` is the compiler directory, and `%d` is the working directory - these are usually all the same.  
+
+
+
+
+
+
+
+
+
+
+
+
+
