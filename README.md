@@ -195,6 +195,8 @@ This shows the numbers for each line, i.e. how far down in the file they are.  C
  Editing Tools
 ---------------
 
+### Delete Lines (Ctrl+L)
+
 `Ctrl+L` will delete the current line(s):
 
 Before:
@@ -212,6 +214,40 @@ Before:
 After:
 
 ![After deleting a multiple lines with Ctrl+L.](documentation/delete-4.png)
+
+### Duplicating Sections (Ctrl+D)
+
+`Ctrl+D` will duplicate the current line if there is no selection:
+
+Before:
+
+![Before duplicating a single line with Ctrl+D.](documentation/duplicate-1.png)
+
+After:
+
+![After duplicating a single line with Ctrl+D.](documentation/duplicate-2.png)
+
+If an area is selected it will duplicate just that section:
+
+Before:
+
+![Before duplicating a selected area with Ctrl+D.](documentation/duplicate-3.png)
+
+After:
+
+![After duplicating a selected area with Ctrl+D.](documentation/duplicate-4.png)
+
+Even if that section spans multiple lines:
+
+Before:
+
+![Before duplicating a multi-line-spanning area with Ctrl+D.](documentation/duplicate-5.png)
+
+After:
+
+![After duplicating a multi-line-spanning area with Ctrl+D.](documentation/duplicate-6.png)
+
+### Auto-Complete
 
 Typing at least three symbol characters (`a-z`, `A-Z`, `0-9`, `_`, and `@`) will bring up the auto-completion list, with all known symbols containing those characters in that order.  For example typing `ABC` will suggest `CreateObject` (`creAteoBjeCt`), `Get3DTextLabelColor` (`get3dtextlABelColor`), and many more.  The more characters you type, the more refined the results will be.  The results are also ordered by likelihood, so the best matches, and the functions used the most come first:
 
@@ -253,13 +289,19 @@ Going to *Edit -> Colour Selection* or pressing *Ctrl+M* will bring up the colou
 
 ![Colour selection dialog.](documentation/colours-simple.png)
 
+### Left Pane
+
 The left half of the dialog is pre-defined colours.  `Pick Screen Colours` brings up a crosshair with which you can click anywhere on your screen to extract the colour at that point.  `Add to Custom Colours` saves the currently selected colour from the right half of the dialog to the currently selected `Custom colours` slot (make sure you select the slot first to avoid overwriting existing ones).  These saved custom colours will survive Qawno being restarted so you can use them throughout your project.  This half also includes the pre-defined `Basic colours`, detailed later:
 
 ![Colour selection dialog left side.](documentation/colours-left.png)
 
+### Right Pane
+
 The right half of the screen is the main colour selection area.  The two top boxes can be clicked and dragged to to adjust the current colour.  The `Hue`, `Sat` (*saturation*), and *Val* (*value*) (collectively `HSV`); or `Red`, `Green`, and `Blue` (collectively `RGB`); boxes can be used to make fine adjustments to the individual colour componenets.  The `Alpha channel` input is used by both *HSV* and *RGB* and determines the transparency of the colour.  `0` is invisible (totally transparent), `255` is fully opaque, the default is `170` (`0xAA` in hex).  The `HTML` input can be used to preview an existing colour already in *RGB* hex format, and must include the `#`.  The final panel is a larger preview of the currently selected colour, ignoring transparency:
 
 ![Colour selection dialog right side.](documentation/colours-right.png)
+
+### Insertion
 
 Clicking on `OK` will insert your chosen colour in to your code at the current cursor position.  If the letter immediately before the cursor is an `x` the colour will be inserted as *RGBA*:
 
@@ -278,6 +320,8 @@ Anywhere else will give the colour in *RGB* format:
 ```
 
 Clicking `Cancel` will not insert anything.
+
+### Pre-Defined Colours
 
 The pre-defined `Basic colours` are forty eight common colours from San Andreas, SA:MP, and open.mp, in three groups.  Note that the dialog itself is limited to 48, hence these specific choices and why obvious options like player and vehicle colours were ommitted:
 
