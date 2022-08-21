@@ -939,16 +939,12 @@ void MainWindow::on_actionComment_triggered() {
     cursor.setPosition(end - endPosInBlock + endBlockLen - 1, QTextCursor::KeepAnchor);
     // We have the full lines selected.  Get the text in this area.
     QString text = cursor.selectedText();
-    QChar const* data = text.data();
-    int len = text.length();
     std::string debug = text.toStdString();
-    int pos = data[22].unicode();
-    pos = data[23].unicode();
-    bool uncommented = false;
+    QChar const* data = text.data();
     // Newline, line separator, or paragraph separator.
-    QRegularExpression search("(^|\\n|\\x{2028}|\\x{2029})[ \\t]*([^ \\t/]|/[^/])");
-    pos = text.indexOf(search);
-    pos = text.indexOf(QChar::ParagraphSeparator);
+    QRegularExpression search("(^|\\n|\\x{2028}|\\x{2029})[ \\t]*($|[^ \\t/]|/[^/]|/$)");
+    bool commented = text.indexOf(search) == -1;
+    //pos = text.indexOf(QChar::ParagraphSeparator);
     //do {
     //  // Skip whitespace.
     //  if (data[pos] == ' ' || data[pos] == '\t') {
