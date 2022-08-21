@@ -883,13 +883,18 @@ void MainWindow::on_actionColours_triggered() {
 
 void MainWindow::on_actionDelline_triggered() {
   if (auto editor = getCurrentEditor()) {
-    // Delete the line.
+    // Extend the selection to cover the whole of the lines.
     QTextCursor cursor = editor->textCursor();
-    int position = cursor.position();
-    int midpoint = cursor.positionInBlock();
-    cursor.setPosition(position - midpoint, QTextCursor::MoveAnchor);
-    cursor.setPosition(position + cursor.block().length() - midpoint, QTextCursor::KeepAnchor);
+    int start, end = cursor.selectionEnd();
+    start = cursor.selectionStart();
+    int endPosInBlock = cursor.positionInBlock();
+    int endBlockLen = cursor.block().length();
+    cursor.setPosition(start);
+    int startPosInBlock = cursor.positionInBlock();
+    cursor.setPosition(start - startPosInBlock, QTextCursor::MoveAnchor);
+    cursor.setPosition(end - endPosInBlock + endBlockLen, QTextCursor::KeepAnchor);
     cursor.insertText("");
+    editor->setTextCursor(cursor);
   }
 }
 
@@ -903,7 +908,7 @@ void MainWindow::on_actionDupline_triggered() {
       QString text = cursor.selectedText();
       cursor.setPosition(end);
       cursor.insertText(text);
-       cursor.setPosition(start, QTextCursor::MoveAnchor);
+      cursor.setPosition(start, QTextCursor::MoveAnchor);
       cursor.setPosition(end, QTextCursor::KeepAnchor);
       editor->setTextCursor(cursor);
     } else {
@@ -921,8 +926,30 @@ void MainWindow::on_actionDupline_triggered() {
 
 void MainWindow::on_actionComment_triggered() {
   if (auto editor = getCurrentEditor()) {
-    // Comment the line.
+    // Extend the selection to cover the whole of the lines.
     QTextCursor cursor = editor->textCursor();
+    int start, end = cursor.selectionEnd();
+    start = cursor.selectionStart();
+    int endPosInBlock = cursor.positionInBlock();
+    int endBlockLen = cursor.block().length();
+    cursor.setPosition(start);
+    int startPosInBlock = cursor.positionInBlock();
+    cursor.setPosition(start - startPosInBlock, QTextCursor::MoveAnchor);
+    cursor.setPosition(end - endPosInBlock + endBlockLen, QTextCursor::KeepAnchor);
+    editor->setTextCursor(cursor);
+    return;
+    //cursor.blockn
+    //editor->document()->r
+    bool uncommented = false;
+    do {
+    } while (start != end);
+
+
+
+
+
+
+
     if (cursor.hasSelection()) {
       // TODO: Block comment.
       QString text = editor->document()->toPlainText();
