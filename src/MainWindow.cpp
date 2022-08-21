@@ -885,8 +885,8 @@ void MainWindow::on_actionDelline_triggered() {
   if (auto editor = getCurrentEditor()) {
     // Extend the selection to cover the whole of the lines.
     QTextCursor cursor = editor->textCursor();
-    int start, end = cursor.selectionEnd();
-    start = cursor.selectionStart();
+    int start = cursor.selectionStart();
+    int end = cursor.selectionEnd();
     int endPosInBlock = cursor.positionInBlock();
     int endBlockLen = cursor.block().length();
     cursor.setPosition(start);
@@ -926,21 +926,42 @@ void MainWindow::on_actionDupline_triggered() {
 
 void MainWindow::on_actionComment_triggered() {
   if (auto editor = getCurrentEditor()) {
-    // Extend the selection to cover the whole of the lines.
+    // I was trying to do this in a way with cursors etc.  In the end I just decided to do it with
+    // string operations and loops.  Extend the selection to cover the whole of the lines.
     QTextCursor cursor = editor->textCursor();
-    int start, end = cursor.selectionEnd();
-    start = cursor.selectionStart();
+    int start = cursor.selectionStart();
+    int end = cursor.selectionEnd();
     int endPosInBlock = cursor.positionInBlock();
     int endBlockLen = cursor.block().length();
     cursor.setPosition(start);
     int startPosInBlock = cursor.positionInBlock();
     cursor.setPosition(start - startPosInBlock, QTextCursor::MoveAnchor);
-    cursor.setPosition(end - endPosInBlock + endBlockLen, QTextCursor::KeepAnchor);
+    cursor.setPosition(end - endPosInBlock + endBlockLen - 1, QTextCursor::KeepAnchor);
+    // We have the full lines selected.  Get the text in this area.
+    QString text = cursor.selectedText();
+    QChar const* data = text.data();
+    int len = text.length();
+    std::string debug = text.toStdString();
+    int pos = 0;
+    bool uncommented = false;
+    QRegularExpression search("^[ \\t]*([^/]|/[^/])");
+    pos = text.indexOf(search);
+    //do {
+    //  // Skip whitespace.
+    //  if (data[pos] == ' ' || data[pos] == '\t') {
+    //    ++pos;
+    //  } else if (data[pos] == '/' && pos + 1 < len && data[pos + 1] == '/') {
+    //    pos = text.indexOf(QChar::LineFeed, pos) + 1;
+    //  } else {
+    //    uncommented = true;
+    //    break;
+    //  }
+    //} while (pos);
     editor->setTextCursor(cursor);
     return;
     //cursor.blockn
     //editor->document()->r
-    bool uncommented = false;
+    //bool uncommented = false;
     do {
     } while (start != end);
 
