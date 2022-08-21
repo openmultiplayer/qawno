@@ -16,13 +16,14 @@
 #include <QFileInfo>
 #include <QProcess>
 #include <QSettings>
+#include <QDir>
 
 #include "Compiler.h"
 
 Compiler::Compiler() {
   QSettings settings;
-  path_ = settings.value("CompilerPath", "pawncc").toString();
-  options_ = settings.value("CompilerOptions", "-;+ -(+").toString().split("\\s*");
+  path_ = settings.value("CompilerPath", QDir::currentPath() + "pawncc").toString();
+  options_ = settings.value("CompilerOptions", "-;+ -(+ -\\ -Z- -r -iinclude -d0 -O2").toString().split("\\s*");
 }
 
 Compiler::~Compiler() {
@@ -60,14 +61,21 @@ QString Compiler::command() const {
 }
 
 QString Compiler::commandFor(const QString &inputFile) const {
-  QString fileName = QFileInfo(inputFile).fileName();
-  return QString("%1 %2 -c \"%3\"").arg(path_).arg(options_.join(" ")).arg(fileName);
+  //QString i = QFileInfo(inputFile).absoluteFilePath();
+  QString i = QFileInfo(inputFile).fileName();
+  QString p = QFileInfo(inputFile).absolutePath();
+  QString o = QFileInfo(inputFile).baseName();
+
+  // Add the input and output files to the command line.
+  // Then replace `-r` with `-rfilename`.
+  //return QString("%1 %2 \"-o%3/%4\" \"%5\"").arg(path_).arg(options_.join(" ")).arg(p).arg(o).arg(i).replace("-r", QString("\"-r%1/%2\"").arg(p).arg(o));
+  return QString("%1 %2 \"-D%3\" \"-o%4\" \"%5\"").arg(path_).arg(options_.join(" ")).arg(p).arg(o).arg(i).replace("-r", QString("\"-r%1\"").arg(o));
 }
 
 void Compiler::run(const QString &inputFile) {
   QProcess process;
   process.setProcessChannelMode(QProcess::MergedChannels);
-  process.setWorkingDirectory(QFileInfo(inputFile).absolutePath());
+  process.setWorkingDirectory(QDir::currentPath());
 
   QString command = commandFor(inputFile);
   process.start(command, QStringList(), QProcess::ReadOnly);
