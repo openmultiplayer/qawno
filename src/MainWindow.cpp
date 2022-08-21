@@ -258,7 +258,19 @@ not_a_native:
   }
 }
 
-void MainWindow::itemDoubleClicked(QListWidgetItem*) {
+void MainWindow::itemDoubleClicked(QListWidgetItem* item) {
+  // Insert this text in to the current position.
+  if (EditorWidget* editor = getCurrentEditor()) {
+    // Insert the current function name.
+    QTextCursor cursor = editor->textCursor();
+    int pos = cursor.selectionStart();
+    QString insert = deprototype(item->data(Qt::StatusTipRole).toString());
+    cursor.insertText(insert);
+    // Jump to the start of the parameters.
+    cursor.setPosition(pos + insert.indexOf('(') + 1);
+    editor->setFocus(Qt::OtherFocusReason);
+    editor->setTextCursor(cursor);
+  }
 }
 
 void MainWindow::itemClicked(QListWidgetItem* item) {
@@ -294,7 +306,7 @@ void MainWindow::currentRowChanged(int index) {
     dynamic_cast<StatusBar*>(statusBar())->setCursorPosition(line, column, selected);
     statusBar()->showMessage("");
   } else {
-    statusBar()->showMessage(deprototype(ui_->functions->currentItem()->data(Qt::StatusTipRole).toString()));
+    statusBar()->showMessage(ui_->functions->currentItem()->data(Qt::ToolTipRole).toString());
   }
 }
 
@@ -1717,5 +1729,6 @@ void MainWindow::createTab(const QString& fileName) {
   connect(editor, SIGNAL(textChanged()), SLOT(on_editor_textChanged()));
   connect(editor, SIGNAL(cursorPositionChanged()), SLOT(on_editor_cursorPositionChanged()));
   ui_->tabWidget->setCurrentIndex(ui_->tabWidget->count() - 1);
+  editor->setFocus(Qt::OtherFocusReason);
 }
 
