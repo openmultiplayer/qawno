@@ -102,12 +102,26 @@ MainWindow::MainWindow(QWidget *parent)
     if (loadFile(QApplication::instance()->arguments()[1])) {
       ++loaded;
     }
-  } else {
+  } else if (settings.contains("LastFiles")) {
     QStringList lastOpenedFileNames = settings.value("LastFiles").toStringList();
+    int idx = settings.contains("LastStarts") && settings.contains("LastEnds") ? 0 : -1000000;
+    QVariantList lastStarts = settings.value("LastStarts", QVariantList()).toList();
+    QVariantList lastEnds = settings.value("LastEnds", QVariantList()).toList();
     for (auto const & i : lastOpenedFileNames) {
       if (!i.isEmpty() && loadFile(i)) {
         ++loaded;
+        if (idx >= 0) {
+          EditorWidget* editor = editors_.last();
+          QTextCursor cursor = editor->textCursor();
+          int pos = lastStarts[idx].toInt();
+          cursor.setPosition(lastStarts[idx].toInt(), QTextCursor::MoveAnchor);
+          cursor.setPosition(lastEnds[idx].toInt(), QTextCursor::KeepAnchor);
+          editor->setFocus(Qt::OtherFocusReason);
+          editor->setTextCursor(cursor);
+          editor->ensureCursorVisible();
+        }
       }
+      ++idx;
     }
   }
   if (loaded == 0) {
@@ -124,6 +138,8 @@ MainWindow::MainWindow(QWidget *parent)
   loadNativeList();
 
   updateTitle();
+
+  ui_->tabWidget->setCurrentIndex(settings.value("LastViewed", 0).toInt());
 }
 
 MainWindow::~MainWindow() {
@@ -133,6 +149,24 @@ MainWindow::~MainWindow() {
   if (!isMaximized()) {
     settings.setValue("WindowSize", size());
   }
+
+  QStringList files {};
+  for (auto const& i : fileNames_) {
+    files.push_back(i);
+  }
+  settings.setValue("LastFiles", files);
+
+  QVariantList starts {};
+  QVariantList ends {};
+  for (auto editor : editors_) {
+    QTextCursor cursor = editor->textCursor();
+    starts.push_back(cursor.selectionStart());
+    ends.push_back(cursor.selectionEnd());
+  }
+  settings.setValue("LastStarts", starts);
+  settings.setValue("LastEnds", ends);
+
+  settings.setValue("LastViewed", getCurrentIndex());
 
   delete ui_;
 }
@@ -751,11 +785,6 @@ void MainWindow::on_actionOpen_triggered() {
 
   dir = QFileInfo(fileNames.first()).dir().path();
   settings.setValue("LastOpenDir", dir);
-  QStringList files {};
-  for (auto const & i : fileNames_) {
-    files.push_back(i);
-  }
-  settings.setValue("LastFiles", files);
 }
 
 void MainWindow::on_actionPaste_triggered() {
@@ -1148,12 +1177,6 @@ void MainWindow::on_actionClose_triggered() {
     parseFile(getCurrentEditor()->toPlainText(), false);
     editors_.remove(cur);
     fileNames_.removeAt(cur);
-    QStringList files {};
-    for (auto const & i : fileNames_) {
-      files.push_back(i);
-    }
-    QSettings settings;
-    settings.setValue("LastFiles", files);
     ui_->tabWidget->removeTab(cur);
 
     if (fileNames_.count() == 0) {
@@ -1242,11 +1265,6 @@ void MainWindow::on_actionSaveAs_triggered() {
   QFileInfo fileInfo(fileName);
   dir = fileInfo.dir().path();
   settings.setValue("LastSaveDir", dir);
-  QStringList files {};
-  for (auto const & i : fileNames_) {
-    files.push_back(i);
-  }
-  settings.setValue("LastFiles", files);
 
   ui_->tabWidget->setTabText(getCurrentIndex(), QFileInfo(fileInfo).fileName());
   fileNames_[getCurrentIndex()] = fileName;
