@@ -203,9 +203,9 @@ void EditorWidget::keyPressEvent(QKeyEvent *event) {
       event->accept();
       return;
     case Qt::Key_Backtab:
-      if (cursor.hasSelection()) {
+      //if (cursor.hasSelection()) {
         unindentSelectedText(cursor);
-      }
+      //}
       event->accept();
       return;
     case Qt::Key_Enter:
