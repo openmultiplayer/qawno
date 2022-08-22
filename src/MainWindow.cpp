@@ -946,10 +946,10 @@ void MainWindow::on_actionComment_triggered() {
     QChar const* data = text.data();
     // Newline, line separator, or paragraph separator.
     QRegularExpression search("(^|\\x{2029})[ \\t]*($|[^ \\t/]|/[^/]|/$)");
+    QRegularExpression anything("[^ \\t]");
     if (text.indexOf(search) == -1) {
       // All lines are commented out.
       QRegularExpression comment("(^|\\x{2029})([ \\t]*)// ?");
-      int lines = text.count(comment);
       // Find where the first comment starts.
       int newStart = text.indexOf('/');
       // Find where the last comment starts.
@@ -957,10 +957,7 @@ void MainWindow::on_actionComment_triggered() {
       if (text[newEnd] == 0x2029) {
         ++newEnd;
       }
-      endBlockLen = 0;
-      while (text[newEnd + endBlockLen] != '/') {
-        ++endBlockLen;
-      }
+      endBlockLen = text.indexOf(anything, newEnd) - newEnd;
       // Work out where to select again.
       if (startPosInBlock <= newStart) {
         // Start doesn't move.
@@ -1003,7 +1000,16 @@ void MainWindow::on_actionComment_triggered() {
       end -= (length - text.length());
     } else {
       // At least one line is uncommented.
-      QRegularExpression comment("(^|\\n|\\x{2028}|\\x{2029})([ \\t]*)");
+      QRegularExpression comment("(^|\\x{2029})([ \\t]*)");
+      QRegularExpression other("(^|\\x{2029})");
+      // Find where the first line starts.
+      int newStart = text.indexOf(anything);
+      // Find where the last line starts.
+      int newEnd = text.lastIndexOf(comment);
+      if (text[newEnd] == 0x2029) {
+        ++newEnd;
+      }
+      endBlockLen = text.indexOf(anything, newEnd) - newEnd;
       text.replace(comment, "\\1\\2// ");
     }
     debug = text.toStdString();
