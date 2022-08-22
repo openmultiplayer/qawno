@@ -941,14 +941,66 @@ void MainWindow::on_actionComment_triggered() {
     cursor.setPosition(end - endPosInBlock + endBlockLen - 1, QTextCursor::KeepAnchor);
     // We have the full lines selected.  Get the text in this area.
     QString text = cursor.selectedText();
+    int length = text.length();
     std::string debug = text.toStdString();
     QChar const* data = text.data();
     // Newline, line separator, or paragraph separator.
-    QRegularExpression search("(^|\\n|\\x{2028}|\\x{2029})[ \\t]*($|[^ \\t/]|/[^/]|/$)");
+    QRegularExpression search("(^|\\x{2029})[ \\t]*($|[^ \\t/]|/[^/]|/$)");
     if (text.indexOf(search) == -1) {
       // All lines are commented out.
-      QRegularExpression comment("(^|\\n|\\x{2028}|\\x{2029})([ \\t]*)// ?");
+      QRegularExpression comment("(^|\\x{2029})([ \\t]*)// ?");
+      int lines = text.count(comment);
+      // Find where the first comment starts.
+      int newStart = text.indexOf('/');
+      // Find where the last comment starts.
+      int newEnd = text.lastIndexOf(comment);
+      if (text[newEnd] == 0x2029) {
+        ++newEnd;
+      }
+      endBlockLen = 0;
+      while (text[newEnd + endBlockLen] != '/') {
+        ++endBlockLen;
+      }
+      // Work out where to select again.
+      if (startPosInBlock <= newStart) {
+        // Start doesn't move.
+      } else if (startPosInBlock == newStart + 1) {
+        // Move back 1.
+        start -= 1;
+      } else if (startPosInBlock == newStart + 2 || text[newStart + 2] != ' ') {
+        // Move back 2.
+        start -= 2;
+      } else {
+        // Move back 3.
+        start -= 3;
+      }
+      if (text[newEnd + endBlockLen + 2] == ' ') {
+        if (endPosInBlock <= endBlockLen) {
+          // Move forward 3.
+          end += 3;
+        } else if (endPosInBlock == endBlockLen + 1) {
+          // Move forward 2.
+          end += 2;
+        } else if (endPosInBlock == endBlockLen + 2) {
+          // Move forward 1.
+          end += 1;
+        } else {
+          // End doesn't move.
+        }
+      } else {
+        if (endPosInBlock <= endBlockLen) {
+          // Move forward 2.
+          end += 2;
+        } else if (endPosInBlock == endBlockLen + 1) {
+          // Move forward 1.
+          end += 1;
+        } else {
+          // End doesn't move.
+        }
+      }
+      // Do the replacement.
       text.replace(comment, "\\1\\2");
+      end -= (length - text.length());
     } else {
       // At least one line is uncommented.
       QRegularExpression comment("(^|\\n|\\x{2028}|\\x{2029})([ \\t]*)");
@@ -956,6 +1008,9 @@ void MainWindow::on_actionComment_triggered() {
     }
     debug = text.toStdString();
     cursor.insertText(text);
+    cursor.setPosition(start, QTextCursor::MoveAnchor);
+    cursor.setPosition(end, QTextCursor::KeepAnchor);
+    editor->setTextCursor(cursor);
     return;
     //cursor.blockn
     //editor->document()->r
