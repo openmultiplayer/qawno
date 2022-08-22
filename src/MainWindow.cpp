@@ -997,7 +997,7 @@ void MainWindow::on_actionComment_triggered() {
       }
       // Do the replacement.
       text.replace(comment, "\\1\\2");
-      end -= (length - text.length());
+      end -= length - text.length();
     } else {
       // At least one line is uncommented.
       QRegularExpression comment("(^|\\x{2029})([ \\t]*)");
@@ -1010,7 +1010,14 @@ void MainWindow::on_actionComment_triggered() {
         ++newEnd;
       }
       endBlockLen = text.indexOf(anything, newEnd) - newEnd;
+      if (startPosInBlock >= newStart) {
+        start += 3;
+      }
+      if (endPosInBlock < endBlockLen) {
+        end -= 3;
+      }
       text.replace(comment, "\\1\\2// ");
+      end += text.length() - length;
     }
     debug = text.toStdString();
     cursor.insertText(text);
