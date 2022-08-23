@@ -205,7 +205,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text) {
       }
       break;
     case NumericLiteral:
-      if (text[i].isDigit() || isHexDigit(text[i]) || text[i] == '.') {
+      if (text[i].isDigit() || isHexDigit(text[i]) || text[i] == '.' || text[i] == '_') {
         setFormat(i, 1, colorScheme_.number);
       } else {
         --i;
