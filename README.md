@@ -195,6 +195,8 @@ This shows the numbers for each line, i.e. how far down in the file they are.  C
  Compile And Run
 -----------------
 
+### Invoking The Compiler
+
 `Build -> Compile` in the menu, or `F5` will compile the current file.  You can see the command used to perform the compile, along with the eventual output, in the compiler output area ***5***.  A common command will look something like:
 
 ```
@@ -209,11 +211,23 @@ pawncc -;+ -(+ -\ -Z- "-rD:/open.mp/gamemodes/YSI_TEST" "-iinclude" -d0 -O2 -t4 
 * `"-oD:/open.mp/gamemodes/YSI_TEST"` - `-o` is *output* so this is the **base** filename of the output.  An extension is added based on the type of compilation - `.amx` (default), `.asm` (with `-a`), or `.lst` (with `-l`).
 * `"-rD:/open.mp/gamemodes/YSI_TEST"` - `-r` is *report* thus this generates a *report* file, i.e. a `.xml` file with all the documentation on functions used in the code.
 
+See the compiler settings for more command-line configuration options.
+
+### Compiler Output
+
 Double-clicking on a warning or error in the output pane will jump straight to the source of the issue:
 
 ![Warnings after compiling.](documentation/warnings-1.png)
 
 ![Warnings after double-clicking on it.](documentation/warnings-2.png)
+
+### Running The Server
+
+`Build -> Run` in the menu, or `F6` will compile the current file as above, then also start an open.mp server instance with the successfully compiled code (assuming it was successfully compiled).  Every time you use `F6` any existing server will be force-closed and a new one started as a trick to force the client to reconnect:
+
+![Launching the server.](documentation/server-launch.png)
+
+See the server settings for more command-line configuration options.
 
  Editing Tools
 ---------------
