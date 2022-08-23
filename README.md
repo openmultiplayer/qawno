@@ -65,6 +65,7 @@ Provides visual access to all the editor features and options.
 
 * *Compile* - Use the pawn compiler to convert the current file in to a .AMX.  Will save *all* open files first as the main script may depend on other files being edited at the same time.
 * *Run* - Compile the code as with *Compile*, and then attempt to run the open.mp server and lauch the current mode.  If a server is already open this will first kill that instance so that clients/players connected will automatically re-connect.
+* *Next Error* - Jump straight to the location in code of the next error *or warning* from the output.
 
 ![The Settings menu.](documentation/menu-settings.png)
 
@@ -90,7 +91,21 @@ This is where you type code to be run later.
 
 ### 5. Compiler Output
 
-This is where the compiler displays its messages after being invoked with *Run -> Compile*.
+This is where the compiler displays its messages after being invoked with *Run -> Compile*.  Double-clicking on a warning or error in the output pane will jump straight to the source of the issue:
+
+![Warnings after compiling.](documentation/warnings-1.png)
+
+![Warnings after double-clicking on it.](documentation/warnings-2.png)
+
+After compiling `Build -> Next Error` or `Ctrl+E` will automatically move through the warnings and errors, and their locations in code.  Pressing `Ctrl+E` once will *select and copy* the entire error message making asking for help easy [without the ridiculous trend of posting text as an image](https://textnot.pictures/):
+
+![All errors selected and copied.](documentation/errors-selected.png)
+
+Pressing `Ctrl+E` a second time will jump to the location of the first warning or error in code, a third time will jump to the second warning or error, and so-on, eventually looping back to the start:
+
+![Next error location jumped to.](documentation/errors-next.png)
+
+The easy way to remember `Ctrl+E` is *Control Error*, but don't forget that it also does warnings, and that warnings are not the same as errors.  `Ctrl+W` can't be used for this as it is *Close Tab*.
 
 ### 6. The Status Bar
 
@@ -212,14 +227,6 @@ pawncc -;+ -(+ -\ -Z- "-rD:/open.mp/gamemodes/YSI_TEST" "-iinclude" -d0 -O2 -t4 
 * `"-rD:/open.mp/gamemodes/YSI_TEST"` - `-r` is *report* thus this generates a *report* file, i.e. a `.xml` file with all the documentation on functions used in the code.
 
 See the compiler settings for more command-line configuration options.
-
-### Compiler Output
-
-Double-clicking on a warning or error in the output pane will jump straight to the source of the issue:
-
-![Warnings after compiling.](documentation/warnings-1.png)
-
-![Warnings after double-clicking on it.](documentation/warnings-2.png)
 
 ### Running The Server
 

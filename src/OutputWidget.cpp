@@ -16,6 +16,8 @@
 #include <QSettings>
 #include <QApplication>
 #include <QClipboard>
+#include <QRegularExpression>
+#include <QFileInfo>
 
 #include "OutputWidget.h"
 
@@ -53,6 +55,7 @@ void OutputWidget::keyPressEvent(QKeyEvent* event) {
     QApplication::clipboard()->setText(cursor.selectedText());
   } else switch (event->key()) {
   case Qt::Key_C:
+  case Qt::Key_X:
     if (!(event->modifiers() & Qt::ControlModifier)) {
       break;
     }
@@ -72,5 +75,49 @@ void OutputWidget::keyPressEvent(QKeyEvent* event) {
     break;
   }
   return;
+}
+
+void OutputWidget::resetErrorCounter() {
+  error_ = -1;
+}
+
+OutputWidget::error_selection_s OutputWidget::advanceErrorCounter() {
+  // Every time this is called we select different bits of the error text.
+  if (error_ != -1) {
+    // Find the Nth error/warning.
+    QTextCursor cursor = textCursor();
+    cursor.setPosition(0);
+    int err = -1;
+    // Example:
+    //
+    //   D:\open.mp\gamemodes\independence.pwn(9) : warning 203: symbol is never used: "warning"
+    //
+    QRegularExpression message("^(.*?)\\((\\d+)\\)");
+    do {
+      cursor.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
+      QString text = cursor.selectedText();
+      QRegularExpressionMatch match = message.match(text);
+      if (match.hasMatch()) {
+        ++err;
+        // Loop through the errors.
+        if (err == error_) {
+          QString fileName = match.captured(1);
+          QString line = match.captured(2);
+          // Normalise the filename so we can compare it to open tabs.
+          QFileInfo info(fileName);
+          setTextCursor(cursor);
+          ++error_;
+          return { info.absoluteFilePath(), line.toInt() };
+        }
+      }
+    } while (cursor.movePosition(QTextCursor::NextBlock));
+  }
+  // Select and copy everything.
+  QTextCursor cursor = textCursor();
+  cursor.select(QTextCursor::Document);
+  QApplication::clipboard()->setText(cursor.selectedText());
+  setTextCursor(cursor);
+  error_ = 0;
+  return { "", -1 };
 }
 

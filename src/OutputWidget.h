@@ -21,12 +21,21 @@
 class OutputWidget: public QPlainTextEdit {
  Q_OBJECT
 
- public:
+public:
+  struct error_selection_s {
+    QString File;
+    int Line;
+  };
+
   explicit OutputWidget(QWidget *parent = 0);
   ~OutputWidget() override;
+  void resetErrorCounter();
+  error_selection_s advanceErrorCounter();
 
 private:
   void keyPressEvent(QKeyEvent* event) override;
+
+  int error_ = -1;
 };
 
 #endif // OUTPUTWIDGET_H

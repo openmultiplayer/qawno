@@ -1609,6 +1609,7 @@ void MainWindow::on_actionCompile_triggered() {
   Compiler compiler;
   const QString& fileName = fileNames_[getCurrentIndex()];
   ui_->output->clear();
+  ui_->output->resetErrorCounter();
   ui_->output->appendPlainText(compiler.commandFor(fileName));
   ui_->output->appendPlainText("\n");
   // Force a repaint now, so the command-line is visible during slow compiles.
@@ -1647,6 +1648,10 @@ void MainWindow::on_actionRun_triggered() {
   }
   on_actionCompile_triggered();
   server_.run(fileNames_[getCurrentIndex()]);
+}
+
+void MainWindow::on_actionNextErr_triggered() {
+  ui_->output->advanceErrorCounter();
 }
 
 void MainWindow::on_actionAbout_triggered() {

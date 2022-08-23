@@ -172,6 +172,7 @@
     </property>
     <addaction name="actionCompile"/>
     <addaction name="actionRun"/>
+    <addaction name="actionNextErr"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
@@ -364,6 +365,14 @@
    </property>
    <property name="shortcut">
     <string>F6</string>
+   </property>
+  </action>
+  <action name="actionNextErr">
+   <property name="text">
+    <string>&amp;Next Error</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
    </property>
   </action>
   <action name="actionAbout">
