@@ -759,19 +759,9 @@ void MainWindow::on_actionOpen_triggered() {
   int loaded = 0;
   bool close = fileNames_.count() == 1 && isNewFile() && !isFileModified();
   for (auto const& fileName : fileNames) {
-    // Is the file already open?  If so just switch to the tab.
-    for (int i = fileNames_.count(); i--; ) {
-      if (fileNames_[i] == fileName) {
-        ui_->tabWidget->setCurrentIndex(i);
-        continue;
-      }
+    if (tryLoadFile(fileName)) {
+      ++loaded;
     }
-
-    if (!loadFile(fileName)) {
-      continue;
-    }
-
-    ++loaded;
   }
 
   if (loaded == 0) {
@@ -1620,6 +1610,8 @@ void MainWindow::on_actionCompile_triggered() {
   ui_->output->clear();
   ui_->output->appendPlainText(compiler.commandFor(fileName));
   ui_->output->appendPlainText("\n");
+  // Force a repaint now, so the command-line is visible during slow compiles.
+  ui_->output->repaint();
   compiler.run(fileName);
   ui_->output->appendPlainText(compiler.output());
 }
@@ -1721,6 +1713,18 @@ void MainWindow::updateTitle() {
   title.append(QCoreApplication::applicationName());
 
   setWindowTitle(title);
+}
+
+bool MainWindow::tryLoadFile(const QString &fileName) {
+  for (int i = fileNames_.count(); i--; ) {
+    if (fileNames_[i] == fileName) {
+      ui_->tabWidget->setCurrentIndex(i);
+      // It wasn't loaded (but is open).
+      return false;
+    }
+  }
+
+  return loadFile(fileName);
 }
 
 bool MainWindow::loadFile(const QString &fileName) {
