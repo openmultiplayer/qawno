@@ -90,6 +90,8 @@ class MainWindow: public QMainWindow {
   void itemDoubleClicked(QListWidgetItem*);
   void itemClicked(QListWidgetItem*);
 
+  void errorClicked();
+
  private:
   QString deprototype(QString func);
   void hidePopup();

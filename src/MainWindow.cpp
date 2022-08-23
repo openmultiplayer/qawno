@@ -133,6 +133,7 @@ MainWindow::MainWindow(QWidget *parent)
   connect(ui_->functions, SIGNAL(currentRowChanged(int)), SLOT(currentRowChanged(int)));
   connect(ui_->functions, SIGNAL(itemClicked(QListWidgetItem*)), SLOT(itemClicked(QListWidgetItem*)));
   connect(ui_->functions, SIGNAL(itemDoubleClicked(QListWidgetItem*)), SLOT(itemDoubleClicked(QListWidgetItem*)));
+  connect(ui_->output, SIGNAL(cursorPositionChanged()), SLOT(errorClicked()));
   QApplication::instance()->installEventFilter(this);
 
   loadNativeList();
@@ -1614,6 +1615,23 @@ void MainWindow::on_actionCompile_triggered() {
   ui_->output->repaint();
   compiler.run(fileName);
   ui_->output->appendPlainText(compiler.output());
+}
+
+void MainWindow::errorClicked() {
+  QTextCursor cursor = ui_->output->textCursor();
+  cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::MoveAnchor);
+  cursor.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
+  // Example:
+  //
+  //   D:\open.mp\gamemodes\independence.pwn(9) : warning 203: symbol is never used: "warning"
+  //
+  QRegularExpression message("^(.*?)\\((\\d+)\\)");
+  QString text = cursor.selectedText();
+  QRegularExpressionMatch match = message.match(text);
+  if (match.hasMatch()) {
+    std::string fileName = match.captured(1).toStdString();
+    std::string line = match.captured(2).toStdString();
+  }
 }
 
 void MainWindow::on_actionRun_triggered() {
