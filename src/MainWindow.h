@@ -109,7 +109,7 @@ class MainWindow: public QMainWindow {
   int getCurrentIndex() const;
   const QString& getCurrentName() const;
   EditorWidget* getCurrentEditor() const;
-  bool eventFilter(QObject* watched, QEvent* event);
+  bool eventFilter(QObject* watched, QEvent* event) override;
   void finishSymbol(QString const& symbol, bool add);
   void parseFile(QString const text, bool add);
   void scrollByLines(int n);

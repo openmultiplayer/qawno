@@ -14,6 +14,8 @@
 // along with qawno. If not, see <http://www.gnu.org/licenses/>.
 
 #include <QSettings>
+#include <QApplication>
+#include <QClipboard>
 
 #include "OutputWidget.h"
 
@@ -34,9 +36,47 @@ OutputWidget::OutputWidget(QWidget *parent):
   QFont font = defaultFont();
   font.fromString(settings.value("OutputFont", font).toString());
   setFont(font);
+  document()->installEventFilter(this);
 }
 
 OutputWidget::~OutputWidget() {
   QSettings settings;
   settings.setValue("OutputFont", font().toString());
 }
+
+void OutputWidget::keyPressEvent(QKeyEvent* event) {
+  return QPlainTextEdit::keyPressEvent(event);
+}
+
+
+bool OutputWidget::eventFilter(QObject* watched, QEvent* event) {
+  switch (event->type()) {
+  case QKeyEvent::KeyPress:
+    if (static_cast<QKeyEvent*>(event)->matches(QKeySequence::Copy)) {
+      QTextCursor cursor = textCursor();
+      QClipboard* clipboard = QApplication::clipboard();
+      QString text = cursor.selectedText();
+      clipboard->setText(text);
+    }
+    switch (static_cast<QKeyEvent*>(event)->key()) {
+    case Qt::Key_C:
+      if (!(static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier)) {
+        break;
+      }
+      // Manually detect `Ctrl+C` and fall through.
+    case Qt::Key_Copy:
+    case Qt::Key_Cut: {
+      // Or have it passed from the OS.
+      QTextCursor cursor = textCursor();
+      QClipboard* clipboard = QApplication::clipboard();
+      QString text = cursor.selectedText();
+      clipboard->setText(text);
+      break;
+    }
+    }
+    break;
+  }
+  // Pass it on.
+  return QPlainTextEdit::eventFilter(watched, event);
+}
+

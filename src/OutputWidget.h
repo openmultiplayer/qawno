@@ -24,6 +24,10 @@ class OutputWidget: public QPlainTextEdit {
  public:
   explicit OutputWidget(QWidget *parent = 0);
   ~OutputWidget() override;
+
+private:
+  bool eventFilter(QObject* watched, QEvent* event) override;
+  void keyPressEvent(QKeyEvent* event) override;
 };
 
 #endif // OUTPUTWIDGET_H
