@@ -24,7 +24,7 @@
 Server::Server() {
   QSettings settings;
   path_ = settings.value("ServerPath", "../omp-server").toString();
-  options_ = settings.value("ServerOptions", "\"%o\"").toString().split("\\s*");
+  options_ = settings.value("ServerOptions", "--config rcon.password=testing \"%o\"").toString().split("\\s*");
   extras_ = settings.value("ServerExtras", "").toString().split("\\s*");
   ZeroMemory(&pi_, sizeof(PROCESS_INFORMATION));
   thread_ = NULL;

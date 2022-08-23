@@ -192,6 +192,29 @@ A real-world include showing some of these tricks can be seen in [the sscanf plu
 
 This shows the numbers for each line, i.e. how far down in the file they are.  Compiler warnings and errors use these line numbers to direct you to the problems, and you can jump straight to them by value with `Go To Line...`.
 
+ Compile And Run
+-----------------
+
+`Build -> Compile` in the menu, or `F5` will compile the current file.  You can see the command used to perform the compile, along with the eventual output, in the compiler output area ***5***.  A common command will look something like:
+
+```
+pawncc -;+ -(+ -\ -Z- "-rD:/open.mp/gamemodes/YSI_TEST" "-iinclude" -d0 -O2 -t4 "-iD:/open.mp/gamemodes/YSI_TEST" "-oD:/open.mp/gamemodes/YSI_TEST" "D:/open.mp/gamemodes/YSI_TEST.pwn"
+```
+
+* `pawncc` - The name of the compiler.
+* `"D:/open.mp/gamemodes/YSI_TEST.pwn"` - The name of the file being compiled (i.e. the file open in the current tab).
+* `-;+ -(+ -\ -Z- -d0 -O2 -t4` - Various flags for settings common to open.mp.  In order: require semi-colons, require brackets, backslash escape character, disable legacy mode, no debug symbols, maximum optimisation level, tab size 4.
+* `-iinclude` - `-i` means *include directory*, so this adds the `include` directory next to Qawno as a location for importing other files.
+* `"-iD:/open.mp/gamemodes/YSI_TEST"` - Same as above, `-i` means *include directory*, so this attempts to use a folder with the same name as the file being built as a search location for dependencies added with `#include <filename>`.
+* `"-oD:/open.mp/gamemodes/YSI_TEST"` - `-o` is *output* so this is the **base** filename of the output.  An extension is added based on the type of compilation - `.amx` (default), `.asm` (with `-a`), or `.lst` (with `-l`).
+* `"-rD:/open.mp/gamemodes/YSI_TEST"` - `-r` is *report* thus this generates a *report* file, i.e. a `.xml` file with all the documentation on functions used in the code.
+
+Double-clicking on a warning or error in the output pane will jump straight to the source of the issue:
+
+![Warnings after compiling.](documentation/warnings-1.png)
+
+![Warnings after double-clicking on it.](documentation/warnings-2.png)
+
  Editing Tools
 ---------------
 
@@ -474,7 +497,7 @@ The second input is for all the options passed to the compiler.  The compiler op
 
 The first input is the server (`omp-server`) location.  By default this is one directory above Qawno.
 
-The second input is for all the options passed to the server.  By default only one option is given - `"%o"`, which, as with the same replacements for the compiler, specifies to load the current output file.  All server/config options can be tuned from here, for example:
+The second input is for all the options passed to the server.  By default only two options are given - `"%o"`, which, as with the same replacements for the compiler, specifies to load the current output file; and an rcon password to enable rapid testing.  All server/config options can be tuned from here, for example:
 
 ```
 --config pawn.legacy_plugins=streamer "%o"
@@ -486,9 +509,9 @@ The final input is also for server command-line parameters, but all those that c
 --objects 600 --checkpoints 12
 ```
 
-Would, with the custom server options shown above, give a final command-line of:
+Would give a final command-line of:
 
 ```
-../omp-server --config pawn.legacy_plugins=streamer "mode" -- --objects 600 --checkpoints 12
+../omp-server --config rcon.password=testing "mode" -- --objects 600 --checkpoints 12
 ```
 
