@@ -759,7 +759,7 @@ void MainWindow::on_actionOpen_triggered() {
   int loaded = 0;
   bool close = fileNames_.count() == 1 && isNewFile() && !isFileModified();
   for (auto const& fileName : fileNames) {
-    if (tryLoadFile(fileName)) {
+    if (tryLoadFile(fileName) == 1) {
       ++loaded;
     }
   }
@@ -1715,16 +1715,16 @@ void MainWindow::updateTitle() {
   setWindowTitle(title);
 }
 
-bool MainWindow::tryLoadFile(const QString &fileName) {
+int MainWindow::tryLoadFile(const QString &fileName) {
   for (int i = fileNames_.count(); i--; ) {
     if (fileNames_[i] == fileName) {
       ui_->tabWidget->setCurrentIndex(i);
       // It wasn't loaded (but is open).
-      return false;
+      return -1;
     }
   }
 
-  return loadFile(fileName);
+  return loadFile(fileName) ? 1 : 0;
 }
 
 bool MainWindow::loadFile(const QString &fileName) {
