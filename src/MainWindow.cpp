@@ -1635,7 +1635,9 @@ void MainWindow::errorClicked() {
     QString fileName = match.captured(1);
     QString line = match.captured(2);
     ui_->output->setTextCursor(cursor);
-    jumpToLine(fileName, line.toInt());
+    // Normalise the filename so we can compare it to open tabs.
+    QFileInfo info(fileName);
+    jumpToLine(info.absoluteFilePath(), line.toInt());
   }
 }
 
