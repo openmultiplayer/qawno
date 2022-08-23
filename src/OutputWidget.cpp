@@ -36,7 +36,6 @@ OutputWidget::OutputWidget(QWidget *parent):
   QFont font = defaultFont();
   font.fromString(settings.value("OutputFont", font).toString());
   setFont(font);
-  this->installEventFilter(this);
 }
 
 OutputWidget::~OutputWidget() {
@@ -45,44 +44,33 @@ OutputWidget::~OutputWidget() {
 }
 
 void OutputWidget::keyPressEvent(QKeyEvent* event) {
-  return QPlainTextEdit::keyPressEvent(event);
-}
-
-bool OutputWidget::eventFilter(QObject* watched, QEvent* event) {
-  switch (event->type()) {
-  case QKeyEvent::KeyPress:
-    if (static_cast<QKeyEvent*>(event)->matches(QKeySequence::SelectAll)) {
+  if (event->matches(QKeySequence::SelectAll)) {
+    QTextCursor cursor = textCursor();
+    cursor.select(QTextCursor::Document);
+    setTextCursor(cursor);
+  } else if (event->matches(QKeySequence::Copy)) {
+    QTextCursor cursor = textCursor();
+    QApplication::clipboard()->setText(cursor.selectedText());
+  } else switch (event->key()) {
+  case Qt::Key_C:
+    if (!(event->modifiers() & Qt::ControlModifier)) {
+      break;
+    }
+    // Manually detect `Ctrl+C` and fall through.
+  case Qt::Key_Copy:
+  case Qt::Key_Cut: {
+    // Or have it passed from the OS.
+    QApplication::clipboard()->setText(textCursor().selectedText());
+    break;
+  }
+  case Qt::Key_A:
+    if (event->modifiers() & Qt::ControlModifier) {
       QTextCursor cursor = textCursor();
       cursor.select(QTextCursor::Document);
       setTextCursor(cursor);
-    } else if (static_cast<QKeyEvent*>(event)->matches(QKeySequence::Copy)) {
-      QTextCursor cursor = textCursor();
-      QApplication::clipboard()->setText(cursor.selectedText());
-    } else switch (static_cast<QKeyEvent*>(event)->key()) {
-    case Qt::Key_C:
-      if (!(static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier)) {
-        break;
-      }
-      // Manually detect `Ctrl+C` and fall through.
-    case Qt::Key_Copy:
-    case Qt::Key_Cut: {
-      // Or have it passed from the OS.
-      QApplication::clipboard()->setText(textCursor().selectedText());
-      break;
     }
-    case Qt::Key_A:
-      if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
-        QTextCursor cursor = textCursor();
-        cursor.select(QTextCursor::Document);
-        setTextCursor(cursor);
-      }
-      break;
-    }
-    // Fallthrough.
-  case QKeyEvent::KeyRelease:
-    return true;
+    break;
   }
-  // Pass it on.
-  return QPlainTextEdit::eventFilter(watched, event);
+  return;
 }
 
