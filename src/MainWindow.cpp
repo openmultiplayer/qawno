@@ -1727,6 +1727,15 @@ int MainWindow::tryLoadFile(const QString &fileName) {
   return loadFile(fileName) ? 1 : 0;
 }
 
+void MainWindow::jumpToLine(const QString& fileName, int line) {
+  if (tryLoadFile(fileName)) {
+    // Was just opened, or was already open.  Either way, we're now on the correct tab.
+    if (EditorWidget* editor = getCurrentEditor()) {
+      editor->jumpToLine(line);
+    }
+  }
+}
+
 bool MainWindow::loadFile(const QString &fileName) {
   bool nu = fileName.startsWith(".");
   QFile file(fileName);
