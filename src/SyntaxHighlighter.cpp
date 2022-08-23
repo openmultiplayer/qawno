@@ -288,12 +288,12 @@ end:
   case CommentBegin:
   case NumericLiteral:
   case Preprocessor:
+  case CharacterLiteral:
     setCurrentBlockState((int)Unknown);
     break;
   case Unknown:
   case Comment:
   case CommentEnd:
-  case CharacterLiteral:
   case StringLiteral:
   case PreprocessorNextLine:
     setCurrentBlockState((int)state);
