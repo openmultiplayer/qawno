@@ -1619,6 +1619,9 @@ void MainWindow::on_actionCompile_triggered() {
 
 void MainWindow::errorClicked() {
   QTextCursor cursor = ui_->output->textCursor();
+  if (!cursor.hasSelection()) {
+    return;
+  }
   cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::MoveAnchor);
   cursor.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
   // Example:
@@ -1629,8 +1632,10 @@ void MainWindow::errorClicked() {
   QString text = cursor.selectedText();
   QRegularExpressionMatch match = message.match(text);
   if (match.hasMatch()) {
-    std::string fileName = match.captured(1).toStdString();
-    std::string line = match.captured(2).toStdString();
+    QString fileName = match.captured(1);
+    QString line = match.captured(2);
+    ui_->output->setTextCursor(cursor);
+    jumpToLine(fileName, line.toInt());
   }
 }
 
