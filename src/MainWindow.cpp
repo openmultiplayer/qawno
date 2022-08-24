@@ -63,7 +63,7 @@ MainWindow::MainWindow(QWidget *parent)
 
   QPalette darkPalette;
   darkPalette.setColor(QPalette::Window, QColor(0x282C34));
-  darkPalette.setColor(QPalette::WindowText, Qt::white);
+  darkPalette.setColor(QPalette::WindowText, Qt::black);
   darkPalette.setColor(QPalette::Base, QColor(0x282C34));
   darkPalette.setColor(QPalette::AlternateBase, QColor(0x282C34));
   darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
@@ -85,11 +85,9 @@ MainWindow::MainWindow(QWidget *parent)
   ui_->actionMRU->setChecked(useMRU);
 
   if (useDarkMode) {
-    ui_->splitter->setPalette(darkModePalette);
-    ui_->tabWidget->setPalette(darkModePalette);
+    ui_->outerWidget->setPalette(darkModePalette);
   } else {
-    ui_->splitter->setPalette(defaultPalette);
-    ui_->tabWidget->setPalette(defaultPalette);
+    ui_->outerWidget->setPalette(defaultPalette);
   }
 
   resize(settings.value("WindowSize", QSize(800, 600)).toSize());
@@ -1538,11 +1536,9 @@ void MainWindow::on_actionDarkMode_triggered() {
     i->toggleDarkMode(useDarkMode);
   }
   if (useDarkMode) {
-    ui_->splitter->setPalette(darkModePalette);
-    ui_->tabWidget->setPalette(darkModePalette);
+    ui_->outerWidget->setPalette(darkModePalette);
   } else {
-    ui_->splitter->setPalette(defaultPalette);
-    ui_->tabWidget->setPalette(defaultPalette);
+    ui_->outerWidget->setPalette(defaultPalette);
   }
 }
 
