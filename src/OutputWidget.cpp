@@ -52,7 +52,7 @@ void OutputWidget::keyPressEvent(QKeyEvent* event) {
     setTextCursor(cursor);
   } else if (event->matches(QKeySequence::Copy)) {
     QTextCursor cursor = textCursor();
-    QApplication::clipboard()->setText(cursor.selectedText());
+    QApplication::clipboard()->setText(cursor.selectedText().replace(QChar::ParagraphSeparator, '\n'));
   } else switch (event->key()) {
   case Qt::Key_C:
   case Qt::Key_X:
@@ -63,7 +63,7 @@ void OutputWidget::keyPressEvent(QKeyEvent* event) {
   case Qt::Key_Copy:
   case Qt::Key_Cut: {
     // Or have it passed from the OS.
-    QApplication::clipboard()->setText(textCursor().selectedText());
+    QApplication::clipboard()->setText(textCursor().selectedText().replace(QChar::ParagraphSeparator, '\n'));
     break;
   }
   case Qt::Key_A:
@@ -115,7 +115,7 @@ OutputWidget::error_selection_s OutputWidget::advanceErrorCounter() {
   // Select and copy everything.
   QTextCursor cursor = textCursor();
   cursor.select(QTextCursor::Document);
-  QApplication::clipboard()->setText(cursor.selectedText());
+  QApplication::clipboard()->setText(cursor.selectedText().replace(QChar::ParagraphSeparator, '\n'));
   setTextCursor(cursor);
   error_ = 0;
   return { "", -1 };
