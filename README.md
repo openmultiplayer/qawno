@@ -83,7 +83,7 @@ Provides visual access to all the editor features and options.
 
 ### 3. The Tab Bar
 
-This shows you all the files you currently have open.  Clicking on any of the tabs will bring that file to the fore so you can edit it.  If there are a lot of tabs open (or tabs with long paths) the tab bar will have small arrows for scrolling the list.
+This shows you all the files you currently have open.  Clicking on any of the tabs will bring that file to the fore so you can edit it.  If there are a lot of tabs open (or tabs with long paths) the tab bar will have small arrows for scrolling the list.  The shortcuts `Ctrl+1` - `Ctrl+0` will take you straight to the numbered tab (starting at `1` on the left).
 
 ### 4. The Editor
 

@@ -1099,6 +1099,96 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
         return true;
       }
       break;
+    case Qt::Key_1:
+      // What is DRY code?
+      if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
+        // Jump to tab.
+        ui_->tabWidget->setCurrentIndex(0);
+        // Stop propagation.
+        return true;
+      }
+      break;
+    case Qt::Key_2:
+      // What is DRY code?
+      if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
+        // Jump to tab.
+        ui_->tabWidget->setCurrentIndex(1);
+        // Stop propagation.
+        return true;
+      }
+      break;
+    case Qt::Key_3:
+      // What is DRY code?
+      if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
+        // Jump to tab.
+        ui_->tabWidget->setCurrentIndex(2);
+        // Stop propagation.
+        return true;
+      }
+      break;
+    case Qt::Key_4:
+      // What is DRY code?
+      if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
+        // Jump to tab.
+        ui_->tabWidget->setCurrentIndex(3);
+        // Stop propagation.
+        return true;
+      }
+      break;
+    case Qt::Key_5:
+      // What is DRY code?
+      if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
+        // Jump to tab.
+        ui_->tabWidget->setCurrentIndex(4);
+        // Stop propagation.
+        return true;
+      }
+      break;
+    case Qt::Key_6:
+      // What is DRY code?
+      if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
+        // Jump to tab.
+        ui_->tabWidget->setCurrentIndex(5);
+        // Stop propagation.
+        return true;
+      }
+      break;
+    case Qt::Key_7:
+      // What is DRY code?
+      if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
+        // Jump to tab.
+        ui_->tabWidget->setCurrentIndex(6);
+        // Stop propagation.
+        return true;
+      }
+      break;
+    case Qt::Key_8:
+      // What is DRY code?
+      if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
+        // Jump to tab.
+        ui_->tabWidget->setCurrentIndex(7);
+        // Stop propagation.
+        return true;
+      }
+      break;
+    case Qt::Key_9:
+      // What is DRY code?
+      if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
+        // Jump to tab.
+        ui_->tabWidget->setCurrentIndex(8);
+        // Stop propagation.
+        return true;
+      }
+      break;
+    case Qt::Key_0:
+      // What is DRY code?
+      if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
+        // Jump to tab.
+        ui_->tabWidget->setCurrentIndex(9);
+        // Stop propagation.
+        return true;
+      }
+      break;
     case Qt::Key_Backtab:
       if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
         // Tab switcher backwards.
