@@ -1732,8 +1732,12 @@ void MainWindow::on_actionRun_triggered() {
   if (fileNames_.isEmpty()) {
     return;
   }
-  on_actionCompile_triggered();
   server_.run(fileNames_[getCurrentIndex()]);
+}
+
+void MainWindow::on_actionCompileRun_triggered() {
+  on_actionCompile_triggered();
+  on_actionRun_triggered();
 }
 
 void MainWindow::on_actionNextErr_triggered() {

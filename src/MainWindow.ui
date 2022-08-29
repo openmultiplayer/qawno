@@ -171,6 +171,7 @@
      <string>&amp;Build</string>
     </property>
     <addaction name="actionCompile"/>
+    <addaction name="actionCompileRun"/>
     <addaction name="actionRun"/>
     <addaction name="actionNextErr"/>
    </widget>
@@ -359,12 +360,20 @@
     <string>F5</string>
    </property>
   </action>
-  <action name="actionRun">
+  <action name="actionCompileRun">
    <property name="text">
-    <string>&amp;Run</string>
+    <string>Compile + &amp;Run</string>
    </property>
    <property name="shortcut">
     <string>F6</string>
+   </property>
+  </action>
+  <action name="actionRun">
+   <property name="text">
+    <string>Run</string>
+   </property>
+   <property name="shortcut">
+    <string>F7</string>
    </property>
   </action>
   <action name="actionNextErr">
