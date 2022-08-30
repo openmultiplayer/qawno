@@ -386,9 +386,6 @@
    </property>
   </action>
   <action name="actionMark">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
    <property name="text">
     <string>Mark Entry</string>
    </property>

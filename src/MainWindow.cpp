@@ -325,7 +325,6 @@ void MainWindow::currentChanged(int index) {
 void MainWindow::tabCloseRequested(int index) {
   if (markedIndex_ == index) {
     markedIndex_ = -1;
-    ui_->actionMark->setChecked(false);
   } else if (markedIndex_ > index) {
     // Shift the index down.
     --markedIndex_;
@@ -1743,9 +1742,7 @@ void MainWindow::on_actionMark_triggered() {
     markedIndex_ = -1;
   }
   if (markedIndex_ == -1) {
-    ui_->actionMark->setChecked(false);
   } else {
-    ui_->actionMark->setChecked(true);
     ui_->tabWidget->setTabIcon(markedIndex_, getCurrentEditor()->style()->standardIcon(QStyle::SP_DialogApplyButton));
   }
 }
