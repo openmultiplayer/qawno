@@ -1737,13 +1737,12 @@ void MainWindow::errorClicked() {
 void MainWindow::on_actionMark_triggered() {
   if (markedIndex_ == -1) {
     markedIndex_ = getCurrentIndex();
+    if (markedIndex_ != -1) {
+      ui_->tabWidget->setTabIcon(markedIndex_, getCurrentEditor()->style()->standardIcon(QStyle::SP_DialogApplyButton));
+    }
   } else {
     ui_->tabWidget->setTabIcon(markedIndex_, QIcon(""));
     markedIndex_ = -1;
-  }
-  if (markedIndex_ == -1) {
-  } else {
-    ui_->tabWidget->setTabIcon(markedIndex_, getCurrentEditor()->style()->standardIcon(QStyle::SP_DialogApplyButton));
   }
 }
 
