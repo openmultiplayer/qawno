@@ -429,6 +429,14 @@ void MainWindow::on_editor_textChanged() {
   int pos = editor->textCursor().selectionStart();
   QString text = editor->toPlainText();
   QChar const* data = text.constData();
+  // Expand the scrollbar.
+  int height = editor->document()->size().height() + editor->height();
+//  editor->verticalScrollBar()->setMaximumHeight(height);
+  //QTextBlock block = editor->document()->findBlockByLineNumber(1);
+  //QRectF boundingGeometry = editor->blockBoundingGeometry(block);
+  //editor->verticalScrollBar()->setMaximumHeight(editor->verticalScrollBar()->maximumHeight() + editor->height());
+  //editor->blockCount();
+  //editor->height();
   // Check if the character typed starts or continues a new word.
   // We now have the extent of the current symbol.  If it is more than three characters and starts
   // with a non-number, search for auto-complete matches.
