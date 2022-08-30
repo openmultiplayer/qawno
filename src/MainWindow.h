@@ -121,7 +121,7 @@ class MainWindow: public QMainWindow {
   QVector<EditorWidget*> editors_;
   Server server_;
 
-  void createTab(const QString& title);
+  void createTab(const QString& title, const QString& tooltip);
 
  private:
   struct suggestions_s {

@@ -1870,7 +1870,8 @@ bool MainWindow::loadFile(const QString &fileName) {
   }
 
   fileNames_.push_back(nu ? "" : fileName);
-  createTab(nu ? QString("New %1").arg(++newCount_) : QFileInfo(fileName).fileName());
+  QString path = nu ? QString("New %1").arg(++newCount_) : fileName;
+  createTab(nu ? path : file.fileName(), path);
   editors_.last()->setPlainText(file.readAll());
   parseFile(editors_.last()->toPlainText(), true);
   setFileModified(false);
@@ -1902,7 +1903,7 @@ bool MainWindow::isFileEmpty() const {
     || (isNewFile() && !document->toPlainText().contains(QRegExp("\\S")));
 }
 
-void MainWindow::createTab(const QString& fileName) {
+void MainWindow::createTab(const QString& title, const QString& tooltip) {
   mru_.push(ui_->tabWidget->count());
   QWidget* tab = new QWidget();
   QHBoxLayout* horizontalLayout = new QHBoxLayout(tab);
@@ -1918,7 +1919,8 @@ void MainWindow::createTab(const QString& fileName) {
   editor->setAcceptDrops(false);
   horizontalLayout->addWidget(editor);
   ui_->tabWidget->addTab(tab, QString());
-  ui_->tabWidget->setTabText(ui_->tabWidget->indexOf(tab), fileName);
+  ui_->tabWidget->setTabText(ui_->tabWidget->indexOf(tab), title);
+  ui_->tabWidget->setTabToolTip(ui_->tabWidget->indexOf(tab), tooltip);
   bool useDarkMode = ui_->actionDarkMode->isChecked();
   editor->toggleDarkMode(useDarkMode);
   editors_.push_back(editor);
