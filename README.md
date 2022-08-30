@@ -64,7 +64,8 @@ Provides visual access to all the editor features and options.
 ![The Build menu.](documentation/menu-build.png)
 
 * *Compile* - Use the pawn compiler to convert the current file in to a .AMX.  Will save *all* open files first as the main script may depend on other files being edited at the same time.
-* *Run* - Compile the code as with *Compile*, and then attempt to run the open.mp server and lauch the current mode.  If a server is already open this will first kill that instance so that clients/players connected will automatically re-connect.
+* *Compile + Run* - Compile the code as with *Compile*, and then attempt to run the open.mp server and lauch the current mode.  If a server is already open this will first kill that instance so that clients/players connected will automatically re-connect.
+* *Run* - Relaunch the server with the current script.
 * *Next Error* - Jump straight to the location in code of the next error *or warning* from the output.
 
 ![The Settings menu.](documentation/menu-settings.png)
