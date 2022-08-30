@@ -323,6 +323,10 @@ void MainWindow::currentChanged(int index) {
 }
 
 void MainWindow::tabCloseRequested(int index) {
+  if (markedIndex_ == index) {
+    markedIndex_ = -1;
+    ui_->actionMark->setChecked(false);
+  }
   ui_->tabWidget->setCurrentIndex(index);
   on_actionClose_triggered();
 }
@@ -1693,7 +1697,7 @@ void MainWindow::on_actionCompile_triggered() {
   }
   on_actionSaveAll_triggered();
   Compiler compiler;
-  const QString& fileName = fileNames_[getCurrentIndex()];
+  const QString& fileName = fileNames_[markedIndex_ == -1 ? getCurrentIndex() : markedIndex_];
   ui_->output->clear();
   ui_->output->resetErrorCounter();
   ui_->output->appendPlainText(compiler.commandFor(fileName));
@@ -1728,11 +1732,20 @@ void MainWindow::errorClicked() {
   }
 }
 
+void MainWindow::on_actionMark_triggered() {
+  if (markedIndex_ == -1) {
+    markedIndex_ = getCurrentIndex();
+  } else {
+    markedIndex_ = -1;
+  }
+  ui_->actionMark->setChecked(markedIndex_ != -1);
+}
+
 void MainWindow::on_actionRun_triggered() {
   if (fileNames_.isEmpty()) {
     return;
   }
-  server_.run(fileNames_[getCurrentIndex()]);
+  server_.run(fileNames_[markedIndex_ == -1 ? getCurrentIndex() : markedIndex_]);
 }
 
 void MainWindow::on_actionCompileRun_triggered() {

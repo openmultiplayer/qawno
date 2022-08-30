@@ -65,6 +65,7 @@ class MainWindow: public QMainWindow {
   void on_actionCompile_triggered();
   void on_actionCompileRun_triggered();
   void on_actionRun_triggered();
+  void on_actionMark_triggered();
   void on_actionNextErr_triggered();
   void on_actionDelline_triggered();
   void on_actionDupline_triggered();
@@ -169,6 +170,7 @@ class MainWindow: public QMainWindow {
   int findStart_ = 0;
   int findRound_ = 0;
   int mruIndex_ = 0;
+  int markedIndex_ = -1;
   int newCount_ = 0;
   QMap<QString, int> words_;
 };

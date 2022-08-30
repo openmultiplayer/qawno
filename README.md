@@ -66,6 +66,7 @@ Provides visual access to all the editor features and options.
 * *Compile* - Use the pawn compiler to convert the current file in to a .AMX.  Will save *all* open files first as the main script may depend on other files being edited at the same time.
 * *Compile + Run* - Compile the code as with *Compile*, and then attempt to run the open.mp server and lauch the current mode.  If a server is already open this will first kill that instance so that clients/players connected will automatically re-connect.
 * *Run* - Relaunch the server with the current script.
+* *Mark Entry* - Mark the current tab as the one always compiled.
 * *Next Error* - Jump straight to the location in code of the next error *or warning* from the output.
 
 ![The Settings menu.](documentation/menu-settings.png)
@@ -213,7 +214,9 @@ This shows the numbers for each line, i.e. how far down in the file they are.  C
 
 ### Invoking The Compiler
 
-`Build -> Compile` in the menu, or `F5` will compile the current file.  You can see the command used to perform the compile, along with the eventual output, in the compiler output area ***5***.  A common command will look something like:
+`Build -> Compile` in the menu, or `F5` will compile the **current** file by default.  However, it is often the case (or should be) that multiple open files are part of the same mode, and thus the compiler should always build from the same entry point.  Going to one tab, editing some code, then returning to the main script to compile can get annoying (even with *MRU*), so there is an extra option in the build menu - *Mark Entry*.  When enabled this will denote the current tab as the main tab (the *entry point*) and the *compile* and *run* commands will use that tab instead of the current tab.
+
+You can see the command used to perform the compile, along with the eventual output, in the compiler output area ***5***.  A common command will look something like:
 
 ```
 pawncc -;+ -(+ -\ -Z- "-rD:/open.mp/gamemodes/YSI_TEST" "-iinclude" -d0 -O2 -t4 "-iD:/open.mp/gamemodes/YSI_TEST" "-oD:/open.mp/gamemodes/YSI_TEST" "D:/open.mp/gamemodes/YSI_TEST.pwn"
@@ -231,7 +234,7 @@ See the compiler settings for more command-line configuration options.
 
 ### Running The Server
 
-`Build -> Run` in the menu, or `F6` will compile the current file as above, then also start an open.mp server instance with the successfully compiled code (assuming it was successfully compiled).  Every time you use `F6` any existing server will be force-closed and a new one started as a trick to force the client to reconnect:
+`Build -> Compile + Run` in the menu, or `F6` will compile the current file as above, then also start an open.mp server instance with the successfully compiled code (assuming it was successfully compiled).  Every time you use `F6` any existing server will be force-closed and a new one started as a trick to force the client to reconnect.  If you don't want to recompile as well use `F7` instead:
 
 ![Launching the server.](documentation/server-launch.png)
 
