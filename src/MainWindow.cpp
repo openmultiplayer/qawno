@@ -908,19 +908,7 @@ void MainWindow::on_actionColours_triggered() {
 
 void MainWindow::on_actionDelline_triggered() {
   if (auto editor = getCurrentEditor()) {
-    // Extend the selection to cover the whole of the lines.
-    QTextCursor cursor = editor->textCursor();
-    int start = cursor.selectionStart();
-    int end = cursor.selectionEnd();
-    cursor.setPosition(end);
-    int endPosInBlock = cursor.positionInBlock();
-    int endBlockLen = cursor.block().length();
-    cursor.setPosition(start);
-    int startPosInBlock = cursor.positionInBlock();
-    cursor.setPosition(start - startPosInBlock, QTextCursor::MoveAnchor);
-    cursor.setPosition(end - endPosInBlock + endBlockLen, QTextCursor::KeepAnchor);
-    cursor.insertText("");
-    editor->setTextCursor(cursor);
+    editor->deleteSelection();
   }
 }
 

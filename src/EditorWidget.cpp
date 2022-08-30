@@ -282,34 +282,41 @@ void EditorWidget::moveSelection(int distance) {
 }
 
 void EditorWidget::duplicateSelection(bool lines) {
+  // Duplicate the line.
   QTextCursor cursor = textCursor();
-  int start = cursor.selectionStart();
-  int end = cursor.selectionEnd();
-  cursor.beginEditBlock();
-  if (lines || !cursor.hasSelection()) {
-    cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::MoveAnchor);
-    cursor.movePosition(QTextCursor::NextBlock, QTextCursor::KeepAnchor);
+  if (cursor.hasSelection()) {
+    int start = cursor.selectionStart();
+    int end = cursor.selectionEnd();
+    QString text = cursor.selectedText();
+    cursor.setPosition(end);
+    cursor.insertText(text);
+    cursor.setPosition(start, QTextCursor::MoveAnchor);
+    cursor.setPosition(end, QTextCursor::KeepAnchor);
+  } else {
+    int position = cursor.position();
+    int midpoint = cursor.positionInBlock();
+    QString text = cursor.block().text();
+    cursor.insertText(text.right(text.length() - midpoint));
+    cursor.insertText("\n");
+    cursor.insertText(text.left(midpoint));
+    cursor.setPosition(position);
   }
-  QString text = cursor.selectedText();
-  cursor.insertText(text);
-  cursor.insertText(text);
-//  cursor.setPosition(start, QTextCursor::MoveAnchor);
-//  cursor.setPosition(end, QTextCursor::KeepAnchor);
-  cursor.endEditBlock();
   setTextCursor(cursor);
 }
 
 void EditorWidget::deleteSelection() {
+  // Extend the selection to cover the whole of the lines.
   QTextCursor cursor = textCursor();
   int start = cursor.selectionStart();
   int end = cursor.selectionEnd();
-  cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::MoveAnchor);
-  cursor.movePosition(QTextCursor::NextBlock, QTextCursor::KeepAnchor);
-  QString text = cursor.selectedText();
-  cursor.insertText(text);
-  cursor.insertText(text);
-  cursor.setPosition(start, QTextCursor::MoveAnchor);
-  cursor.setPosition(end, QTextCursor::KeepAnchor);
+  cursor.setPosition(end);
+  int endPosInBlock = cursor.positionInBlock();
+  int endBlockLen = cursor.block().length();
+  cursor.setPosition(start);
+  int startPosInBlock = cursor.positionInBlock();
+  cursor.setPosition(start - startPosInBlock, QTextCursor::MoveAnchor);
+  cursor.setPosition(end - endPosInBlock + endBlockLen, QTextCursor::KeepAnchor);
+  cursor.insertText("");
   setTextCursor(cursor);
 }
 
