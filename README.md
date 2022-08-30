@@ -214,7 +214,9 @@ This shows the numbers for each line, i.e. how far down in the file they are.  C
 
 ### Invoking The Compiler
 
-`Build -> Compile` in the menu, or `F5` will compile the **current** file by default.  However, it is often the case (or should be) that multiple open files are part of the same mode, and thus the compiler should always build from the same entry point.  Going to one tab, editing some code, then returning to the main script to compile can get annoying (even with *MRU*), so there is an extra option in the build menu - *Mark Entry*.  When enabled this will denote the current tab as the main tab (the *entry point*) and the *compile* and *run* commands will use that tab instead of the current tab.
+`Build -> Compile` in the menu, or `F5` will compile the **current** file by default.  However, it is often the case (or should be) that multiple open files are part of the same mode, and thus the compiler should always build from the same entry point.  Going to one tab, editing some code, then returning to the main script to compile can get annoying (even with *MRU*), so there is an extra option in the build menu - *Mark Entry*.  When enabled this will denote the current tab as the main tab (the *entry point*) and the *compile* and *run* commands will use that tab instead of the current tab.  The marked tab is shown with a tick:
+
+![Which tab is marked?](documentation/marked.png)
 
 You can see the command used to perform the compile, along with the eventual output, in the compiler output area ***5***.  A common command will look something like:
 

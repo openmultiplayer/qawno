@@ -326,6 +326,9 @@ void MainWindow::tabCloseRequested(int index) {
   if (markedIndex_ == index) {
     markedIndex_ = -1;
     ui_->actionMark->setChecked(false);
+  } else if (markedIndex_ > index) {
+    // Shift the index down.
+    --markedIndex_;
   }
   ui_->tabWidget->setCurrentIndex(index);
   on_actionClose_triggered();
@@ -1736,9 +1739,15 @@ void MainWindow::on_actionMark_triggered() {
   if (markedIndex_ == -1) {
     markedIndex_ = getCurrentIndex();
   } else {
+    ui_->tabWidget->setTabIcon(markedIndex_, QIcon(""));
     markedIndex_ = -1;
   }
-  ui_->actionMark->setChecked(markedIndex_ != -1);
+  if (markedIndex_ == -1) {
+    ui_->actionMark->setChecked(false);
+  } else {
+    ui_->actionMark->setChecked(true);
+    ui_->tabWidget->setTabIcon(markedIndex_, getCurrentEditor()->style()->standardIcon(QStyle::SP_DialogApplyButton));
+  }
 }
 
 void MainWindow::on_actionRun_triggered() {
@@ -1932,8 +1941,9 @@ void MainWindow::createTab(const QString& title, const QString& tooltip) {
   editor->setAcceptDrops(false);
   horizontalLayout->addWidget(editor);
   ui_->tabWidget->addTab(tab, QString());
-  ui_->tabWidget->setTabText(ui_->tabWidget->indexOf(tab), title);
-  ui_->tabWidget->setTabToolTip(ui_->tabWidget->indexOf(tab), tooltip);
+  int idx = ui_->tabWidget->indexOf(tab);
+  ui_->tabWidget->setTabText(idx, title);
+  ui_->tabWidget->setTabToolTip(idx, tooltip);
   bool useDarkMode = ui_->actionDarkMode->isChecked();
   editor->toggleDarkMode(useDarkMode);
   editors_.push_back(editor);
