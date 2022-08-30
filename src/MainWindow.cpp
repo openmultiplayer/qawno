@@ -111,9 +111,10 @@ MainWindow::MainWindow(QWidget *parent)
         if (idx >= 0) {
           EditorWidget* editor = editors_.last();
           QTextCursor cursor = editor->textCursor();
-          int pos = lastStarts[idx].toInt();
-          cursor.setPosition(lastStarts[idx].toInt(), QTextCursor::MoveAnchor);
-          cursor.setPosition(lastEnds[idx].toInt(), QTextCursor::KeepAnchor);
+          int p0 = lastStarts[idx].toInt();
+          int p1 = lastStarts[idx].toInt();
+          cursor.setPosition(p0, QTextCursor::MoveAnchor);
+          cursor.setPosition(p1, QTextCursor::KeepAnchor);
           editor->setFocus(Qt::OtherFocusReason);
           editor->setTextCursor(cursor);
           editor->ensureCursorVisible();
@@ -925,27 +926,7 @@ void MainWindow::on_actionDelline_triggered() {
 
 void MainWindow::on_actionDupline_triggered() {
   if (auto editor = getCurrentEditor()) {
-    // Duplicate the line.
-    QTextCursor cursor = editor->textCursor();
-    if (cursor.hasSelection()) {
-      int start = cursor.selectionStart();
-      int end = cursor.selectionEnd();
-      QString text = cursor.selectedText();
-      cursor.setPosition(end);
-      cursor.insertText(text);
-      cursor.setPosition(start, QTextCursor::MoveAnchor);
-      cursor.setPosition(end, QTextCursor::KeepAnchor);
-      editor->setTextCursor(cursor);
-    } else {
-      int position = cursor.position();
-      int midpoint = cursor.positionInBlock();
-      QString text = cursor.block().text();
-      cursor.insertText(text.right(text.length() - midpoint));
-      cursor.insertText("\n");
-      cursor.insertText(text.left(midpoint));
-      cursor.setPosition(position);
-      editor->setTextCursor(cursor);
-    }
+    editor->duplicateSelection(true);
   }
 }
 
@@ -1061,8 +1042,15 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
         popup_->setCurrentRow(popup_->currentRow() + 1);
         return true;
       } else if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
-        // Scroll up.
-        scrollByLines(1);
+        if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ShiftModifier) {
+          // Move the selection up.
+          if (EditorWidget* editor = getCurrentEditor()) {
+            editor->moveSelection(1);
+          }
+        } else {
+          // Scroll up.
+          scrollByLines(1);
+        }
         return true;
       }
       break;
@@ -1071,8 +1059,15 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
         popup_->setCurrentRow(popup_->currentRow() - 1);
         return true;
       } else if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ControlModifier) {
-        // Scroll down.
-        scrollByLines(-1);
+        if (static_cast<QKeyEvent*>(event)->modifiers() & Qt::ShiftModifier) {
+          // Move the selection down.
+          if (EditorWidget* editor = getCurrentEditor()) {
+            editor->moveSelection(-1);
+          }
+        } else {
+          // Scroll down.
+          scrollByLines(-1);
+        }
         return true;
       }
       break;

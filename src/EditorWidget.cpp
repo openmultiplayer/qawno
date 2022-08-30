@@ -267,6 +267,52 @@ void EditorWidget::editSelectedText(QTextCursor cursor,
   cursor.endEditBlock();
 }
 
+void EditorWidget::moveSelection(int distance) {
+  QTextCursor cursor = textCursor();
+  int start = cursor.selectionStart();
+  int end = cursor.selectionEnd();
+  cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::MoveAnchor);
+  cursor.movePosition(QTextCursor::NextBlock, QTextCursor::KeepAnchor);
+  QString text = cursor.selectedText();
+  cursor.insertText(text);
+  cursor.insertText(text);
+  cursor.setPosition(start, QTextCursor::MoveAnchor);
+  cursor.setPosition(end, QTextCursor::KeepAnchor);
+  setTextCursor(cursor);
+}
+
+void EditorWidget::duplicateSelection(bool lines) {
+  QTextCursor cursor = textCursor();
+  int start = cursor.selectionStart();
+  int end = cursor.selectionEnd();
+  cursor.beginEditBlock();
+  if (lines || !cursor.hasSelection()) {
+    cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::MoveAnchor);
+    cursor.movePosition(QTextCursor::NextBlock, QTextCursor::KeepAnchor);
+  }
+  QString text = cursor.selectedText();
+  cursor.insertText(text);
+  cursor.insertText(text);
+//  cursor.setPosition(start, QTextCursor::MoveAnchor);
+//  cursor.setPosition(end, QTextCursor::KeepAnchor);
+  cursor.endEditBlock();
+  setTextCursor(cursor);
+}
+
+void EditorWidget::deleteSelection() {
+  QTextCursor cursor = textCursor();
+  int start = cursor.selectionStart();
+  int end = cursor.selectionEnd();
+  cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::MoveAnchor);
+  cursor.movePosition(QTextCursor::NextBlock, QTextCursor::KeepAnchor);
+  QString text = cursor.selectedText();
+  cursor.insertText(text);
+  cursor.insertText(text);
+  cursor.setPosition(start, QTextCursor::MoveAnchor);
+  cursor.setPosition(end, QTextCursor::KeepAnchor);
+  setTextCursor(cursor);
+}
+
 void EditorWidget::indentBlock(QTextCursor cursor) {
   cursor.insertText("\t");
 }

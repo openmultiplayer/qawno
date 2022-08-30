@@ -61,6 +61,10 @@ class EditorWidget: public QPlainTextEdit {
 
   void toggleDarkMode(bool toggle);
 
+  void moveSelection(int distance);
+  void duplicateSelection(bool lines);
+  void deleteSelection();
+
  public slots:
   void jumpToLine(long line);
 
