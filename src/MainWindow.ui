@@ -161,8 +161,9 @@
     <addaction name="actionFindNext"/>
     <addaction name="separator"/>
     <addaction name="actionGoToLine"/>
-    <addaction name="actionDelline"/>
+    <addaction name="actionDupsel"/>
     <addaction name="actionDupline"/>
+    <addaction name="actionDelline"/>
     <addaction name="actionComment"/>
     <addaction name="actionColours"/>
    </widget>
@@ -465,15 +466,26 @@
     <string>Ctrl+L</string>
    </property>
   </action>
+  <action name="actionDupsel">
+   <property name="text">
+    <string>Duplicate Selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Duplicate the current selection.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
+  </action>
   <action name="actionDupline">
    <property name="text">
     <string>Duplicate Line</string>
    </property>
    <property name="toolTip">
-    <string>Duplicate the current line.</string>
+    <string>Duplicate the current line(s).</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+D</string>
+    <string>Ctrl+Shift+D</string>
    </property>
   </action>
   <action name="actionComment">
@@ -641,6 +653,12 @@
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>Dupline()</slot>
+  </connection>
+  <connection>
+   <sender>actionDupsel</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>Dupsel()</slot>
   </connection>
   <connection>
    <sender>actionComment</sender>

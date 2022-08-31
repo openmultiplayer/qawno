@@ -309,7 +309,7 @@ void EditorWidget::duplicateSelection(bool lines) {
     cursor.movePosition(QTextCursor::NextBlock, QTextCursor::KeepAnchor);
   }
   QString text = cursor.selectedText();
-  cursor.insertText(text);
+  cursor.setPosition(end);
   cursor.insertText(text);
   cursor.setPosition(start, QTextCursor::MoveAnchor);
   cursor.setPosition(end, QTextCursor::KeepAnchor);

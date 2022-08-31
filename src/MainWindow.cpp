@@ -918,6 +918,12 @@ void MainWindow::on_actionDupline_triggered() {
   }
 }
 
+void MainWindow::on_actionDupsel_triggered() {
+  if (auto editor = getCurrentEditor()) {
+    editor->duplicateSelection(false);
+  }
+}
+
 void MainWindow::on_actionComment_triggered() {
   if (auto editor = getCurrentEditor()) {
     // I was trying to do this in a way with cursors etc.  In the end I just decided to do it with

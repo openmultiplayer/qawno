@@ -69,6 +69,7 @@ class MainWindow: public QMainWindow {
   void on_actionNextErr_triggered();
   void on_actionDelline_triggered();
   void on_actionDupline_triggered();
+  void on_actionDupsel_triggered();
   void on_actionComment_triggered();
   void on_actionColours_triggered();
 

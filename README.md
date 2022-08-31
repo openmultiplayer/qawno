@@ -15,7 +15,7 @@ Qawno is a simple cross-platform Pawn editor with syntax highlighting, script co
 * **Pawn Compiler** - Compile your code and view the output directly in a panel at the bottom of the program.
 * **open.mp Launch** - Start a server running your code immediately for fast feedback.
 * **Colour Picker** - Select hex numbers representing colours visually (`Ctrl+M`).
-* **Editing Helpers** - Scroll with `Ctrl+Up`/`Ctrl+Down`.  Duplicate a line with `Ctrl+D`.  Delete a line with `Ctrl+L`.  Comment a line with `Ctrl+K`.  Also block comment a selection with `Ctrl+K`.
+* **Editing Helpers** - Scroll with `Ctrl+Up`/`Ctrl+Down`.  Duplicate lines and sections with `Ctrl+D`/`Ctrl+Shift+D`.  Delete a line with `Ctrl+L`.  Comment a line with `Ctrl+K`.  Also block comment a selection with `Ctrl+K`.
 * **Find And Replace** - Search for some text, and optionally replace the found location with new text.  Alternatively replace all the instances of that text with the new version.
 
  Main View
@@ -56,8 +56,9 @@ Provides visual access to all the editor features and options.
 * *Find...* - Search for some text in the current document.  May optionally replace the found text with new text.
 * *Find Next...* - If an item of text has been found this attempts to move on to the next instance of that text in the current file.
 * *Go To Line...* - Enter a line number and the cursor will move straight to that line (see area ***8***).  Useful for jumping to compiler error locations.
+* *Duplicate Selection* - Will make a copy of the current selection, or the current line if there is no selection.
+* *Duplicate Line* - Will make a copy of the whole line or lines that the cursor is currently on below the current line.
 * *Delete Line* - Will remove the whole line that the cursor is currently on.
-* *Duplicate Line* - Will make a copy of the whole line that the cursor is currently on below the current line.
 * *Comment Line/Selection* - If the cursor is on a normal line with nothing selected, this will comment out the current line by adding `//` to the start.  If a block of text is selected this will instead comment out that block using `/* */`.  Pressing this option again on the same line or block will reverse the action, so performing it on a line or block already commented out will uncomment the line or block.
 * *Colour Selection* - Opens the colour selection dialog (colour picker).  This makes inserting hex colour codes simpler by allowing you to choose them visually, and by pre-defining and saving useful or common ones.  See below for full documentation on this feature.
 
