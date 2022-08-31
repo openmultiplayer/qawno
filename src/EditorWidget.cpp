@@ -284,23 +284,22 @@ void EditorWidget::moveSelection(int distance) {
 void EditorWidget::duplicateSelection(bool lines) {
   // Duplicate the line.
   QTextCursor cursor = textCursor();
-  if (cursor.hasSelection()) {
-    int start = cursor.selectionStart();
-    int end = cursor.selectionEnd();
-    QString text = cursor.selectedText();
-    cursor.setPosition(end);
-    cursor.insertText(text);
+  int start = cursor.selectionStart();
+  int end = cursor.selectionEnd();
+  cursor.beginEditBlock();
+  if (lines || !cursor.hasSelection())
+  {
     cursor.setPosition(start, QTextCursor::MoveAnchor);
+    cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::MoveAnchor);
     cursor.setPosition(end, QTextCursor::KeepAnchor);
-  } else {
-    int position = cursor.position();
-    int midpoint = cursor.positionInBlock();
-    QString text = cursor.block().text();
-    cursor.insertText(text.right(text.length() - midpoint));
-    cursor.insertText("\n");
-    cursor.insertText(text.left(midpoint));
-    cursor.setPosition(position);
+    cursor.movePosition(QTextCursor::NextBlock, QTextCursor::KeepAnchor);
   }
+  QString text = cursor.selectedText();
+  cursor.insertText(text);
+  cursor.insertText(text);
+  cursor.setPosition(start, QTextCursor::MoveAnchor);
+  cursor.setPosition(end, QTextCursor::KeepAnchor);
+  cursor.endEditBlock();
   setTextCursor(cursor);
 }
 
