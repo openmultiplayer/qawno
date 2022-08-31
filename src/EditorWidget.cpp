@@ -308,15 +308,11 @@ void EditorWidget::deleteSelection() {
   QTextCursor cursor = textCursor();
   int start = cursor.selectionStart();
   int end = cursor.selectionEnd();
-  cursor.setPosition(end);
-  int endPosInBlock = cursor.positionInBlock();
-  int endBlockLen = cursor.block().length();
-  cursor.setPosition(start);
-  int startPosInBlock = cursor.positionInBlock();
-  cursor.setPosition(start - startPosInBlock, QTextCursor::MoveAnchor);
-  cursor.setPosition(end - endPosInBlock + endBlockLen, QTextCursor::KeepAnchor);
+  cursor.setPosition(start, QTextCursor::MoveAnchor);
+  cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::MoveAnchor);
+  cursor.setPosition(end, QTextCursor::KeepAnchor);
+  cursor.movePosition(QTextCursor::NextBlock, QTextCursor::KeepAnchor);
   cursor.insertText("");
-  setTextCursor(cursor);
 }
 
 void EditorWidget::indentBlock(QTextCursor cursor) {
