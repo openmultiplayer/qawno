@@ -359,6 +359,14 @@ You can also use the arrow keys to move to a different function before selecting
 
 The predictions are collected from all open files and the natives list on the right-hand side.  This gives a close approximation to being able to offer suggestions from all of a project.  When a file is opened it is parsed and all names longer than three characters are extracted and stored.  The same is also done while typing.
 
+### Move Lines Up (Ctrl+Shift+Up)
+
+This key combination will move the currently selected lines up one place.
+
+### Move Lines Down (Ctrl+Shift+Down)
+
+This key combination will move the currently selected lines down one place.
+
  Opening Files
 ---------------
 
