@@ -271,13 +271,24 @@ void EditorWidget::moveSelection(int distance) {
   QTextCursor cursor = textCursor();
   int start = cursor.selectionStart();
   int end = cursor.selectionEnd();
-  cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::MoveAnchor);
-  cursor.movePosition(QTextCursor::NextBlock, QTextCursor::KeepAnchor);
-  QString text = cursor.selectedText();
-  cursor.insertText(text);
-  cursor.insertText(text);
   cursor.setPosition(start, QTextCursor::MoveAnchor);
+  cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::MoveAnchor);
+  int offset = cursor.selectionStart();
   cursor.setPosition(end, QTextCursor::KeepAnchor);
+  cursor.movePosition(QTextCursor::NextBlock, QTextCursor::KeepAnchor);
+  cursor.beginEditBlock();
+  QString text = cursor.selectedText();
+  cursor.insertText("");
+  if (distance == -1) {
+    cursor.movePosition(QTextCursor::PreviousBlock, QTextCursor::MoveAnchor);
+  } else if (distance == 1) {
+    cursor.movePosition(QTextCursor::NextBlock, QTextCursor::MoveAnchor);
+  }
+  cursor.insertText(text);
+  offset = cursor.position() - text.length() - offset;
+  cursor.setPosition(offset + start, QTextCursor::MoveAnchor);
+  cursor.setPosition(offset + end, QTextCursor::KeepAnchor);
+  cursor.endEditBlock();
   setTextCursor(cursor);
 }
 
