@@ -855,7 +855,7 @@ void MainWindow::on_actionColours_triggered() {
   // Game Text style 2/5 and stunt bonuses.  May be around 0xDDDDDB.
   QColorDialog::setStandardColor( 3, QColor(0x95, 0xB0, 0xD1, 0xFF)); // Game Text style 6
   QColorDialog::setStandardColor( 9, QColor(0xDD, 0xDD, 0xDD, 0xFF)); // GT style 6 ~h~
-  QColorDialog::setStandardColor(15, QColor(0xE1, 0xE1, 0xE1, 0xFF)); // Game Text style 2/5
+  QColorDialog::setStandardColor(15, QColor(0xE1, 0xE1, 0xE1, 0xFF)); // Game Text style 2/5, ~w~
   QColorDialog::setStandardColor(21, QColor(0xC3, 0xC3, 0xC3, 0xFF)); // Clock
   QColorDialog::setStandardColor(27, QColor(0x96, 0x96, 0x96, 0xFF)); // Radio switch
   QColorDialog::setStandardColor(33, QColor(0xAC, 0xCB, 0xF1, 0xFF)); // Region names

@@ -465,7 +465,7 @@ Third row:
 * `~p~`
 * `~p~~h~`
 * `~p~~h~~h~`
-* `~w~` (also any other colour with an extra `~h~`).
+* Any other colour with an extra `~h~`.
 
 Fourth row:
 
@@ -483,7 +483,7 @@ First row:
 
 * Game Text style 6 default colour.
 * Game Text style 6 after one `~h~`.
-* Game Text styles 2 and 5 default colour.
+* Game Text styles 2 and 5 default colour, also `~w~` and some clocks.
 * Clock colour.
 * Radio station changing text colour.
 * Region names.
