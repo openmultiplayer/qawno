@@ -436,44 +436,72 @@ These are the selectable game text colours.  From left to right:
 
 First row:
 
-* `(default)` (game texts default colour, and the currently playing radio station).
-* `~h~` (default colour, but slightly lighter).
-* `~h~~h~` (default colour, even lighter still).
-* `~y~`
-* `~y~~h~`
-* `~y~~h~~h~` (the same as `~g~~h~~h~~h~~h~`).
-* `~g~~h~~h~~h~`
-* `~g~~h~~h~`
+* `(default)` (`#906210`) (game texts default colour, and the currently playing radio station).
+* `~h~` (`#D89318`) (default colour, but slightly lighter).
+* `~h~~h~` (`#FFFF36`) (default colour, even lighter still).
+* `~y~` (`#E2C063`)
+* `~y~~h~` (`#FFFF94`)
+* `~y~~h~~h~` (`#FFFFDE`) (the same as `~g~~h~~h~~h~~h~`).
+* `~g~~h~~h~~h~` (`#B5FF94`)
+* `~g~~h~~h~` (`#79EA63`)
 
 Second row:
 
-* `~r~` (also the color of negative money).
-* `~r~~h~`
-* `~r~~h~~h~`
-* `~r~~h~~h~~h~`
-* `~r~~h~~h~~h~~h~`
-* `~r~~h~~h~~h~~h~~h~` (the lightest any colour can go without becoming white).
-* `~g~~h~`
-* `~g~` (also the colour of positive money and entered vehicles).
+* `~r~` (`#B4191D`) (also the color of negative money).
+* `~r~~h~` (`#FF252B`)
+* `~r~~h~~h~` (`#FF3740`)
+* `~r~~h~~h~~h~` (`#FF5260`)
+* `~r~~h~~h~~h~~h~` (`#FF7B90`)
+* `~r~~h~~h~~h~~h~~h~` (`#FFB8D8`) (the lightest any colour can go without becoming white).
+* `~g~~h~` (`#519C42`)
+* `~g~` (`#36682C`) (also the colour of positive money and entered vehicles).
 
 Third row:
 
-* `~b~`
-* `~b~~h~`
-* `~b~~h~~h~`
-* `~b~~h~~h~~h~`
-* `~p~`
-* `~p~~h~`
-* `~p~~h~~h~`
-* Any other colour with an extra `~h~`.
+* `~b~` {`#323C7F`}
+* `~b~~h~` {`#4B5ABE`}
+* `~b~~h~~h~` {`#7087FF`}
+* `~b~~h~~h~~h~` {`#A8CAFF`}
+* `~p~` {`#A86EFC`}
+* `~p~~h~` {`#FCA5FF`}
+* `~p~~h~~h~` {`#FFF7FF`}
+*  {`#FFFFFF`} (any other colour with an extra `~h~`).
 
 Fourth row:
 
-* `~l~`
+* `~l~`  {`#000000`}
 
 ![Pre-defined CGA colours.](documentation/colours-annotated-2.png)
 
 These are the 17 CGA colours, just a simple set of common primary and secondary colours.  The white and black are the same as the game text colours, and the brown on top is the later "tweaked brown".
+
+First row:
+
+* White (`#FFFFFF`)
+
+Second row:
+
+* Tweaked brown (`#AA5500`) (from a later CGA revision).
+* Black (`#000000`) (same as `~l~`).
+
+Third row:
+* Light blue (`#5555FF`)
+* Green (`#00AA00`)
+* Cyan (`#00AAAA`)
+* Red (`#AA0000`)
+* Magenta (`#AA00AA`)
+* Dark yellow (`#AAAA00`)
+* Dark gray (`#555555`)
+
+Fourth row:
+
+* Blue (`#0000AA`)
+* Light green (`#55FF55`)
+* Light cyan (`#55FFFF`)
+* Light red (`#FF5555`)
+* Light magenta (`#FF55FF`)
+* Yellow (`#FFFF55`)
+* Light gray (`#AAAAAA`)
 
 ![Pre-defined special colours.](documentation/colours-annotated-3.png)
 
@@ -481,20 +509,20 @@ The remaining few colours are extras with special meanings.  From left to right 
 
 First row:
 
-* Game Text style 6 default colour.
-* Game Text style 6 after one `~h~`.
-* Game Text styles 2 and 5 default colour, also `~w~` and some clocks.
-* Clock colour.
-* Radio station changing text colour.
-* Region names.
+* Game Text style 6 default colour (`#95B0D1`).
+* Game Text style 6 after one `~h~` (`#DDDDDD`).
+* Game Text styles 2 and 5 default colour, also `~w~` and some clocks (`#E1E1E1`).
+* Clock colour (`#C3C3C3`).
+* Radio station changing text colour (`#969696`).
+* Region names (`#ACCBF1`).
 
 Second row:
 
-* open.mp branding purple.
+* open.mp branding purple (`#8477B7`).
 
 Third row:
 
-* SA:MP branding orange.
+* SA:MP branding orange (`#F07B0F`).
 
  Settings
 ----------
