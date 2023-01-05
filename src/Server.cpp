@@ -132,7 +132,7 @@ void Server::run(const QString &inputFile) {
   }
 }
 
-DWORD Server::threaded(LPVOID p) {
+DWORD WINAPI Server::threaded(LPVOID p) {
   HANDLE h = ((PROCESS_INFORMATION*)p)->hProcess;
   WaitForSingleObject(h, INFINITE);
   CloseHandle(h);

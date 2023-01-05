@@ -52,7 +52,7 @@ class Server {
   HANDLE thread_;
   PROCESS_INFORMATION pi_;
 
-  static DWORD threaded(LPVOID);
+  static DWORD WINAPI threaded(LPVOID);
 };
 
 #endif // SERVER_H
