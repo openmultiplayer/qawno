@@ -94,7 +94,7 @@
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
-             <verstretch>1</verstretch>
+             <verstretch>0</verstretch>
             </sizepolicy>
            </property>
            <property name="acceptDrops">
@@ -231,11 +231,11 @@
    <property name="text">
     <string>New Include</string>
    </property>
-   <property name="shortcut">
-     <string>Ctrl+I</string>
-   </property>
    <property name="toolTip">
     <string>Create a new include</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
    </property>
   </action>
   <action name="actionNewBlank">
