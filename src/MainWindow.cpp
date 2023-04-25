@@ -18,6 +18,8 @@
 #include <QCoreApplication>
 #include <QFile>
 #include <QFileDialog>
+#include <QTextCodec>
+#include <QTextStream>
 #include <QFont>
 #include <QFontDialog>
 #include <QMessageBox>
@@ -1319,7 +1321,7 @@ void MainWindow::on_actionSave_triggered() {
     return;
   }
 
-  file.write(getCurrentEditor()->toPlainText().toLatin1());
+  file.write(getCurrentEditor()->toPlainText().toUtf8());
   getCurrentEditor()->textChanged();
   setFileModified(false);
 }
@@ -1876,10 +1878,13 @@ bool MainWindow::loadFile(const QString &fileName) {
     return false;
   }
 
+  QTextStream input(&file);
+  input.setCodec(QTextCodec::codecForName("UTF-8"));
+
   fileNames_.push_back(nu ? "" : fileName);
   QString path = nu ? QString("New %1").arg(++newCount_) : fileName;
   createTab(nu ? path : file.fileName(), path);
-  editors_.last()->setPlainText(file.readAll());
+  editors_.last()->setPlainText(input.readAll());
   parseFile(editors_.last()->toPlainText(), true);
   setFileModified(false);
 
