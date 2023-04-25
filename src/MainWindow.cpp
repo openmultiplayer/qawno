@@ -1321,7 +1321,7 @@ void MainWindow::on_actionSave_triggered() {
     return;
   }
 
-  file.write(getCurrentEditor()->toPlainText().toUtf8());
+  file.write(getCurrentEditor()->toPlainText().toLatin1());
   getCurrentEditor()->textChanged();
   setFileModified(false);
 }
@@ -1879,7 +1879,7 @@ bool MainWindow::loadFile(const QString &fileName) {
   }
 
   QTextStream input(&file);
-  input.setCodec(QTextCodec::codecForName("UTF-8"));
+  input.setCodec(QTextCodec::codecForName("latin1"));
 
   fileNames_.push_back(nu ? "" : fileName);
   QString path = nu ? QString("New %1").arg(++newCount_) : fileName;
