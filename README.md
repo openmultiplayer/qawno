@@ -579,3 +579,19 @@ Would give a final command-line of:
 ../omp-server --config rcon.password=testing "mode" -- --objects 600 --checkpoints 12
 ```
 
+ Development
+-------------
+
+If you just want to use the tool this section is not relevant.  However, if you want to know how to compile Qawno itself (as opposed to compiling pawn code in the tool) read on.
+
+Firstly you'll need to install [cmake](https://cmake.org/) and [Qt5](https://doc.qt.io/qt-5/gettingstarted.html).  When installing Qt ensure you select at least one set of components, and record where the installation is targetting.  After that use the following commands from a terminal in the checked out source code of Qawno, replacing the Qt path with your own:
+
+```
+mkdir build
+cd build
+$env:CMAKE_PREFIX_PATH="C:\Qt\Qt5.12.12\5.12.12\msvc2017_64\"
+cmake ..
+```
+
+This will generate a `.sln` file to open in Visual Studio and build.
+
