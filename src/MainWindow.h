@@ -105,7 +105,7 @@ class MainWindow: public QMainWindow {
   void loadNativeList();
   int tryLoadFile(const QString& fileName);
   void jumpToLine(const QString& fileName, int line);
-  bool loadFile(const QString& fileName);
+  bool loadFile(const QString& fileName, const char* encoding = "Windows-1251");
   bool isNewFile() const;
   bool isFileModified() const;
   void setFileModified(bool isModified);

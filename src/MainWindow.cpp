@@ -1321,9 +1321,12 @@ void MainWindow::on_actionSave_triggered() {
     return;
   }
 
-  file.write(getCurrentEditor()->toPlainText().toLatin1());
+  QTextStream output(&file);
+  output.setCodec(QTextCodec::codecForName("Windows-1251"));
+  output << getCurrentEditor()->toPlainText();
   getCurrentEditor()->textChanged();
   setFileModified(false);
+  file.close();
 }
 
 void MainWindow::on_actionSaveAs_triggered() {
@@ -1865,7 +1868,7 @@ void MainWindow::jumpToLine(const QString& fileName, int line) {
   }
 }
 
-bool MainWindow::loadFile(const QString &fileName) {
+bool MainWindow::loadFile(const QString &fileName, const char* encoding) {
   bool nu = fileName.startsWith(".");
   QFile file(fileName);
   if (!file.open(QIODevice::ReadOnly)) {
@@ -1879,7 +1882,7 @@ bool MainWindow::loadFile(const QString &fileName) {
   }
 
   QTextStream input(&file);
-  input.setCodec(QTextCodec::codecForName("latin1"));
+  input.setCodec(QTextCodec::codecForName(encoding));
 
   fileNames_.push_back(nu ? "" : fileName);
   QString path = nu ? QString("New %1").arg(++newCount_) : fileName;
@@ -1887,6 +1890,7 @@ bool MainWindow::loadFile(const QString &fileName) {
   editors_.last()->setPlainText(input.readAll());
   parseFile(editors_.last()->toPlainText(), true);
   setFileModified(false);
+  file.close();
 
   return true;
 }
