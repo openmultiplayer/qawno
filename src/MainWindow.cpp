@@ -193,14 +193,7 @@ void MainWindow::loadNativeList() {
   for (auto const & fileName : includes.entryInfoList()) {
     QFile f{fileName.absoluteFilePath()};
     if (f.open(QFile::ReadOnly | QFile::Text)) {
-      {
-        // Extra scope for `name`.
-        child = new QListWidgetItem("\n" + fileName.fileName() + "\n", ui_->functions);
-        child->setFont(*fileFont);
-        child->setTextAlignment(4);
-        child->setFlags(child->flags() & ~Qt::ItemIsSelectable & ~Qt::ItemIsEnabled);
-        // Pad the natives list so indexing works, though we never see this in the status bar.
-      }
+      child = nullptr;
       // Find every line that starts with `native`.
       while (!f.atEnd()) {
         QByteArray line = f.readLine();
@@ -264,6 +257,16 @@ void MainWindow::loadNativeList() {
             while (data[len] <= ' ');
             ++len;
             if (idx < len) {
+              if (!child)
+              {
+                // first valid entry from this file.  Add the filename too.
+                // Extra scope for `name`.
+                child = new QListWidgetItem("\n" + fileName.fileName() + "\n", ui_->functions);
+                child->setFont(*fileFont);
+                child->setTextAlignment(4);
+                child->setFlags(child->flags() & ~Qt::ItemIsSelectable & ~Qt::ItemIsEnabled);
+                // Pad the natives list so indexing works, though we never see this in the status bar.
+              }
               if (data[idx] == '#') {
                 // Special syntax:
                 //
