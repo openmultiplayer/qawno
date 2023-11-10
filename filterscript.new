@@ -53,7 +53,7 @@ public OnPlayerSpawn(playerid)
 	return 1;
 }
 
-public OnPlayerDeath(playerid, killerid, reason)
+public OnPlayerDeath(playerid, killerid, WEAPON:reason)
 {
 	return 1;
 }
@@ -146,7 +146,7 @@ public OnPlayerLeaveRaceCheckpoint(playerid)
 	return 1;
 }
 
-public OnPlayerGiveDamageActor(playerid, damaged_actorid, Float:amount, weaponid, bodypart)
+public OnPlayerGiveDamageActor(playerid, damaged_actorid, Float:amount, WEAPON:weaponid, bodypart)
 {
 	return 1;
 }
@@ -241,7 +241,7 @@ public OnPlayerEditObject(playerid, playerobject, objectid, EDIT_RESPONSE:respon
 	return 1;
 }
 
-public OnPlayerEditAttachedObject(playerid, EDIT_RESPONSE:response, index, modelid, boneid, Float:fOffsetX, Float:fOffsetY, Float:fOffsetZ, Float:rotationX, Float:rotationY, Float:rotationZ, Float:scaleX, Float:scaleY, Float:scaleZ)
+public OnPlayerEditAttachedObject(playerid, EDIT_RESPONSE:response, index, modelid, boneid, Float:fOffsetX, Float:fOffsetY, Float:fOffsetZ, Float:fRotX, Float:fRotY, Float:fRotZ, Float:fScaleX, Float:fScaleY, Float:fScaleZ)
 {
 	return 1;
 }
@@ -296,12 +296,12 @@ public OnPlayerStreamOut(playerid, forplayerid)
 	return 1;
 }
 
-public OnPlayerTakeDamage(playerid, issuerid, Float:amount, weaponid, bodypart)
+public OnPlayerTakeDamage(playerid, issuerid, Float:amount, WEAPON:weaponid, bodypart)
 {
 	return 1;
 }
 
-public OnPlayerGiveDamage(playerid, damagedid, Float:amount, weaponid, bodypart)
+public OnPlayerGiveDamage(playerid, damagedid, Float:amount, WEAPON:weaponid, bodypart)
 {
 	return 1;
 }
@@ -311,7 +311,7 @@ public OnPlayerClickPlayer(playerid, clickedplayerid, CLICK_SOURCE:source)
 	return 1;
 }
 
-public OnPlayerWeaponShot(playerid, weaponid, BULLET_HIT_TYPE:hittype, hitid, Float:fX, Float:fY, Float:fZ)
+public OnPlayerWeaponShot(playerid, WEAPON:weaponid, BULLET_HIT_TYPE:hittype, hitid, Float:fX, Float:fY, Float:fZ)
 {
 	return 1;
 }
@@ -366,7 +366,7 @@ public OnVehicleStreamOut(vehicleid, forplayerid)
 	return 1;
 }
 
-public OnVehicleMod(playerid, vehicleid, component)
+public OnVehicleMod(playerid, vehicleid, componentid)
 {
 	return 1;
 }
@@ -376,12 +376,12 @@ public OnEnterExitModShop(playerid, enterexit, interiorid)
 	return 1;
 }
 
-public OnVehiclePaintjob(playerid, vehicleid, paintjob)
+public OnVehiclePaintjob(playerid, vehicleid, paintjobid)
 {
 	return 1;
 }
 
-public OnVehicleRespray(playerid, vehicleid, colour1, colour2)
+public OnVehicleRespray(playerid, vehicleid, color1, color2)
 {
 	return 1;
 }
