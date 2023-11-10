@@ -28,6 +28,7 @@ static QFont defaultFont() {
     QFont font("Monospace");
   #endif
   font.setStyleHint(QFont::Monospace);
+  font.setPointSize(10);
   return font;
 }
 
