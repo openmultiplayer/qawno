@@ -24,7 +24,7 @@
 Compiler::Compiler() {
   QSettings settings;
   path_ = settings.value("CompilerPath", "./pawncc").toString();
-  options_ = settings.value("CompilerOptions", "-;+ -(+ -\\ -Z- \"-i%p/%o\" \"-r%p/%o\" \"-i%q/include\" -d0 -O2 -t4 \"-o%p/%o\" \"%p/%i\"").toString().split("\\s*");
+  options_ = settings.value("CompilerOptions", "-;+ -(+ -\\ -Z- \"-i%p/%o\" \"-r%p/%o\" \"-i%q/include\" -d3 -t4 \"-o%p/%o\" \"%p/%i\"").toString().split("\\s*");
 }
 
 Compiler::~Compiler() {
