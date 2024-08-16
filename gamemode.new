@@ -333,11 +333,6 @@ public OnPlayerWeaponShot(playerid, WEAPON:weaponid, BULLET_HIT_TYPE:hittype, hi
 	return 1;
 }
 
-public OnScriptCash(playerid, amount, source)
-{
-	return 1;
-}
-
 public OnPlayerClickMap(playerid, Float:fX, Float:fY, Float:fZ)
 {
 	return 1;
