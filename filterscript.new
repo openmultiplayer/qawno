@@ -236,7 +236,7 @@ public OnPlayerSelectObject(playerid, SELECT_OBJECT:type, objectid, modelid, Flo
 	return 1;
 }
 
-public OnPlayerEditObject(playerid, playerobject, objectid, EDIT_RESPONSE:response, Float:fX, Float:fY, Float:fZ, Float:rotationX, Float:rotationY, Float:rotationZ)
+public OnPlayerEditObject(playerid, playerobject, objectid, EDIT_RESPONSE:response, Float:fX, Float:fY, Float:fZ, Float:fRotX, Float:fRotY, Float:fRotZ)
 {
 	return 1;
 }
@@ -390,4 +390,3 @@ public OnUnoccupiedVehicleUpdate(vehicleid, playerid, passenger_seat, Float:new_
 {
 	return 1;
 }
-
