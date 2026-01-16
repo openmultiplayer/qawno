@@ -1,7 +1,7 @@
  Qawno
 =======
 
-Qawno is a simple cross-platform Pawn editor with syntax highlighting, script compilation, and open.mp server launch support.
+Qawno is a simple Pawn editor with syntax highlighting, script compilation, and open.mp server launch support.
 
 ![Qawno main window.](documentation/screenshot.png)
 
